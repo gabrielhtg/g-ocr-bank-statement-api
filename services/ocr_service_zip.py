@@ -3,6 +3,7 @@ import zipfile
 import cv2 as cv
 import numpy as np
 import easyocr
+from six import BytesIO
 
 from werkzeug.utils import secure_filename
 
@@ -10,20 +11,13 @@ from services.utils import calculate_distance_between_2_points, order_points, ge
 
 
 def get_file_list_from_zip(data_file, app):
-    file = data_file
-    filename = secure_filename(file.filename)
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    file.save(file_path)
-
     # Ekstrak file zip ke folder EXTRACT_FOLDER
-    with zipfile.ZipFile(file_path, 'r') as zip_ref:
+    with zipfile.ZipFile(BytesIO(data_file.read()), 'r') as zip_ref:
         try:
             file_list = zip_ref.namelist()
             zip_ref.extractall(app.config['EXTRACT_FOLDER'])
         except RuntimeError:
             return 400
-
-    os.remove(file_path)
 
     return file_list
 
