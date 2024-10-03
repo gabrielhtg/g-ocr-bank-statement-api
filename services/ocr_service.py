@@ -3,10 +3,11 @@ import os
 import cv2 as cv
 import easyocr
 import numpy as np
-from services.utils import get_value_percentage, order_points, calculate_distance_between_2_points, contains_number
+from services.utils import get_value_percentage, order_points, calculate_distance_between_2_points, contains_number, \
+    is_current_page_the_right_bank_statement_type
 
 
-def do_ocr(images_array, app):
+def do_ocr(images_array, app, bank_statement_type, is_zip):
     list_baris = []
     list_sub_data = []
     data_baris = []
@@ -37,15 +38,35 @@ def do_ocr(images_array, app):
     most_right_saldo = None
     threshold_saldo = None
     percentage_threshold_saldo = None
-    halaman = 0
+    page = 0
     is_transaction_data_done = False
 
+    # is_current_page_correct adalah variable yang berisikan nilai kebenaran dari pagi ini sudah sesuai dengan
+    # tipe bank statement atau belum
+    is_current_page_correct = None
+
+    '''
+        Loop ini berguna untuk move antar halaman. Kalau iterasi bertambah, 
+        maka masuk ke halaman selanjutnya
+    '''
     for i in images_array:
-        file = i
-        filename = secure_filename(file.filename)
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(file_path)
-        halaman += 1
+        # ini adalah case jika file yang diupload adalah file zip
+        if is_zip :
+            filename = i
+            file_path = os.path.join(app.config['EXTRACT_FOLDER'], filename)
+
+        # ini adalah case ketika fila yang diupload adalah gambar
+        else:
+            file = i
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+
+        # ini digunakan untuk menentukan page / halaman saat ini dengan menjumlahkannya
+        page += 1
+
+        #Setiap masuk ke dalam page baru, maka perlu text count yang sudah dicek direset lagi ke 0
+        checked_text_count = 0
 
         print('Processing {}'.format(filename))
 
@@ -137,6 +158,16 @@ def do_ocr(images_array, app):
 
         # Iterasi melalui hasil OCR
         for bbox, ocr_text, score in text_:
+            checked_text_count += 1
+
+            # ini adalah pengecekan terhadap tipe dari bank statement
+            # saat ini threshold yang digunakan adalah 5
+            # 5 bisa disesuaikan sesuai dengan kondisi
+            if not is_current_page_correct:
+                if checked_text_count < 10:
+                    is_current_page_correct = is_current_page_the_right_bank_statement_type(bank_statement_type,
+                                                                                            ocr_text)
+
             if str(ocr_text).lower() == 'saldo':
                 save_data = True
                 continue
@@ -181,11 +212,11 @@ def do_ocr(images_array, app):
                         list_sub_data.append(ocr_text)
                         continue
 
-                if halaman == len(images_array) and 'saldo' in str(ocr_text).lower():
+                if page == len(images_array) and 'saldo' in str(ocr_text).lower():
                     data_baris_temp = data_baris.copy()
                     wait_for_awal = True
 
-                if halaman == len(images_array) and 'awal' in str(ocr_text).lower() and wait_for_awal:
+                if page == len(images_array) and 'awal' in str(ocr_text).lower() and wait_for_awal:
                     list_baris.append(data_baris_temp.copy())
                     data_baris_temp.clear()
                     is_transaction_data_done = True
@@ -217,7 +248,7 @@ def do_ocr(images_array, app):
                         {
                             'text': ocr_text,
                             'col': 0,
-                            'page': halaman,
+                            'page': page,
                             'filename': filename
                         }
                     )
@@ -249,7 +280,7 @@ def do_ocr(images_array, app):
                                 {
                                     'text': ocr_text,
                                     'col': 1,
-                                    'page': halaman,
+                                    'page': page,
                                     'filename': filename
                                 }
                             )
@@ -280,7 +311,7 @@ def do_ocr(images_array, app):
                                         {
                                             'text': ocr_text,
                                             'col': 2,
-                                            'page': halaman,
+                                            'page': page,
                                             'filename': filename
                                         }
                                     )
@@ -311,7 +342,7 @@ def do_ocr(images_array, app):
                                                 {
                                                     'text': ocr_text,
                                                     'col': 3,
-                                                    'page': halaman,
+                                                    'page': page,
                                                     'filename': filename
                                                 }
                                             )
@@ -342,7 +373,7 @@ def do_ocr(images_array, app):
                                                         {
                                                             'text': ocr_text,
                                                             'col': 4,
-                                                            'page': halaman,
+                                                            'page': page,
                                                             'filename': filename
                                                         }
                                                     )
@@ -362,6 +393,12 @@ def do_ocr(images_array, app):
                                                             most_right_saldo = most_right_box
 
                 before = ocr_text
+
+        if is_current_page_correct is not None:
+            if not is_current_page_correct:
+                return 400, None
+
+        is_current_page_correct = False
         os.remove(file_path)
 
     return [list_baris, list_sub_data]
