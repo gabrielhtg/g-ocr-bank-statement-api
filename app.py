@@ -15,6 +15,10 @@ EXTRACT_FOLDER = 'extracted_data/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['EXTRACT_FOLDER'] = EXTRACT_FOLDER
 
+@app.route('/', methods=['GET'])
+def hello():
+    return 'Python OCR API Menyala!!!'
+
 @app.route('/proceed', methods=['POST'])
 def get_image():
     uploaded_files = request.files.getlist('files')
@@ -52,6 +56,12 @@ def get_image():
                 }), 400
 
             cleaned_data = clean_data(list_data)
+            
+            if cleaned_data == 400:
+                return jsonify({
+                    'success' : False,
+                    'data' : 'Pastikan seluruh halaman dari bank statement sudah lengkap diupload!'
+                }), 400
 
     else :
         # melakukan sorting terhadap file
@@ -59,6 +69,7 @@ def get_image():
 
         # disini ocr dijalankan
         list_data, list_sub_data = do_ocr(sorted_files, app, bank_statement_type, is_zip)
+        
 
         if list_data == 400:
             return jsonify({
@@ -67,28 +78,34 @@ def get_image():
             }), 400
 
         cleaned_data = clean_data(list_data)
+        
+        if cleaned_data == 400:
+            return jsonify({
+                'success' : False,
+                'data' : 'Pastikan seluruh halaman dari bank statement sudah lengkap diupload!'
+            }), 400
 
     return jsonify({
-        'transaction-data' : cleaned_data['data_transaction'], # cleaned data
-        'analitics-data': {
-            'saldo_awal' : list_sub_data[0],
-            'mutasi_cr' : list_sub_data[1],
-            'jumlah_mutasi_cr' : list_sub_data[2],
-            'mutasi_db' : list_sub_data[3],
-            'jumlah_mutasi_db' : list_sub_data[4],
-            'saldo_akhir' : list_sub_data[5],
-            'count_db_ocr' : cleaned_data['analitics_data']['count_db'],
-            'count_cr_ocr' : cleaned_data['analitics_data']['count_cr'],
-            'sum_cr' : cleaned_data['analitics_data']['sum_cr'],
-            'sum_db' : cleaned_data['analitics_data']['sum_db'],
-            'raw_sum_cr': cleaned_data['analitics_data']['raw_sum_cr'],
-            'raw_sum_db': cleaned_data['analitics_data']['raw_sum_db'],
-            'avg_db' : cleaned_data['analitics_data']['avg_db'],
-            'avg_cr' : cleaned_data['analitics_data']['avg_cr'],
-            'min_db' : cleaned_data['analitics_data']['min_db'],
-            'min_cr' : cleaned_data['analitics_data']['min_cr'],
-            'max_db' : cleaned_data['analitics_data']['max_db'],
-            'max_cr' : cleaned_data['analitics_data']['max_cr'],
-            'net_balance' : cleaned_data['analitics_data']['net_balance']
-        } # list sub data
+        'transaction-data'      : cleaned_data['data_transaction'], # cleaned data
+        'analitics-data'        : {
+            'saldo_awal'            : list_sub_data[0],
+            'mutasi_cr'             : list_sub_data[1],
+            'jumlah_mutasi_cr'      : list_sub_data[2],
+            'mutasi_db'             : list_sub_data[3],
+            'jumlah_mutasi_db'      : list_sub_data[4],
+            'saldo_akhir'           : list_sub_data[5],
+            'count_db_ocr'          : cleaned_data['analitics_data']['count_db'],
+            'count_cr_ocr'          : cleaned_data['analitics_data']['count_cr'],
+            'sum_cr'                : cleaned_data['analitics_data']['sum_cr'],
+            'sum_db'                : cleaned_data['analitics_data']['sum_db'],
+            'raw_sum_cr'            : cleaned_data['analitics_data']['raw_sum_cr'],
+            'raw_sum_db'            : cleaned_data['analitics_data']['raw_sum_db'],
+            'avg_db'                : cleaned_data['analitics_data']['avg_db'],
+            'avg_cr'                : cleaned_data['analitics_data']['avg_cr'],
+            'min_db'                : cleaned_data['analitics_data']['min_db'],
+            'min_cr'                : cleaned_data['analitics_data']['min_cr'],
+            'max_db'                : cleaned_data['analitics_data']['max_db'],
+            'max_cr'                : cleaned_data['analitics_data']['max_cr'],
+            'net_balance'           : cleaned_data['analitics_data']['net_balance']
+        }
     })
