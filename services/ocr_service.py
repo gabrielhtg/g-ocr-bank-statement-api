@@ -399,6 +399,6 @@ def do_ocr(images_array, app, bank_statement_type, is_zip):
                 return 400, None
 
         is_current_page_correct = False
-        os.remove(file_path)
+        # os.remove(file_path)
 
     return [list_baris, list_sub_data]

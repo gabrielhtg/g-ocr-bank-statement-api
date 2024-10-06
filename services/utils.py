@@ -3,6 +3,7 @@ import statistics
 import zipfile
 from io import BytesIO
 
+from flask import jsonify
 import numpy as np
 from werkzeug.utils import secure_filename
 
@@ -179,7 +180,7 @@ def get_file_list_from_protected_zip(data_file, app, password):
         file_list = zip_ref.namelist()
         zip_ref.extractall(app.config['EXTRACT_FOLDER'])
 
-    os.remove(file_path)
+    # os.remove(file_path)
 
     return file_list
 
@@ -195,3 +196,9 @@ def is_current_page_the_right_bank_statement_type (bank_statement_type, ocr_text
             return True
 
         return False
+    
+def return_fail_message(taskStatus, message) :
+    return jsonify({
+        'success' : False,
+        'data' : 'Pastikan seluruh halaman dari bank statement sudah lengkap diupload!'
+    }), 400

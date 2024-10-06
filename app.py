@@ -4,7 +4,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from services.check_is_zip import check_is_zip
 from services.ocr_service import do_ocr
-from services.utils import clean_data, get_file_list_from_zip
+from services.utils import clean_data, get_file_list_from_zip, return_fail_message
 
 app = Flask(__name__)
 CORS(app)
@@ -25,10 +25,7 @@ def get_image():
     bank_statement_type = request.form.get('bank-statement-type')
 
     if bank_statement_type == '' :
-        return jsonify({
-            'success': False,
-            'data' : 'Tentukan jenis bank statement dulu!'
-        }), 400
+        return_fail_message(False, 'Tentukan jenis bank statement dulu!')
 
     is_zip = False
 
@@ -40,28 +37,19 @@ def get_image():
         file_list = get_file_list_from_zip(uploaded_files[0], app)
 
         if file_list == 400:
-            return jsonify({
-                'success': False,
-                'data': 'Gagal mengekstrak Zip. Zip terproteksi password!'
-            }), 400
+            return_fail_message(False, 'Gagal mengekstrak Zip. Zip terproteksi password!')
 
         else:
             file_list.sort()
             list_data, list_sub_data = do_ocr(file_list, app, bank_statement_type, is_zip)
 
             if list_data == 400:
-                return jsonify({
-                    'success': False,
-                    'data': 'Tipe dari bank statement tidak sama!'
-                }), 400
+                return_fail_message(False, 'Tipe dari bank statement tidak sama!')
 
             cleaned_data = clean_data(list_data)
             
             if cleaned_data == 400:
-                return jsonify({
-                    'success' : False,
-                    'data' : 'Pastikan seluruh halaman dari bank statement sudah lengkap diupload!'
-                }), 400
+                return_fail_message(False, 'Pastikan seluruh halaman dari bank statement sudah lengkap diupload!')
 
     else :
         # melakukan sorting terhadap file
@@ -72,18 +60,12 @@ def get_image():
         
 
         if list_data == 400:
-            return jsonify({
-                'success': False,
-                'data': 'Tipe dari bank statement tidak sama!'
-            }), 400
+            return_fail_message(False, 'Tipe dari bank statement tidak sama!')
 
         cleaned_data = clean_data(list_data)
         
         if cleaned_data == 400:
-            return jsonify({
-                'success' : False,
-                'data' : 'Pastikan seluruh halaman dari bank statement sudah lengkap diupload!'
-            }), 400
+            return_fail_message(False, 'Pastikan seluruh halaman dari bank statement sudah lengkap diupload!')
 
     return jsonify({
         'transaction-data'      : cleaned_data['data_transaction'], # cleaned data
