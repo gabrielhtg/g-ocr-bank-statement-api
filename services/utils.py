@@ -7,6 +7,8 @@ from flask import jsonify
 import numpy as np
 from werkzeug.utils import secure_filename
 
+import pyzipper
+
 
 def get_value_percentage(percentage, value):
     return int((percentage / 100) * value)
@@ -156,13 +158,30 @@ def clean_data (array) :
 def contains_number(s):
     return any(char.isdigit() for char in s)
 
-def get_file_list_from_zip(data_file, app):
+# ! DEPRECATED
+# Fungsi ini digunakan untuk melakukan ekstraksi terhadap zip
+# def get_file_list_from_zip(data_file, app, zip_password):
+#     # Ekstrak file zip ke folder EXTRACT_FOLDER
+#     with zipfile.ZipFile(BytesIO(data_file.read()), 'r') as zip_ref:
+#         try:
+#             file_list = zip_ref.namelist()
+#             zip_ref.extractall(app.config['EXTRACT_FOLDER'])
+#         except RuntimeError:
+#             return 400
+
+#     return file_list
+
+# fungsi ini digunakan untuk melakukan ekstraksi terhadap zip
+def get_file_list_from_zip(data_file, app, zip_password):
     # Ekstrak file zip ke folder EXTRACT_FOLDER
-    with zipfile.ZipFile(BytesIO(data_file.read()), 'r') as zip_ref:
+    with pyzipper.AESZipFile(BytesIO(data_file.read()), 'r') as zip_ref:
         try:
+            # Gunakan kata sandi untuk membuka zip
+            zip_ref.pwd = zip_password.encode('utf-8')
+            
             file_list = zip_ref.namelist()
             zip_ref.extractall(app.config['EXTRACT_FOLDER'])
-        except RuntimeError:
+        except (RuntimeError, pyzipper.BadZipFile, pyzipper.LargeZipFile) as e:
             return 400
 
     return file_list
@@ -199,6 +218,7 @@ def is_current_page_the_right_bank_statement_type (bank_statement_type, ocr_text
     
 def return_fail_message(taskStatus, message) :
     return jsonify({
-        'success' : False,
-        'data' : 'Pastikan seluruh halaman dari bank statement sudah lengkap diupload!'
+        'success' : taskStatus,
+        'data' : message
     }), 400
+    

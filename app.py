@@ -1,10 +1,7 @@
-from distutils.command.clean import clean
-
-from flask import Flask, jsonify, request
+from flask import Flask
 from flask_cors import CORS
-from services.check_is_zip import check_is_zip
-from services.ocr_service import do_ocr
-from services.utils import clean_data, get_file_list_from_zip, return_fail_message
+from controller.bca_controller import ocr_bca
+
 
 app = Flask(__name__)
 CORS(app)
@@ -19,75 +16,10 @@ app.config['EXTRACT_FOLDER'] = EXTRACT_FOLDER
 def hello():
     return 'Python OCR API Menyala!!!'
 
-@app.route('/proceed', methods=['POST'])
-def get_image():
-    uploaded_files = request.files.getlist('files')
-    bank_statement_type = request.form.get('bank-statement-type')
+@app.route('/proceed-bca', methods=['POST'])
+def proceed_bca() :
+    return ocr_bca(app)
 
-    if bank_statement_type == '' :
-        return_fail_message(False, 'Tentukan jenis bank statement dulu!')
-
-    is_zip = False
-
-    # cek apakah file adalah zip atau gambar
-    if len(uploaded_files) == 1:
-        is_zip = check_is_zip(uploaded_files)
-
-    if is_zip:
-        file_list = get_file_list_from_zip(uploaded_files[0], app)
-
-        if file_list == 400:
-            return_fail_message(False, 'Gagal mengekstrak Zip. Zip terproteksi password!')
-
-        else:
-            file_list.sort()
-            list_data, list_sub_data = do_ocr(file_list, app, bank_statement_type, is_zip)
-
-            if list_data == 400:
-                return_fail_message(False, 'Tipe dari bank statement tidak sama!')
-
-            cleaned_data = clean_data(list_data)
-            
-            if cleaned_data == 400:
-                return_fail_message(False, 'Pastikan seluruh halaman dari bank statement sudah lengkap diupload!')
-
-    else :
-        # melakukan sorting terhadap file
-        sorted_files = sorted(uploaded_files, key=lambda x: x.filename)
-
-        # disini ocr dijalankan
-        list_data, list_sub_data = do_ocr(sorted_files, app, bank_statement_type, is_zip)
-        
-
-        if list_data == 400:
-            return_fail_message(False, 'Tipe dari bank statement tidak sama!')
-
-        cleaned_data = clean_data(list_data)
-        
-        if cleaned_data == 400:
-            return_fail_message(False, 'Pastikan seluruh halaman dari bank statement sudah lengkap diupload!')
-
-    return jsonify({
-        'transaction-data'      : cleaned_data['data_transaction'], # cleaned data
-        'analitics-data'        : {
-            'saldo_awal'            : list_sub_data[0],
-            'mutasi_cr'             : list_sub_data[1],
-            'jumlah_mutasi_cr'      : list_sub_data[2],
-            'mutasi_db'             : list_sub_data[3],
-            'jumlah_mutasi_db'      : list_sub_data[4],
-            'saldo_akhir'           : list_sub_data[5],
-            'count_db_ocr'          : cleaned_data['analitics_data']['count_db'],
-            'count_cr_ocr'          : cleaned_data['analitics_data']['count_cr'],
-            'sum_cr'                : cleaned_data['analitics_data']['sum_cr'],
-            'sum_db'                : cleaned_data['analitics_data']['sum_db'],
-            'raw_sum_cr'            : cleaned_data['analitics_data']['raw_sum_cr'],
-            'raw_sum_db'            : cleaned_data['analitics_data']['raw_sum_db'],
-            'avg_db'                : cleaned_data['analitics_data']['avg_db'],
-            'avg_cr'                : cleaned_data['analitics_data']['avg_cr'],
-            'min_db'                : cleaned_data['analitics_data']['min_db'],
-            'min_cr'                : cleaned_data['analitics_data']['min_cr'],
-            'max_db'                : cleaned_data['analitics_data']['max_db'],
-            'max_cr'                : cleaned_data['analitics_data']['max_cr'],
-            'net_balance'           : cleaned_data['analitics_data']['net_balance']
-        }
-    })
+@app.route('/proceed-bri', methods=['POST'])
+def proceed_bri(app) :
+    pass

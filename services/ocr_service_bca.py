@@ -7,7 +7,7 @@ from services.utils import get_value_percentage, order_points, calculate_distanc
     is_current_page_the_right_bank_statement_type
 
 
-def do_ocr(images_array, app, bank_statement_type, is_zip):
+def do_ocr_bca(images_array, app, bank_statement_type, is_zip):
     list_baris = []
     list_sub_data = []
     data_baris = []
