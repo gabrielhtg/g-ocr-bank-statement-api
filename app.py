@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from controller.bca_controller import ocr_bca
+from controller.bri_controller import ocr_bri
 
 
 app = Flask(__name__)
@@ -21,5 +22,5 @@ def proceed_bca() :
     return ocr_bca(app)
 
 @app.route('/proceed-bri', methods=['POST'])
-def proceed_bri(app) :
-    pass
+def proceed_bri() :
+    return ocr_bri(app)

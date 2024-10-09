@@ -1,6 +1,6 @@
 from flask import jsonify, request
-from services.check_is_zip import check_is_zip
-from services.ocr_service_bca import do_ocr_bca
+from services.check_is_zip import checkIsZip
+from services.bca_ocr_service import do_ocr_bca
 from services.utils import clean_data, get_file_list_from_zip, return_fail_message
 
 def ocr_bca(app):
@@ -18,7 +18,7 @@ def ocr_bca(app):
 
     # cek apakah file adalah zip atau gambar
     if len(uploaded_files) == 1:
-        is_zip = check_is_zip(uploaded_files)
+        is_zip = checkIsZip(uploaded_files)
 
     if is_zip:
         # melakukan ekstraksi dari zip dan menyimpannya ke dalam list

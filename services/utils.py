@@ -9,25 +9,6 @@ from werkzeug.utils import secure_filename
 
 import pyzipper
 
-
-def get_value_percentage(percentage, value):
-    return int((percentage / 100) * value)
-
-def order_points(pts):
-    pts = pts.reshape(4, 2)
-    rect = np.zeros((4, 2), dtype="float32")
-    s = pts.sum(axis=1)
-    rect[0] = pts[np.argmin(s)]
-    rect[2] = pts[np.argmax(s)]
-    diff = np.diff(pts, axis=1)
-    rect[1] = pts[np.argmin(diff)]
-    rect[3] = pts[np.argmax(diff)]
-    return rect
-
-def calculate_distance_between_2_points(p1, p2):
-    dis = ((p2[0] - p1[0]) ** 2 + (p2[1] - p1[1]) ** 2) ** 0.5
-    return dis
-
 def clean_data (array) :
     arr_temp = []
     count_db = 0
