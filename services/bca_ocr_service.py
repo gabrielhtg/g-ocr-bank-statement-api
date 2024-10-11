@@ -3,9 +3,11 @@ import os
 import cv2 as cv
 import easyocr
 import numpy as np
-from services.utils import get_value_percentage, order_points, calculate_distance_between_2_points, contains_number, \
-    is_current_page_the_right_bank_statement_type
 
+from services.calculate_distance_between_two_points import calculate_distance_between_2_points
+from services.get_value_percentage import get_value_percentage
+from services.order_points import order_points
+from services.utils import contains_number, is_current_page_the_right_bank_statement_type
 
 def do_ocr_bca(images_array, app, bank_statement_type, is_zip):
     list_baris = []

@@ -152,21 +152,6 @@ def contains_number(s):
 
 #     return file_list
 
-# fungsi ini digunakan untuk melakukan ekstraksi terhadap zip
-def get_file_list_from_zip(data_file, app, zip_password):
-    # Ekstrak file zip ke folder EXTRACT_FOLDER
-    with pyzipper.AESZipFile(BytesIO(data_file.read()), 'r') as zip_ref:
-        try:
-            # Gunakan kata sandi untuk membuka zip
-            zip_ref.pwd = zip_password.encode('utf-8')
-            
-            file_list = zip_ref.namelist()
-            zip_ref.extractall(app.config['EXTRACT_FOLDER'])
-        except (RuntimeError, pyzipper.BadZipFile, pyzipper.LargeZipFile) as e:
-            return 400
-
-    return file_list
-
 def get_file_list_from_protected_zip(data_file, app, password):
     file = data_file
     filename = secure_filename(file.filename)
@@ -197,9 +182,5 @@ def is_current_page_the_right_bank_statement_type (bank_statement_type, ocr_text
 
         return False
     
-def return_fail_message(taskStatus, message) :
-    return jsonify({
-        'success' : taskStatus,
-        'data' : message
-    }), 400
+
     

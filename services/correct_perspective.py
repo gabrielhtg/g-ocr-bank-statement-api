@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 
 from services.calculate_distance_between_two_points import calculate_distance_between_2_points
-from services.utils import order_points
+from services.order_points import order_points
 
 def correct_perspective(image) :
     img = cv.imread(image)

@@ -1,18 +1,20 @@
 from flask import jsonify, request
 from services.check_is_zip import checkIsZip
 from services.bca_ocr_service import do_ocr_bca
-from services.utils import clean_data, get_file_list_from_zip, return_fail_message
+from services.get_file_list_from_zip import getFileListFromZip
+from services.returnFailMessage import returnFailMessage
+from services.utils import clean_data
 
-def ocr_bca(app):
+def bca_controller(app):
     uploaded_files = request.files.getlist('files')
     bank_statement_type = request.form.get('bank-statement-type')
-    zip_password = None
+    zip_password = ''
     
     if request.form.get('zip-password') :
         zip_password = request.form.get('zip-password')
 
     if bank_statement_type == '' :
-        return return_fail_message(False, 'Tentukan jenis bank statement dulu!')
+        return returnFailMessage(False, 'Tentukan jenis bank statement dulu!')
 
     is_zip = False
 
@@ -22,11 +24,11 @@ def ocr_bca(app):
 
     if is_zip:
         # melakukan ekstraksi dari zip dan menyimpannya ke dalam list
-        file_list = get_file_list_from_zip(uploaded_files[0], app, zip_password)
+        file_list = getFileListFromZip(uploaded_files[0], app, zip_password)
         
         # return jika zip gagal diekstrak karena terproteksi password
         if file_list == 400:
-            return return_fail_message(False, 'Gagal mengekstrak zip! Wrong Password!')
+            return returnFailMessage(False, 'Gagal mengekstrak zip! Password salah!')
 
         else:
             # melakukan sorting berdasarkan nama file
@@ -37,12 +39,12 @@ def ocr_bca(app):
 
             # return jika tipe data bank statement tidak sama dengan yang diinput sebelumnya
             if list_data == 400:
-                return return_fail_message(False, 'Tipe dari bank statement tidak sama!')
+                return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
 
             cleaned_data = clean_data(list_data)
             
             if cleaned_data == 400:
-                return return_fail_message(False, 'Pastikan seluruh halaman dari bank statement sudah lengkap diupload!')
+                return returnFailMessage(False, 'Pastikan seluruh halaman dari bank statement sudah lengkap diupload!')
 
     else :
         # melakukan sorting terhadap file
@@ -53,12 +55,12 @@ def ocr_bca(app):
         
 
         if list_data == 400:
-            return return_fail_message(False, 'Tipe dari bank statement tidak sama!')
+            return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
 
         cleaned_data = clean_data(list_data)
         
         if cleaned_data == 400:
-            return return_fail_message(False, 'Pastikan seluruh halaman dari bank statement sudah lengkap diupload!')
+            return returnFailMessage(False, 'Pastikan seluruh halaman dari bank statement sudah lengkap diupload!')
 
     try :
         return jsonify({
@@ -87,4 +89,4 @@ def ocr_bca(app):
         })
         
     except IndexError as e :
-        return return_fail_message(False, "Pastikan halaman bank statement sudah lengkap!")
+        return returnFailMessage(False, "Pastikan halaman bank statement sudah lengkap!")

@@ -1,7 +1,8 @@
 from flask import Flask
 from flask_cors import CORS
-from controller.bca_controller import ocr_bca
-from controller.bri_controller import ocr_bri
+
+from controller.bca_controller import bca_controller
+from controller.bri_controller import bri_controller
 
 
 app = Flask(__name__)
@@ -19,8 +20,8 @@ def hello():
 
 @app.route('/proceed-bca', methods=['POST'])
 def proceed_bca() :
-    return ocr_bca(app)
+    return bca_controller(app)
 
 @app.route('/proceed-bri', methods=['POST'])
 def proceed_bri() :
-    return ocr_bri(app)
+    return bri_controller(app)
