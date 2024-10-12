@@ -29,7 +29,7 @@ def bri_controller(app) :
         else :
             fileList.sort()
             
-            transactionData = do_ocr_bri(fileList, app, bankStatementType)
+            transactionData, summaryData = do_ocr_bri(fileList, app, bankStatementType)
 
             if transactionData == 400 :
                 return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
@@ -37,12 +37,13 @@ def bri_controller(app) :
     else :
         sortedData = sorted(uploadedFiles, key=lambda x: x.filename)
         
-        transactionData = do_ocr_bri(sortedData, app, bankStatementType)
+        transactionData, summaryData = do_ocr_bri(sortedData, app, bankStatementType)
         
         if transactionData == 400 :
                 return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
 
     return jsonify({
         'data' : transactionData,
-        'banyak_data' : len(transactionData)
+        'banyak_data' : len(transactionData),
+        'summary_data' : summaryData
     })

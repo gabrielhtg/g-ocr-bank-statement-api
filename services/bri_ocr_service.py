@@ -1,4 +1,9 @@
 import os
+from services.clean_debit_bri import cleanDebitBri
+from services.clean_kredit_bri import cleanKreditBri
+from services.clean_saldo_bri import cleanSaldoBri
+from services.clean_summary_bri import cleanSummaryBri
+from services.clean_tanggal_transaksi_bri import clean_tanggal_transaksi_bri
 from services.correct_perspective import correct_perspective
 from services.do_orc_easyocr import do_ocr_easyocr
 from services.getImageHeight import getImageHeight
@@ -35,14 +40,23 @@ def do_ocr_bri (imageArray, app, bankStatementType) :
     titikKiriSaldo = None
     titikKananSaldo = None
 
+    # saklar yang kita gunakan untuk pengumpulan data transaksi
     startGetTransactionData = False
-
+    
+    # saklar yang kita gunakan untuk pengumpulan summary dari gambar
+    startGetSummary = False
+    
+    # ini digunakan untuk menghitung banyak data summary yang sudah dilakukan OCR
+    # sejak kode ini dibuat, maksimal ada 4 
+    summaryDataCount = 0
+    
     # text sebelumnya (-1 iterasi saat ini)
     textBefore = None
 
     # menyimpan semua data transaksi
     transactionData = []
     rowData = []
+    summaryData = []
 
     # menyimpan visited state pada tiap kolom yang ada pada tabel transaksi
     isTanggalTransaksiVisited = False
@@ -130,7 +144,7 @@ def do_ocr_bri (imageArray, app, bankStatementType) :
                     isDebetVisited = False
                     isKreditVisited = False
                     isSaldoVisited = False
-                    break
+                    continue
                 
                 if isTanggalTransaksiVisited and len(rowData) >= 6 and titikKananTanggalTransaksi < titikPalingKiriBox and titikPalingKananBox < titikKiriTeller :
                     rowData[1] = str(rowData[1]) + '\n' + text
@@ -151,7 +165,7 @@ def do_ocr_bri (imageArray, app, bankStatementType) :
                     # memasukkan data
                     titikKiriTanggalTransaksi = titikPalingKiriBox
                     titikKananTanggalTransaksi = titikPalingKananBox
-                    rowData.append(text)
+                    rowData.append(clean_tanggal_transaksi_bri(text))
                     isTanggalTransaksiVisited = True
                     continue
                     
@@ -159,7 +173,7 @@ def do_ocr_bri (imageArray, app, bankStatementType) :
                     titikKiriTanggalTransaksi = titikPalingKiriBox
                     titikKananTanggalTransaksi = titikPalingKananBox
                     thresholdUraianTransaksi = int(titikKananTanggalTransaksi + (0.272 * lebarGambar))
-                    rowData.append(text)
+                    rowData.append(clean_tanggal_transaksi_bri(text))
                     isTanggalTransaksiVisited = True
                     
                 elif not isUraianTransaksiVisited:
@@ -183,24 +197,39 @@ def do_ocr_bri (imageArray, app, bankStatementType) :
                 elif not isDebetVisited:
                     titikKiriDebet = titikPalingKiriBox
                     titikKananDebet = titikPalingKananBox
-                    rowData.append(text)
+                    rowData.append(cleanDebitBri(text))
                     isDebetVisited = True
                     
                 elif not isKreditVisited:
                     titikKiriKredit = titikPalingKiriBox
                     titikKananKredit = titikPalingKananBox
-                    rowData.append(text)
+                    rowData.append(cleanKreditBri(text))
                     isKreditVisited = True
                     
                 elif not isSaldoVisited:
                     titikKiriSaldo = titikPalingKiriBox
                     titikKananSaldo = titikPalingKananBox
-                    rowData.append(text)
+                    rowData.append(cleanSaldoBri(text))
                     isSaldoVisited = True
                 
             textBefore = text
+            
+            if 'sing' in text.lower() and 'ance' in text.lower() :
+                startGetSummary = True 
+                continue
+            
+            if startGetSummary :
+                summaryDataCount += 1
+                summaryData.append(cleanSummaryBri(text))
+                
+                if summaryDataCount == 4 :
+                    break
+                
+            if 'bilang' in text.lower() :
+                startGetSummary = False
+                continue
         
         if not isBankStatementCorrect :
             return 400
         
-    return transactionData
+    return transactionData, summaryData
