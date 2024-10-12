@@ -6,8 +6,9 @@ import numpy as np
 
 from services.calculate_distance_between_two_points import calculate_distance_between_2_points
 from services.get_value_percentage import get_value_percentage
+from services.is_contain_number import is_contain_number
+from services.is_current_page_the_right_bank_statement_type import is_current_page_the_right_bank_statement_type
 from services.order_points import order_points
-from services.utils import contains_number, is_current_page_the_right_bank_statement_type
 
 def do_ocr_bca(images_array, app, bank_statement_type, is_zip):
     list_baris = []
@@ -210,7 +211,7 @@ def do_ocr_bca(images_array, app, bank_statement_type, is_zip):
 
             if save_data:
                 if is_transaction_data_done:
-                    if contains_number(ocr_text):
+                    if is_contain_number(ocr_text):
                         list_sub_data.append(ocr_text)
                         continue
 

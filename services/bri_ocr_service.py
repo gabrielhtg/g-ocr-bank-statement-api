@@ -1,12 +1,13 @@
 import os
-import string
 from services.correct_perspective import correct_perspective
 from services.do_orc_easyocr import do_ocr_easyocr
 from services.getImageHeight import getImageHeight
 from services.getImageWidth import getImageWidth
 from werkzeug.utils import secure_filename
 
-def do_ocr_bri (imageArray, app) :
+from services.is_current_page_the_right_bank_statement_type import is_current_page_the_right_bank_statement_type
+
+def do_ocr_bri (imageArray, app, bankStatementType) :
     # 4 data yang disimpan di bawah ini masih dummy
     # belum tentu digunakan
     # ! sementara ini tidak digunakan
@@ -51,6 +52,13 @@ def do_ocr_bri (imageArray, app) :
     isKreditVisited = False
     isSaldoVisited = False
     
+    # digunakan untuk memeriksa apakah halaman yang diupload masih merupakan
+    # tipe bank statement yang sama dengan yang dimasukkan user
+    isBankStatementCorrect = False
+    
+    # merepresentasikan value dari gambar ke berapa saat ini yang dilakukan ocr
+    banyakKataYangDiScan = 0
+    
     for e in imageArray:
         if isinstance(e, str) :
             filename = secure_filename(e)
@@ -76,6 +84,12 @@ def do_ocr_bri (imageArray, app) :
         for e in text_ :
             box, text, score = e
             
+            banyakKataYangDiScan += 1
+            
+            if not isBankStatementCorrect:
+                if banyakKataYangDiScan < 7 :
+                    isBankStatementCorrect = is_current_page_the_right_bank_statement_type(bankStatementType, text)
+                
             titikPalingKiriBox = box[0][0]
             titikPalingKananBox = box[1][0]
             titikPalingAtasBox = box[0][1]
@@ -185,5 +199,8 @@ def do_ocr_bri (imageArray, app) :
                     isSaldoVisited = True
                 
             textBefore = text
-            
+        
+        if not isBankStatementCorrect :
+            return 400
+        
     return transactionData

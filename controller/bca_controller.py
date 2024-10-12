@@ -1,9 +1,9 @@
 from flask import jsonify, request
 from services.check_is_zip import checkIsZip
 from services.bca_ocr_service import do_ocr_bca
+from services.clean_bca_data import clean_bca_data
 from services.get_file_list_from_zip import getFileListFromZip
 from services.returnFailMessage import returnFailMessage
-from services.utils import clean_data
 
 def bca_controller(app):
     uploaded_files = request.files.getlist('files')
@@ -41,7 +41,7 @@ def bca_controller(app):
             if list_data == 400:
                 return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
 
-            cleaned_data = clean_data(list_data)
+            cleaned_data = clean_bca_data(list_data)
             
             if cleaned_data == 400:
                 return returnFailMessage(False, 'Pastikan seluruh halaman dari bank statement sudah lengkap diupload!')
@@ -57,7 +57,7 @@ def bca_controller(app):
         if list_data == 400:
             return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
 
-        cleaned_data = clean_data(list_data)
+        cleaned_data = clean_bca_data(list_data)
         
         if cleaned_data == 400:
             return returnFailMessage(False, 'Pastikan seluruh halaman dari bank statement sudah lengkap diupload!')

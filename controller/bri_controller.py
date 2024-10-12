@@ -7,7 +7,7 @@ from services.returnFailMessage import returnFailMessage
 def bri_controller(app) :
     uploadedFiles = request.files.getlist('files')
     zipPassword = ''
-    bankStatementStyle = request.form.get('bank-statement-type')
+    bankStatementType = request.form.get('bank-statement-type')
     
     if request.form.get('zip-password') :
         zipPassword = request.form.get('zip-password')
@@ -29,7 +29,7 @@ def bri_controller(app) :
         else :
             fileList.sort()
             
-            transactionData = do_ocr_bri(fileList, app)
+            transactionData = do_ocr_bri(fileList, app, bankStatementType)
 
             if transactionData == 400 :
                 return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
@@ -37,7 +37,10 @@ def bri_controller(app) :
     else :
         sortedData = sorted(uploadedFiles, key=lambda x: x.filename)
         
-        transactionData = do_ocr_bri(sortedData, app)
+        transactionData = do_ocr_bri(sortedData, app, bankStatementType)
+        
+        if transactionData == 400 :
+                return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
 
     return jsonify({
         'data' : transactionData,
