@@ -1,6 +1,7 @@
 from flask import jsonify, request
 from services.bri_ocr_service import do_ocr_bri
 from services.check_is_zip import checkIsZip
+from services.get_bri_analysis import getBriAnalysisData
 from services.get_file_list_from_zip import getFileListFromZip
 from services.returnFailMessage import returnFailMessage
 
@@ -8,6 +9,7 @@ def bri_controller(app) :
     uploadedFiles = request.files.getlist('files')
     zipPassword = ''
     bankStatementType = request.form.get('bank-statement-type')
+    analysisData = []
     
     if request.form.get('zip-password') :
         zipPassword = request.form.get('zip-password')
@@ -33,7 +35,7 @@ def bri_controller(app) :
 
             if transactionData == 400 :
                 return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
-
+            
     else :
         sortedData = sorted(uploadedFiles, key=lambda x: x.filename)
         
@@ -45,5 +47,6 @@ def bri_controller(app) :
     return jsonify({
         'data' : transactionData,
         'banyak_data' : len(transactionData),
-        'summary_data' : summaryData
+        'summary_data' : summaryData,
+        'analysis_data' : getBriAnalysisData(transactionData, summaryData)
     })

@@ -73,6 +73,8 @@ def do_ocr_bri (imageArray, app, bankStatementType) :
     # merepresentasikan value dari gambar ke berapa saat ini yang dilakukan ocr
     banyakKataYangDiScan = 0
     
+    banyakTransaksi = 0
+    
     for e in imageArray:
         if isinstance(e, str) :
             filename = secure_filename(e)
@@ -120,6 +122,8 @@ def do_ocr_bri (imageArray, app, bankStatementType) :
             # ketika sudah masuk ke bagian tabel transaksi, maka akan mulai mengambil data
             # dan block code ini akan dieksekusi
             if startGetTransactionData:
+                
+                # ini adalah kondisi ketika sudah masuk ke akhir halaman
                 if isSaldoVisited and titikPalingKiriBox > titikKiriKredit :
                     rowData.append(filename)
                     transactionData.append(rowData.copy())
@@ -131,6 +135,7 @@ def do_ocr_bri (imageArray, app, bankStatementType) :
                     isDebetVisited = False
                     isKreditVisited = False
                     isSaldoVisited = False
+                    print('-> akhir gambar')
                     continue
                 
                 if len(transactionData) > 0 and 'aldo' in text.lower() and 'al' in text.lower() :
@@ -228,8 +233,8 @@ def do_ocr_bri (imageArray, app, bankStatementType) :
             if 'bilang' in text.lower() :
                 startGetSummary = False
                 continue
-        
+            
         if not isBankStatementCorrect :
-            return 400
+            return 400, 400
         
     return transactionData, summaryData
