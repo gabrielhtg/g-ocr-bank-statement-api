@@ -135,7 +135,6 @@ def do_ocr_bri (imageArray, app, bankStatementType) :
                     isDebetVisited = False
                     isKreditVisited = False
                     isSaldoVisited = False
-                    print('-> akhir gambar')
                     continue
                 
                 if len(transactionData) > 0 and 'aldo' in text.lower() and 'al' in text.lower() :
