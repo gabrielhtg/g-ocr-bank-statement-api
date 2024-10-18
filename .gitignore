@@ -2,3 +2,5 @@
 /uploads/*
 /extracted_data/*
 /__pycache__
+!/uploads/.gitkeep
+!/extracted_data/.gitkeep
