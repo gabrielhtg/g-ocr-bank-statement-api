@@ -4,3 +4,5 @@
 /__pycache__
 !/uploads/.gitkeep
 !/extracted_data/.gitkeep
+/.idea
+/.vscode
