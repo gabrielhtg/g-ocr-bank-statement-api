@@ -1,8 +1,6 @@
 /data
-/uploads/*
-/extracted_data/*
 /__pycache__
-!/uploads/.gitkeep
-!/extracted_data/.gitkeep
+/uploads
+/extracted_data
 /.idea
 /.vscode

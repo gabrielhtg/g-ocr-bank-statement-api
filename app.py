@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_cors import CORS
 
@@ -13,6 +14,11 @@ UPLOAD_FOLDER = 'uploads/'
 EXTRACT_FOLDER = 'extracted_data/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['EXTRACT_FOLDER'] = EXTRACT_FOLDER
+
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+if not os.path.exists(EXTRACT_FOLDER):
+    os.makedirs(EXTRACT_FOLDER, exist_ok=True)
 
 @app.route('/', methods=['GET'])
 def hello():
