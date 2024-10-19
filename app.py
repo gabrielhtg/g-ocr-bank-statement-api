@@ -5,6 +5,8 @@ from flask_cors import CORS
 from controller.bca_controller import bca_controller
 from controller.bri_controller import bri_controller
 
+from waitress import serve
+
 
 app = Flask(__name__)
 CORS(app)
@@ -19,6 +21,11 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 if not os.path.exists(EXTRACT_FOLDER):
     os.makedirs(EXTRACT_FOLDER, exist_ok=True)
+    
+if __name__ == "__main__":
+    #app.run(host='0.0.0.0')
+    #We now use this syntax to server our app. 
+    serve(app, host='0.0.0.0', port=5000)
 
 @app.route('/', methods=['GET'])
 def hello():
