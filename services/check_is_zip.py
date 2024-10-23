@@ -1,5 +1,5 @@
 def checkIsZip(uploaded_files):
-    if uploaded_files[0].content_type == 'application/zip':
+    if '.zip' in uploaded_files[0].filename:
         return True
 
     return False
