@@ -35,13 +35,13 @@ def bca_controller(app):
             file_list.sort()
             
             # melakukan process ocr
-            list_data, list_sub_data = do_ocr_bca(file_list, app, bank_statement_type, is_zip)
+            ocr_data = do_ocr_bca(file_list, app, bank_statement_type, is_zip)
 
             # return jika tipe data bank statement tidak sama dengan yang diinput sebelumnya
-            if list_data == 400:
+            if ocr_data == 400:
                 return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
 
-            cleaned_data = clean_bca_data(list_data)
+            cleaned_data = clean_bca_data(ocr_data['list_baris'])
             
             if cleaned_data == 400:
                 return returnFailMessage(False, 'Pastikan seluruh halaman dari bank statement sudah lengkap diupload!')
@@ -51,13 +51,13 @@ def bca_controller(app):
         sorted_files = sorted(uploaded_files, key=lambda x: x.filename)
 
         # disini ocr dijalankan
-        list_data, list_sub_data = do_ocr_bca(sorted_files, app, bank_statement_type, is_zip)
+        ocr_data = do_ocr_bca(sorted_files, app, bank_statement_type, is_zip)
         
 
-        if list_data == 400:
+        if ocr_data == 400:
             return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
 
-        cleaned_data = clean_bca_data(list_data)
+        cleaned_data = clean_bca_data(ocr_data['list_baris'])
         
         if cleaned_data == 400:
             return returnFailMessage(False, 'Pastikan seluruh halaman dari bank statement sudah lengkap diupload!')
@@ -66,12 +66,12 @@ def bca_controller(app):
         return jsonify({
             'transaction-data'      : cleaned_data['data_transaction'], # cleaned data
             'analitics-data'        : {
-                'saldo_awal'            : list_sub_data[0],
-                'mutasi_cr'             : list_sub_data[1],
-                'jumlah_mutasi_cr'      : list_sub_data[2],
-                'mutasi_db'             : list_sub_data[3],
-                'jumlah_mutasi_db'      : list_sub_data[4],
-                'saldo_akhir'           : list_sub_data[5],
+                'saldo_awal'            : ocr_data['list_sub_data'][0],
+                'mutasi_cr'             : ocr_data['list_sub_data'][1],
+                'jumlah_mutasi_cr'      : ocr_data['list_sub_data'][2],
+                'mutasi_db'             : ocr_data['list_sub_data'][3],
+                'jumlah_mutasi_db'      : ocr_data['list_sub_data'][4],
+                'saldo_akhir'           : ocr_data['list_sub_data'][5],
                 'count_db_ocr'          : cleaned_data['analitics_data']['count_db'],
                 'count_cr_ocr'          : cleaned_data['analitics_data']['count_cr'],
                 'sum_cr'                : cleaned_data['analitics_data']['sum_cr'],
@@ -85,7 +85,13 @@ def bca_controller(app):
                 'max_db'                : cleaned_data['analitics_data']['max_db'],
                 'max_cr'                : cleaned_data['analitics_data']['max_cr'],
                 'net_balance'           : cleaned_data['analitics_data']['net_balance']
-            }
+            },
+            'tipe_rekening'         : ocr_data['tipe_rekening'],
+            'kcp'                   : ocr_data['kcp'],
+            'pemilik_rekening'      : ocr_data['pemilik_rekening'],
+            'nomor_rekening'        : ocr_data['nomor_rekening'],
+            'periode'               : ocr_data['periode'],
+            'mata_uang'             : ocr_data['mata_uang'],
         })
         
     except IndexError as e :

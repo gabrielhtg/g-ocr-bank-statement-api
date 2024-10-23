@@ -47,7 +47,9 @@ def do_ocr_bca(images_array, app, bank_statement_type, is_zip):
     # is_current_page_correct adalah variable yang berisikan nilai kebenaran dari pagi ini sudah sesuai dengan
     # tipe bank statement atau belum
     is_current_page_correct = None
-
+    
+    data = {}
+    
     '''
         Loop ini berguna untuk move antar halaman. Kalau iterasi bertambah, 
         maka masuk ke halaman selanjutnya
@@ -158,10 +160,60 @@ def do_ocr_bca(images_array, app, bank_statement_type, is_zip):
         wait_for_awal = 'false'
 
         save_data = False
+        
+        tipeRekening = None
+        kcp = None
+        pemilikRekening = None
+        titikBawahPemilikRekening = None
+        nomorRekening = None
+        periode = None
+        mataUang = None
+        
+        before = None
+
+        thresholdBawahBoxPertama = None
+        thresholdKananBoxPertama = None
 
         # Iterasi melalui hasil OCR
         for bbox, ocr_text, score in text_:
+            
+            bbox = [[int(coord[0]), int(coord[1])] for coord in bbox]
+            
+            current_width = bbox[1][0] - bbox[0][0]
+            most_right_box = bbox[0][0] + current_width
+            most_left_box = bbox[0][0]
+            most_top_box = bbox[1][1]
+            most_bottom_box = bbox[2][1]
+            
             checked_text_count += 1
+            
+            if checked_text_count == 2 :
+                tipeRekening = ocr_text
+            
+            if checked_text_count == 3:
+                kcp = ocr_text
+                thresholdBawahBoxPertama = most_top_box + int(0.10 * img_height)
+                thresholdKananBoxPertama = most_left_box + int(0.408 * img_width)
+                
+            if checked_text_count > 3 :
+                if most_left_box < thresholdKananBoxPertama and most_top_box < thresholdBawahBoxPertama :
+                    if pemilikRekening == None:
+                        titikBawahPemilikRekening = most_bottom_box
+                        pemilikRekening = ocr_text
+                    
+                    else :
+                        if most_top_box < titikBawahPemilikRekening:
+                            pemilikRekening = pemilikRekening + ' ' + ocr_text
+                            
+                if most_left_box > thresholdKananBoxPertama and most_top_box < thresholdBawahBoxPertama :
+                    if 'no' in before.lower():
+                        nomorRekening = ocr_text
+                    
+                    if 'iode' in before.lower() :
+                        periode = ocr_text
+                        
+                    if 'uang' in before.lower() :
+                        mataUang = ocr_text                      
 
             # ini adalah pengecekan terhadap tipe dari bank statement
             # saat ini threshold yang digunakan adalah 5
@@ -187,6 +239,8 @@ def do_ocr_bca(images_array, app, bank_statement_type, is_zip):
                 # Cek apakah ini adalah teks paling kanan
                 if x2 > max_x:
                     max_x = x2
+            
+            before = ocr_text
 
         # Hasil akhir
         content_width = max_x - min_x
@@ -197,7 +251,7 @@ def do_ocr_bca(images_array, app, bank_statement_type, is_zip):
 
         for t in text_:
             bbox, ocr_text, score, *test = t
-
+            
             bbox = [[int(coord[0]), int(coord[1])] for coord in bbox]
 
             if str(ocr_text).lower() == 'saldo' and len(data_baris) < 1:
@@ -403,5 +457,14 @@ def do_ocr_bca(images_array, app, bank_statement_type, is_zip):
 
         is_current_page_correct = False
         # os.remove(file_path)
+        
+    data['tipe_rekening'] = tipeRekening
+    data['list_baris'] = list_baris
+    data['list_sub_data'] = list_sub_data
+    data['kcp'] = kcp
+    data['pemilik_rekening'] = pemilikRekening
+    data['nomor_rekening'] = nomorRekening
+    data['periode'] = periode
+    data['mata_uang'] = mataUang
 
-    return [list_baris, list_sub_data]
+    return data
