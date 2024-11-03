@@ -1,6 +1,6 @@
 import statistics
 
-def clean_bca_data (array) :
+def cleanBcaData (array) :
     arr_temp = []
     count_db = 0
     count_cr = 0

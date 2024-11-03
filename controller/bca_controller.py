@@ -1,11 +1,11 @@
 from flask import jsonify, request
-from services.check_is_zip import checkIsZip
-from services.bca_ocr_service import do_ocr_bca
-from services.clean_bca_data import clean_bca_data
-from services.get_file_list_from_zip import getFileListFromZip
-from services.returnFailMessage import returnFailMessage
+from services.bca_services.bca_ocr_service import doOcrBca
+from services.bca_services.clean_bca_data import cleanBcaData
+from services.utils.check_is_zip import checkIsZip
+from services.utils.get_file_list_from_zip import getFileListFromZip
+from services.utils.return_fail_message import returnFailMessage
 
-def bca_controller(app):
+def bcaController(app):
     uploaded_files = request.files.getlist('files')
     bank_statement_type = request.form.get('bank-statement-type')
     zip_password = ''
@@ -35,13 +35,13 @@ def bca_controller(app):
             file_list.sort()
             
             # melakukan process ocr
-            ocr_data = do_ocr_bca(file_list, app, bank_statement_type, is_zip)
+            ocr_data = doOcrBca(file_list, app, bank_statement_type, is_zip)
 
             # return jika tipe data bank statement tidak sama dengan yang diinput sebelumnya
             if ocr_data == 400:
                 return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
 
-            cleaned_data = clean_bca_data(ocr_data['list_baris'])
+            cleaned_data = cleanBcaData(ocr_data['list_baris'])
             
             if cleaned_data == 400:
                 return returnFailMessage(False, 'Pastikan seluruh halaman dari bank statement sudah lengkap diupload!')
@@ -51,13 +51,13 @@ def bca_controller(app):
         sorted_files = sorted(uploaded_files, key=lambda x: x.filename)
 
         # disini ocr dijalankan
-        ocr_data = do_ocr_bca(sorted_files, app, bank_statement_type, is_zip)
+        ocr_data = doOcrBca(sorted_files, app, bank_statement_type, is_zip)
         
 
         if ocr_data == 400:
             return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
 
-        cleaned_data = clean_bca_data(ocr_data['list_baris'])
+        cleaned_data = cleanBcaData(ocr_data['list_baris'])
         
         if cleaned_data == 400:
             return returnFailMessage(False, 'Pastikan seluruh halaman dari bank statement sudah lengkap diupload!')

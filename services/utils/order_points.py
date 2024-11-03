@@ -1,6 +1,6 @@
 import numpy as np
 
-def order_points(pts):
+def orderPoints(pts):
     pts = pts.reshape(4, 2)
     rect = np.zeros((4, 2), dtype="float32")
     s = pts.sum(axis=1)

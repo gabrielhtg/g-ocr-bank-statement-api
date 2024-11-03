@@ -1,11 +1,13 @@
+from crypt import methods
 import os
 from flask import Flask
 from flask_cors import CORS
 
-from controller.bca_controller import bca_controller
-from controller.bri_controller import bri_controller
-
 from waitress import serve
+
+from controller.bca_controller import bcaController
+from controller.bri_controller import briController
+from controller.permata_controller import permataController
 
 
 app = Flask(__name__)
@@ -33,8 +35,12 @@ def hello():
 
 @app.route('/proceed-bca', methods=['POST'])
 def proceed_bca() :
-    return bca_controller(app)
+    return bcaController(app)
 
 @app.route('/proceed-bri', methods=['POST'])
 def proceed_bri() :
-    return bri_controller(app)
+    return briController(app)
+
+@app.route('/proceed-permata', methods=['POST'])
+def proceedPermata () : 
+    return permataController(app)

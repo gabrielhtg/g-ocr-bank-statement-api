@@ -1,9 +1,9 @@
 import statistics
-from services.convert_bri_amount_to_float import convertBriAmountToFloat
-from services.convert_float_to_string_bri import convertFloatToFormattedStringBri
 
+from services.bri_services.convert_bri_amount_to_float import convertBriAmountToFloat
+from services.bri_services.convert_float_to_string_bri import convertFloatToFormattedStringBri
 
-def getBriAnalysisData (transactionData, summaryData) :
+def getBriAnalysisData (transactionData, ch) :
     freqDebit = 0
     sumDebit = 0
     currentDebitAmount = None

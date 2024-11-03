@@ -1,10 +1,10 @@
 import cv2 as cv
 import numpy as np
 
-from services.calculate_distance_between_two_points import calculate_distance_between_2_points
-from services.order_points import order_points
+from services.utils.calculate_distance_between_two_points import calculateDistanceBetweenTwoPoints
+from services.utils.order_points import orderPoints
 
-def correct_perspective(image) :
+def correctPerspective(image) :
     img = cv.imread(image)
 
     gray_img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
@@ -34,7 +34,7 @@ def correct_perspective(image) :
     gambar_setelah_contour_max = img.copy()
     cv.drawContours(gambar_setelah_contour_max, [contour_with_max_area], -1, (0, 255, 0), 3)
 
-    contour_with_max_area_ordered = order_points(contour_with_max_area)
+    contour_with_max_area_ordered = orderPoints(contour_with_max_area)
 
     existing_image_width = None
 
@@ -47,9 +47,9 @@ def correct_perspective(image) :
 
     existing_image_width_reduced_by_10_percent = int(existing_image_width * 0.9)
 
-    distance_between_top_left_and_top_right = calculate_distance_between_2_points(contour_with_max_area_ordered[0],
+    distance_between_top_left_and_top_right = calculateDistanceBetweenTwoPoints(contour_with_max_area_ordered[0],
                                                                                 contour_with_max_area_ordered[1])
-    distance_between_top_left_and_bottom_left = calculate_distance_between_2_points(contour_with_max_area_ordered[0],
+    distance_between_top_left_and_bottom_left = calculateDistanceBetweenTwoPoints(contour_with_max_area_ordered[0],
                                                                                     contour_with_max_area_ordered[3])
     aspect_ratio = distance_between_top_left_and_bottom_left / distance_between_top_left_and_top_right
     new_image_width = existing_image_width_reduced_by_10_percent

@@ -4,13 +4,13 @@ import cv2 as cv
 import easyocr
 import numpy as np
 
-from services.calculate_distance_between_two_points import calculate_distance_between_2_points
-from services.get_value_percentage import get_value_percentage
-from services.is_contain_number import is_contain_number
-from services.is_current_page_the_right_bank_statement_type import is_current_page_the_right_bank_statement_type
-from services.order_points import order_points
+from services.utils.calculate_distance_between_two_points import calculateDistanceBetweenTwoPoints
+from services.utils.get_value_percentage import getValuePercentage
+from services.utils.is_contain_number import isContainNumber
+from services.utils.is_current_page_the_right_bank_statement_type import isCurrentPageTheRightBankStatementType
+from services.utils.order_points import orderPoints
 
-def do_ocr_bca(images_array, app, bank_statement_type, is_zip):
+def doOcrBca(images_array, app, bank_statement_type, is_zip):
     list_baris = []
     list_sub_data = []
     data_baris = []
@@ -104,7 +104,7 @@ def do_ocr_bca(images_array, app, bank_statement_type, is_zip):
         gambar_setelah_contour_max = img.copy()
         cv.drawContours(gambar_setelah_contour_max, [contour_with_max_area], -1, (0, 255, 0), 3)
 
-        contour_with_max_area_ordered = order_points(contour_with_max_area)
+        contour_with_max_area_ordered = orderPoints(contour_with_max_area)
 
         existing_image_width = None
 
@@ -117,9 +117,9 @@ def do_ocr_bca(images_array, app, bank_statement_type, is_zip):
 
         existing_image_width_reduced_by_10_percent = int(existing_image_width * 0.9)
 
-        distance_between_top_left_and_top_right = calculate_distance_between_2_points(contour_with_max_area_ordered[0],
+        distance_between_top_left_and_top_right = calculateDistanceBetweenTwoPoints(contour_with_max_area_ordered[0],
                                                                                       contour_with_max_area_ordered[1])
-        distance_between_top_left_and_bottom_left = calculate_distance_between_2_points(
+        distance_between_top_left_and_bottom_left = calculateDistanceBetweenTwoPoints(
             contour_with_max_area_ordered[0],
             contour_with_max_area_ordered[3])
         aspect_ratio = distance_between_top_left_and_bottom_left / distance_between_top_left_and_top_right
@@ -205,8 +205,8 @@ def do_ocr_bca(images_array, app, bank_statement_type, is_zip):
                         if most_top_box < titikBawahPemilikRekening:
                             pemilikRekening = pemilikRekening + ' ' + ocr_text
                             
-                if most_left_box > thresholdKananBoxPertama and most_top_box < thresholdBawahBoxPertama :
-                    if 'no' in before.lower():
+                if most_left_box > thresholdKananBoxPertama and most_top_box < thresholdBawahBoxPertama and mataUang == None :
+                    if 'ing' in before.lower():
                         nomorRekening = ocr_text
                     
                     if 'iode' in before.lower() :
@@ -220,7 +220,7 @@ def do_ocr_bca(images_array, app, bank_statement_type, is_zip):
             # 5 bisa disesuaikan sesuai dengan kondisi
             if not is_current_page_correct:
                 if checked_text_count < 10:
-                    is_current_page_correct = is_current_page_the_right_bank_statement_type(bank_statement_type,
+                    is_current_page_correct = isCurrentPageTheRightBankStatementType(bank_statement_type,
                                                                                             ocr_text)
 
             if str(ocr_text).lower() == 'saldo':
@@ -265,7 +265,7 @@ def do_ocr_bca(images_array, app, bank_statement_type, is_zip):
 
             if save_data:
                 if is_transaction_data_done:
-                    if is_contain_number(ocr_text):
+                    if isContainNumber(ocr_text):
                         list_sub_data.append(ocr_text)
                         continue
 
@@ -289,7 +289,7 @@ def do_ocr_bca(images_array, app, bank_statement_type, is_zip):
 
                 # bagian tanggal
                 if threshold_tanggal is None:
-                    threshold_tanggal = most_right_box + get_value_percentage(1, content_width)
+                    threshold_tanggal = most_right_box + getValuePercentage(1, content_width)
                     percentage_threshold_tanggal = threshold_tanggal / img_width
 
                 if most_right_box < threshold_tanggal:
@@ -329,7 +329,7 @@ def do_ocr_bca(images_array, app, bank_statement_type, is_zip):
                     else:
                         # bagian keterangan
                         if threshold_keterangan is None:
-                            threshold_keterangan = threshold_tanggal + get_value_percentage(42, content_width)
+                            threshold_keterangan = threshold_tanggal + getValuePercentage(42, content_width)
                             percentage_threshold_keterangan = threshold_keterangan / img_width
 
                         if most_right_box < threshold_keterangan:
@@ -360,7 +360,7 @@ def do_ocr_bca(images_array, app, bank_statement_type, is_zip):
                             else:
                                 # bagian cbg
                                 if threshold_cbg is None:
-                                    threshold_cbg = threshold_keterangan + get_value_percentage(8, content_width)
+                                    threshold_cbg = threshold_keterangan + getValuePercentage(8, content_width)
                                     percentage_threshold_cbg = threshold_cbg / img_width
 
                                 if most_right_box < threshold_cbg:
@@ -390,7 +390,7 @@ def do_ocr_bca(images_array, app, bank_statement_type, is_zip):
                                     else:
                                         # bagian mutasi
                                         if threshold_mutasi is None:
-                                            threshold_mutasi = threshold_cbg + get_value_percentage(27, content_width)
+                                            threshold_mutasi = threshold_cbg + getValuePercentage(27, content_width)
                                             percentage_threshold_mutasi = threshold_mutasi / img_width
 
                                         if most_right_box < threshold_mutasi:
@@ -421,7 +421,7 @@ def do_ocr_bca(images_array, app, bank_statement_type, is_zip):
                                             else:
                                                 # bagian saldo
                                                 if threshold_saldo is None:
-                                                    threshold_saldo = max_x + get_value_percentage(5, content_width)
+                                                    threshold_saldo = max_x + getValuePercentage(5, content_width)
                                                     percentage_threshold_saldo = threshold_saldo / img_width
 
                                                 if most_right_box < threshold_saldo:
@@ -453,7 +453,7 @@ def do_ocr_bca(images_array, app, bank_statement_type, is_zip):
 
         if is_current_page_correct is not None:
             if not is_current_page_correct:
-                return 400, None
+                return 400
 
         is_current_page_correct = False
         # os.remove(file_path)

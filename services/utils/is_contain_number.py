@@ -1,2 +1,2 @@
-def is_contain_number(s):
+def isContainNumber(s):
     return any(char.isdigit() for char in s)
