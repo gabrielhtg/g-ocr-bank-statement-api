@@ -1,6 +1,4 @@
-from format_currency import format_currency
 from services.permata_services.clean_number import cleanNumber
-
 
 def getTransactionData (textData) :
     rowDataArr = []
