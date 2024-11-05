@@ -5,6 +5,7 @@ from flask_cors import CORS
 from waitress import serve
 
 from controller.bca_controller import bcaController
+from controller.bni_controller import bniController
 from controller.bri_controller import briController
 from controller.danamon_controller import danamonController
 from controller.permata_controller import permataController
@@ -48,3 +49,7 @@ def proceedPermata () :
 @app.route('/proceed-danamon', methods=['POST'])
 def proceedDanamon () : 
     return danamonController(app)
+
+@app.route('/proceed-bni', methods=['POST'])
+def proceedBni () : 
+    return bniController(app)

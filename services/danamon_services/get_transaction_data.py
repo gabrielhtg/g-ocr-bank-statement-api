@@ -69,7 +69,6 @@ def danamonGetTransactionData (textData) :
                 'kredit' : None,
                 'saldo' : None
             }
-            currentData['uraian_transaksi'] = None
             
             if e['col'] == 1 :
                 currentData['tanggal_transaksi'] = e['text']
