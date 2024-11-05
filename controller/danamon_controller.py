@@ -1,11 +1,11 @@
 from flask import jsonify, request
 
-from services.permata_services.permata_ocr_service import doOcrPermata
+from services.danamon_services.danamon_ocr_service import doOcrDanamon
 from services.utils.check_is_zip import checkIsZip
 from services.utils.get_file_list_from_zip import getFileListFromZip
 from services.utils.return_fail_message import returnFailMessage
 
-def permataController(app) :
+def danamonController(app) :
     uploadedFiles = request.files.getlist('files')
     zipPassword = ''
     bankStatementType = request.form.get('bank-statement-type')
@@ -30,7 +30,7 @@ def permataController(app) :
         else :
             fileList.sort()
             
-            data = doOcrPermata(fileList, app, bankStatementType)
+            data = doOcrDanamon(fileList, app, bankStatementType)
 
             if data == 400 :
                 return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
@@ -38,7 +38,7 @@ def permataController(app) :
     else :
         sortedData = sorted(uploadedFiles, key=lambda x: x.filename)
         
-        data = doOcrPermata(sortedData, app, bankStatementType)
+        data = doOcrDanamon(sortedData, app, bankStatementType)
         
         if data == 400 :
             return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
@@ -47,15 +47,12 @@ def permataController(app) :
         'message' : 'ok',
         'data' : {
             'pemilik_rekening' : data['pemilik_rekening'],
-            'alamat' : data['alamat'],
-            'periode_laporan' : data['periode_laporan'],
-            'tanggal_laporan' : data['tanggal_laporan'],
-            'nomor_rekening' : data['nomor_rekening'],
+            'nomor_nasabah' : data['nomor_nasabah'],
             'cabang' : data['cabang'],
-            'nama_produk' : data['nama_produk'],
-            'mata_uang' : data['mata_uang'],
-            'no_cif':  data['no_cif'],
+            'pemilik_rekening' : data['pemilik_rekening'],
+            'alamat' : data['alamat'],
             'transaction_data' : data['transaction_data'],
+            'periode_laporan' : data['periode_laporan'],
             'total_debet' : data['total_debet'],
             'total_kredit' : data['total_kredit'],
             'analytics_data': data['analytics_data']    

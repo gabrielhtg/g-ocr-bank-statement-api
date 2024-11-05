@@ -1,4 +1,3 @@
-from crypt import methods
 import os
 from flask import Flask
 from flask_cors import CORS
@@ -6,7 +5,9 @@ from flask_cors import CORS
 from waitress import serve
 
 from controller.bca_controller import bcaController
+from controller.bni_controller import bniController
 from controller.bri_controller import briController
+from controller.danamon_controller import danamonController
 from controller.permata_controller import permataController
 
 
@@ -44,3 +45,11 @@ def proceed_bri() :
 @app.route('/proceed-permata', methods=['POST'])
 def proceedPermata () : 
     return permataController(app)
+
+@app.route('/proceed-danamon', methods=['POST'])
+def proceedDanamon () : 
+    return danamonController(app)
+
+@app.route('/proceed-bni', methods=['POST'])
+def proceedBni () : 
+    return bniController(app)

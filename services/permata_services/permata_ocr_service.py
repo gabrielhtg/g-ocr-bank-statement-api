@@ -36,27 +36,22 @@ def doOcrPermata (imageArray, app, bankStatementType) :
     thbTanggalLaporan = None
     thlTanggalLaporan = None
 
-    thrNomorCif = None
     thtNomorCif = None
     thbNomorCif = None
     thlNomorCif = None
 
-    thrNomorRekening = None
     thtNomorRekening = None
     thbNomorRekening = None
     thlNomorRekening = None
 
-    thrCabang = None
     thtCabang = None
     thbCabang = None
     thlCabang = None
 
-    thrNamaProduk = None
     thtNamaProduk = None
     thbNamaProduk = None
     thlNamaProduk = None
 
-    thrMataUang = None
     thtMataUang = None
     thbMataUang = None
     thlMataUang = None
@@ -76,9 +71,12 @@ def doOcrPermata (imageArray, app, bankStatementType) :
     textData = []
     
     currentRow = 0
+    
+    transactionData = []
 
     for e in imageArray:
         page += 1
+        textData.clear()
         
         if isinstance(e, str) :
             filename = secure_filename(e)
@@ -277,6 +275,7 @@ def doOcrPermata (imageArray, app, bankStatementType) :
                 textData.append(textWithCol.copy())
         # if not isBankStatementCorrect :
         #     return 400
+        transactionData.extend(getTransactionData(textData))
     
     data['pemilik_rekening'] = pemilikRekening
     data['alamat'] = alamat
@@ -287,7 +286,7 @@ def doOcrPermata (imageArray, app, bankStatementType) :
     data['nama_produk'] = namaProduk
     data['mata_uang'] = mataUang
     data['no_cif'] = noCif
-    data['transaction_data'] = getTransactionData(textData)
+    data['transaction_data'] = transactionData
     data['total_debet'] = getTotalDebet(data['transaction_data'])
     data['total_kredit'] = getTotalKredit(data['transaction_data'])
     data['analytics_data'] = permataAnalysisData(data['transaction_data'])

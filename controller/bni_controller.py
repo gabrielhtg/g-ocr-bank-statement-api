@@ -1,11 +1,12 @@
 from flask import jsonify, request
 
-from services.permata_services.permata_ocr_service import doOcrPermata
+from services.bni_controller.bni_ocr_service import doOcrBni
+from services.danamon_services.danamon_ocr_service import doOcrDanamon
 from services.utils.check_is_zip import checkIsZip
 from services.utils.get_file_list_from_zip import getFileListFromZip
 from services.utils.return_fail_message import returnFailMessage
 
-def permataController(app) :
+def bniController(app) :
     uploadedFiles = request.files.getlist('files')
     zipPassword = ''
     bankStatementType = request.form.get('bank-statement-type')
@@ -30,7 +31,7 @@ def permataController(app) :
         else :
             fileList.sort()
             
-            data = doOcrPermata(fileList, app, bankStatementType)
+            data = doOcrBni(fileList, app, bankStatementType)
 
             if data == 400 :
                 return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
@@ -38,7 +39,7 @@ def permataController(app) :
     else :
         sortedData = sorted(uploadedFiles, key=lambda x: x.filename)
         
-        data = doOcrPermata(sortedData, app, bankStatementType)
+        data = doOcrBni(sortedData, app, bankStatementType)
         
         if data == 400 :
             return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
@@ -46,15 +47,12 @@ def permataController(app) :
     return jsonify({
         'message' : 'ok',
         'data' : {
+            'akun_rekening' : data['akun_rekening'],
+            'nomor_rekening' : data['nomor_rekening'],
+            'tipe_akun' : data['tipe_akun'],
+            'periode_rekening' : data['periode_rekening'],
             'pemilik_rekening' : data['pemilik_rekening'],
             'alamat' : data['alamat'],
-            'periode_laporan' : data['periode_laporan'],
-            'tanggal_laporan' : data['tanggal_laporan'],
-            'nomor_rekening' : data['nomor_rekening'],
-            'cabang' : data['cabang'],
-            'nama_produk' : data['nama_produk'],
-            'mata_uang' : data['mata_uang'],
-            'no_cif':  data['no_cif'],
             'transaction_data' : data['transaction_data'],
             'total_debet' : data['total_debet'],
             'total_kredit' : data['total_kredit'],
