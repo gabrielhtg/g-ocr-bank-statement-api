@@ -110,85 +110,86 @@ def doOcrBni (imageArray, app, bankStatementType) :
             cw = lb + int(abs(rb - lb) / 2)
             ch = tb + int(abs(bb - tb) / 2)
             
-            if 'count' in text.lower() and 'eme' in text.lower() :
-                thrPemilikRekening = lb - int(0.2 * lebarGambar)
-                thtPemilikRekening = bb
-                thbPemilikRekening = bb + int(0.02 * tinggiGambar)
-                thrAlamat = lb - int(0.07 * lebarGambar)
-                thlAlamat = lb - int(0.2 * lebarGambar)
-                thbAlamat = bb + int (0.08 * tinggiGambar)
-                
-            if 'no' in text.lower() and 'cou' in text.lower() :
-                thrAccountNo = rb + int(0.25 * lebarGambar)
-                thbAccountNo = bb + int(0.001 * tinggiGambar)
-                thtAccountNo = tb - int(0.004 * tinggiGambar)
-                thlAccountNo = rb + int(0.008 * tinggiGambar)
-                
-            if 'cou' in text.lower() and 'pe' in text.lower() :
-                thrAccountType = rb + int(0.25 * lebarGambar)
-                thbAccountType = bb + int(0.0005 * tinggiGambar)
-                thtAccountType = tb - int(0.001 * tinggiGambar)
-                thlAccountType = rb + int(0.008 * tinggiGambar)
-                
-            if 'rio' in text.lower() :
-                thrPeriod = rb + int(0.25 * lebarGambar)
-                thbPeriod = bb + int(0.0005 * tinggiGambar)
-                thtPeriod = tb - int(0.004 * tinggiGambar)
-                thlPeriod = rb + int(0.008 * tinggiGambar)
-                
-            if thrAlamat != None:
-                if (
-                    bb < thbPemilikRekening and 
-                    tb > thtPemilikRekening and 
-                    rb < thrAlamat
-                    ) :
-                    if pemilikRekening == None:
-                        pemilikRekening = text
-                        
-                if pemilikRekening != None :
+            if page == 1 :
+                if 'count' in text.lower() and 'eme' in text.lower() :
+                    thrPemilikRekening = lb - int(0.2 * lebarGambar)
+                    thtPemilikRekening = bb
+                    thbPemilikRekening = bb + int(0.02 * tinggiGambar)
+                    thrAlamat = lb - int(0.07 * lebarGambar)
+                    thlAlamat = lb - int(0.2 * lebarGambar)
+                    thbAlamat = bb + int (0.08 * tinggiGambar)
+                    
+                if 'no' in text.lower() and 'cou' in text.lower() :
+                    thrAccountNo = rb + int(0.25 * lebarGambar)
+                    thbAccountNo = bb + int(0.001 * tinggiGambar)
+                    thtAccountNo = tb - int(0.004 * tinggiGambar)
+                    thlAccountNo = rb + int(0.008 * tinggiGambar)
+                    
+                if 'cou' in text.lower() and 'pe' in text.lower() :
+                    thrAccountType = rb + int(0.25 * lebarGambar)
+                    thbAccountType = bb + int(0.0005 * tinggiGambar)
+                    thtAccountType = tb - int(0.001 * tinggiGambar)
+                    thlAccountType = rb + int(0.008 * tinggiGambar)
+                    
+                if 'rio' in text.lower() :
+                    thrPeriod = rb + int(0.25 * lebarGambar)
+                    thbPeriod = bb + int(0.0005 * tinggiGambar)
+                    thtPeriod = tb - int(0.004 * tinggiGambar)
+                    thlPeriod = rb + int(0.008 * tinggiGambar)
+                    
+                if thrAlamat != None:
                     if (
-                        tb > thbPemilikRekening and 
-                        bb < thbAlamat and 
+                        bb < thbPemilikRekening and 
+                        tb > thtPemilikRekening and 
                         rb < thrAlamat
                         ) :
-                        if alamat == None:
-                            alamat = text
+                        if pemilikRekening == None:
+                            pemilikRekening = text
+                            
+                    if pemilikRekening != None :
+                        if (
+                            tb > thbPemilikRekening and 
+                            bb < thbAlamat and 
+                            rb < thrAlamat
+                            ) :
+                            if alamat == None:
+                                alamat = text
+                                
+                            else :
+                                alamat = alamat + ' ' + text
+                    
+                if thbAccountNo != None:
+                    if (
+                        (lb > thlAccountNo) 
+                        and (bb <= thbAccountNo) 
+                        and (tb >= thtAccountNo)
+                    ) :
+                        if nomorRekening == None :
+                            nomorRekening = text
                             
                         else :
-                            alamat = alamat + ' ' + text
-                
-            if thbAccountNo != None:
-                if (
-                    (lb > thlAccountNo) 
-                    and (bb <= thbAccountNo) 
-                    and (tb >= thtAccountNo)
-                ) :
-                    if nomorRekening == None :
-                        nomorRekening = text
-                        
-                    else :
-                        akunRekening = text
-                        
-            if thrAccountType != None:
-                if (
-                    (lb > thlAccountType) 
-                    and (bb <= thbAccountType) 
-                    and (tb >= thtAccountType)
-                ) :
-                    if tipeAkun == None :
-                        tipeAkun = text
-                        
-            if thrPeriod != None:
-                if (
-                    (lb > thlPeriod) 
-                    and (bb <= thbPeriod) 
-                    and (tb >= thtPeriod)
-                ) :
-                    if periodeRekening == None :
-                        periodeRekening = text
-                        
-                    else :
-                        periodeRekening = periodeRekening + ' ' + text
+                            akunRekening = text
+                            
+                if thrAccountType != None:
+                    if (
+                        (lb > thlAccountType) 
+                        and (bb <= thbAccountType) 
+                        and (tb >= thtAccountType)
+                    ) :
+                        if tipeAkun == None :
+                            tipeAkun = text
+                            
+                if thrPeriod != None:
+                    if (
+                        (lb > thlPeriod) 
+                        and (bb <= thbPeriod) 
+                        and (tb >= thtPeriod)
+                    ) :
+                        if periodeRekening == None :
+                            periodeRekening = text
+                            
+                        else :
+                            periodeRekening = periodeRekening + ' ' + text
                 
             if 'ting' in text.lower() and 'te' in text.lower() and currentRow == 0:
                 thbHeaderTable = tb + int(0.015 * tinggiGambar)

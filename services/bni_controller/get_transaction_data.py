@@ -6,7 +6,7 @@ from services.utils.format_string_money_amount import convertToIDR
 def bniGetTransactionData (textData) :
     rowDataArr = []
     currentRow = 1
-    beforeRow = 1
+    beforeRow = None
     currentData = {
         'posting_date' : None,
         'effective_date' : None,
@@ -20,6 +20,9 @@ def bniGetTransactionData (textData) :
 
     for e in textData :
         currentRow = e['row']
+        
+        if (beforeRow == None) :
+            beforeRow = currentRow
     
         if (beforeRow == currentRow) :
             if e['col'] == 1 :
@@ -53,16 +56,6 @@ def bniGetTransactionData (textData) :
         else :
             beforeRow = currentRow
             rowDataArr.append(currentData.copy())
-            currentData = {
-                'posting_date' : None,
-                'effective_date' : None,
-                'branch' : None,
-                'journal': None,
-                'transaction_description' : None,
-                'amount' : None,
-                'debit_credit' : None,
-                'balance' : None,
-            }
             currentData['transaction_description'] = None
             
             if e['col'] == 1 :
@@ -92,7 +85,10 @@ def bniGetTransactionData (textData) :
                 
             if e['col'] == 8 :
                 currentData['balance'] = convertToIDR(e['text'])
-                
+    
+    # print(rowDataArr)
+    # print('----------------------------------------------------------')
+    # print()
     rowDataArr.append(currentData.copy())
     return rowDataArr
             
