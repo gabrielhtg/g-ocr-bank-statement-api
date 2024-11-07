@@ -237,7 +237,7 @@ def doOcrDanamon (imageArray, app, bankStatementType) :
         # if not isBankStatementCorrect :
         #     return 400
         
-        transactionData.extend(danamonGetTransactionData(textData))
+        transactionData.extend(danamonGetTransactionData(textData, filename))
     
     data['pemilik_rekening'] = pemilikRekening
     data['nomor_nasabah'] = nomorNasabah

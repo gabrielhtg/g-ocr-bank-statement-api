@@ -3,7 +3,7 @@ from numpy import number
 
 from services.utils.format_string_money_amount import convertToIDR
 
-def bniGetTransactionData (textData) :
+def bniGetTransactionData (textData, filename:str) :
     rowDataArr = []
     currentRow = 1
     beforeRow = None
@@ -16,6 +16,7 @@ def bniGetTransactionData (textData) :
         'amount' : None,
         'debit_credit' : None,
         'balance' : None,
+        'filename' : None
     }
 
     for e in textData :
@@ -55,6 +56,7 @@ def bniGetTransactionData (textData) :
             
         else :
             beforeRow = currentRow
+            currentData['filename'] = filename
             rowDataArr.append(currentData.copy())
             currentData['transaction_description'] = None
             
@@ -89,6 +91,7 @@ def bniGetTransactionData (textData) :
     # print(rowDataArr)
     # print('----------------------------------------------------------')
     # print()
+    currentData['filename'] = filename
     rowDataArr.append(currentData.copy())
     return rowDataArr
             

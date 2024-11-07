@@ -263,7 +263,7 @@ def doOcrBni (imageArray, app, bankStatementType) :
         # if not isBankStatementCorrect :
         #     return 400
         
-        transactionData.extend(bniGetTransactionData(textData))
+        transactionData.extend(bniGetTransactionData(textData, filename))
     
     data['akun_rekening'] = akunRekening
     data['nomor_rekening'] = nomorRekening

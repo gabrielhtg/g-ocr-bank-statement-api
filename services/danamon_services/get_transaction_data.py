@@ -1,7 +1,7 @@
 from format_currency import format_currency
 from numpy import number
 
-def danamonGetTransactionData (textData) :
+def danamonGetTransactionData (textData, filename:str) :
     rowDataArr = []
     currentRow = 1
     beforeRow = 1
@@ -12,7 +12,8 @@ def danamonGetTransactionData (textData) :
         'reff' : None,
         'debit' : None,
         'kredit' : None,
-        'saldo' : None
+        'saldo' : None,
+        'filename' : None
     }
 
     for e in textData :
@@ -59,6 +60,7 @@ def danamonGetTransactionData (textData) :
             
         else :
             beforeRow = currentRow
+            currentData['filename'] = filename
             rowDataArr.append(currentData.copy())
             currentData = {
                 'tanggal_transaksi' : None,
@@ -98,7 +100,8 @@ def danamonGetTransactionData (textData) :
                 
             if e['col'] == 7 :
                 currentData['saldo'] = e['text']
-                
+    
+    currentData['filename'] = filename            
     rowDataArr.append(currentData.copy())
     return rowDataArr
             
