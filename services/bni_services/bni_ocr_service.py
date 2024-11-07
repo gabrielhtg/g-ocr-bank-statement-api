@@ -2,10 +2,10 @@ import os
 from matplotlib.dviread import Page
 from werkzeug.utils import secure_filename
 
-from services.bni_controller.get_analysis_data import bniAnalysisData
-from services.bni_controller.get_total_debit import getTotalDebit
-from services.bni_controller.get_total_kredit import getTotalKredit
-from services.bni_controller.get_transaction_data import bniGetTransactionData
+from services.bni_services.get_analysis_data import bniAnalysisData
+from services.bni_services.get_total_debit import getTotalDebit
+from services.bni_services.get_total_kredit import getTotalKredit
+from services.bni_services.get_transaction_data import bniGetTransactionData
 from services.utils.correct_perspective import correctPerspective
 from services.utils.do_orc_easyocr import doEasyOcr
 from services.utils.get_image_height import getImageHeight

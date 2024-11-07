@@ -104,11 +104,12 @@ def doOcrPermata (imageArray, app, bankStatementType) :
     
             bbox = [[int(coord[0]), int(coord[1])] for coord in bbox]
                     
-            current_width = bbox[1][0] - bbox[0][0]
-            rb = bbox[0][0] + current_width
+            rb = bbox[1][0]
             lb = bbox[0][0]
             tb = bbox[1][1]
             bb = bbox[2][1]
+            cw = lb + int(abs(rb - lb) / 2)
+            ch = tb + int(abs(bb - tb) / 2)
             
             if page == 1 :
                 if 'epada' in text.lower() :
@@ -247,28 +248,28 @@ def doOcrPermata (imageArray, app, bankStatementType) :
 
                 textWithCol['text'] = text
                 
-                if (rb < thrTableCol1) :
+                if (cw < thrTableCol1) :
                     currentRow += 1    
                     textWithCol['col'] = 1
                     textWithCol['row'] = currentRow
                 
-                if (lb > thrTableCol1 and rb < thrTableCol2) :
+                if (cw > thrTableCol1 and cw < thrTableCol2) :
                     textWithCol['col'] = 2
                     textWithCol['row'] = currentRow
                     
-                if (lb > thrTableCol2 and rb < thrTableCol3) :
+                if (cw > thrTableCol2 and cw < thrTableCol3) :
                     textWithCol['col'] = 3
                     textWithCol['row'] = currentRow
                     
-                if (lb > thrTableCol3 and rb < thrTableCol4) :
+                if (cw > thrTableCol3 and cw < thrTableCol4) :
                     textWithCol['col'] = 4
                     textWithCol['row'] = currentRow
                     
-                if (lb > thrTableCol4 and rb < thrTableCol5) :
+                if (cw > thrTableCol4 and cw < thrTableCol5) :
                     textWithCol['col'] = 5
                     textWithCol['row'] = currentRow
                     
-                if (lb > thrTableCol5) :
+                if (cw > thrTableCol5) :
                     textWithCol['col'] = 6
                     textWithCol['row'] = currentRow
                     

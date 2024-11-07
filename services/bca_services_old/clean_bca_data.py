@@ -58,10 +58,10 @@ def cleanBcaData (array) :
                 col_three = col_three[:-2]
                 col_three = col_three[:-2] + '.' + col_three[-2:]
 
-                try :
-                    sum_db += float(col_three)
-                except ValueError:
-                    return 400
+                # try :
+                sum_db += float(col_three)
+                # except ValueError:
+                #     return 400
                     
                 list_db.append(float(col_three))
 
