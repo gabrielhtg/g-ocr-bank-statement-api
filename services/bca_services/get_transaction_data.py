@@ -3,7 +3,7 @@ from numpy import number
 
 from services.utils.convert_to_float import convertToFloat
 
-def bcaGetTransactionData (textData) :
+def bcaGetTransactionData (textData, filename: str) :
     rowDataArr = []
     currentRow = 1
     beforeRow = 1
@@ -57,6 +57,8 @@ def bcaGetTransactionData (textData) :
                     currentData['mutasi'] = format_currency(convertToFloat(currentData['mutasi']), currency_code='IDR')  + ' ' +'DB'
                 else : 
                     currentData['mutasi'] = format_currency(convertToFloat(currentData['mutasi']), currency_code='IDR')
+                    
+            currentData['filename'] = filename
 
             rowDataArr.append(currentData.copy())
             currentData = {
@@ -102,7 +104,8 @@ def bcaGetTransactionData (textData) :
             currentData['mutasi'] = format_currency(convertToFloat(currentData['mutasi']), currency_code='IDR')  + ' ' +'DB'
         else : 
             currentData['mutasi'] = format_currency(convertToFloat(currentData['mutasi']), currency_code='IDR')
-            
+
+    currentData['filename'] = filename
     rowDataArr.append(currentData.copy())
     
     # for e in rowDataArr :

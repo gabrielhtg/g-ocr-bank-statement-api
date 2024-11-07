@@ -396,7 +396,7 @@ def doOcrBca (imageArray, app, bankStatementType) :
                     
                 textData.append(textWithCol.copy())
     
-        transactionData.extend(bcaGetTransactionData(textData))
+        transactionData.extend(bcaGetTransactionData(textData, filename))
     
     data['kcp'] = cabang
     data['pemilik_rekening'] = pemilikRekening
