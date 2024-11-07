@@ -1,6 +1,6 @@
 from services.permata_services.clean_number import cleanNumber
 
-def getTransactionData (textData) :
+def getTransactionData (textData, filename) :
     rowDataArr = []
     currentRow = 1
     beforeRow = 1
@@ -41,6 +41,7 @@ def getTransactionData (textData) :
             
         else :
             beforeRow = currentRow
+            currentData['filename'] = filename   
             rowDataArr.append(currentData.copy())
             currentData = {
                 'tanggal_transaksi' : None,
@@ -76,5 +77,6 @@ def getTransactionData (textData) :
             if e['col'] == 6 :
                 currentData['saldo'] = cleanNumber(e['text'])
     
+    currentData['filename'] = filename   
     rowDataArr.append(currentData.copy())           
     return rowDataArr

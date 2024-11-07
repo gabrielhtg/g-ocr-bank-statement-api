@@ -276,7 +276,7 @@ def doOcrPermata (imageArray, app, bankStatementType) :
                 textData.append(textWithCol.copy())
         # if not isBankStatementCorrect :
         #     return 400
-        transactionData.extend(getTransactionData(textData))
+        transactionData.extend(getTransactionData(textData, filename))
     
     data['pemilik_rekening'] = pemilikRekening
     data['alamat'] = alamat
