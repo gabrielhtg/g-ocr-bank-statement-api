@@ -404,14 +404,14 @@ def doOcrBca (imageArray, app, bankStatementType) :
     data['nomor_rekening'] = nomorRekening
     data['periode'] = periode
     data['mata_uang'] = mataUang
-    data['saldo_awal'] = format_currency(convertToFloat(saldoAwal))
-    data['saldo_akhir'] = format_currency(convertToFloat(saldoAkhir))
-    data['mutasi_debit'] = format_currency(convertToFloat(mutasiDebit))
-    data['mutasi_kredit'] = format_currency(convertToFloat(mutasiKredit))
+    data['saldo_awal'] = format_currency(convertToFloat(saldoAwal), currency_code='IDR')
+    data['saldo_akhir'] = format_currency(convertToFloat(saldoAkhir), currency_code='IDR')
+    data['mutasi_debit'] = format_currency(convertToFloat(mutasiDebit), currency_code='IDR')
+    data['mutasi_kredit'] = format_currency(convertToFloat(mutasiKredit), currency_code='IDR')
     data['total_mutasi_debit'] = totalMutasiDebit
     data['total_mutasi_kredit'] = totalMutasiKredit
     data['transaction_data'] = transactionData
     data['total_debit'] = getTotalDebit(transactionData)
     data['total_kredit'] = getTotalKredit(transactionData)
-    # data['analytics_data'] = getAnalysisData(data['transaction_data'])
+    data['analytics_data'] = getAnalysisData(data['transaction_data'])
     return data

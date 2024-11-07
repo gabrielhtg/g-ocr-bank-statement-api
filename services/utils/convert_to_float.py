@@ -10,5 +10,5 @@ def convertToFloat (text: str) :
                     .replace('DB', '')
                     .replace('O', '0')
                     .replace('o', '0')
-                    .replace('Rp ', '')
+                    .replace('Rp', '')
                   ) / 100

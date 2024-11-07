@@ -50,13 +50,13 @@ def bcaGetTransactionData (textData) :
             beforeRow = currentRow
             
             if currentData['saldo'] != None :
-                currentData['saldo'] = format_currency(convertToFloat(currentData['saldo']), country_code='IDR')
+                currentData['saldo'] = format_currency(convertToFloat(currentData['saldo']), currency_code='IDR')
             
             if currentData['mutasi'] != None:
                 if 'DB' in currentData['mutasi'] :
-                    currentData['mutasi'] = format_currency(convertToFloat(currentData['mutasi']), country_code='IDR')  + ' ' +'DB'
+                    currentData['mutasi'] = format_currency(convertToFloat(currentData['mutasi']), currency_code='IDR')  + ' ' +'DB'
                 else : 
-                    currentData['mutasi'] = format_currency(convertToFloat(currentData['mutasi']), country_code='IDR')
+                    currentData['mutasi'] = format_currency(convertToFloat(currentData['mutasi']), currency_code='IDR')
 
             rowDataArr.append(currentData.copy())
             currentData = {
@@ -95,15 +95,26 @@ def bcaGetTransactionData (textData) :
                     currentData['saldo'] = currentData['saldo'] + ' ' + e['text']
                     
     if currentData['saldo'] != None :
-        currentData['saldo'] = format_currency(convertToFloat(currentData['saldo']), country_code='IDR')
-
+        currentData['saldo'] = format_currency(convertToFloat(currentData['saldo']), currency_code='IDR')
+            
     if currentData['mutasi'] != None:
         if 'DB' in currentData['mutasi'] :
-            currentData['mutasi'] = format_currency(convertToFloat(currentData['mutasi']), country_code='IDR')  + ' ' +'DB'
+            currentData['mutasi'] = format_currency(convertToFloat(currentData['mutasi']), currency_code='IDR')  + ' ' +'DB'
         else : 
-            currentData['mutasi'] = format_currency(convertToFloat(currentData['mutasi']), country_code='IDR')
+            currentData['mutasi'] = format_currency(convertToFloat(currentData['mutasi']), currency_code='IDR')
             
     rowDataArr.append(currentData.copy())
     
+    # for e in rowDataArr :
+    #     if e['saldo'] != None :
+    #         e['saldo'] = format_currency(convertToFloat(e['saldo']), country_code='IDR')
+    #         print(e['saldo'])
+
+    # if e['mutasi'] != None:
+    #     if 'DB' in e['mutasi'] :
+    #         e['mutasi'] = format_currency(convertToFloat(e['mutasi']), country_code='IDR')  + ' ' +'DB'
+    #     else : 
+    #         e['mutasi'] = format_currency(convertToFloat(e['mutasi']), country_code='IDR')
+            
     return rowDataArr
             

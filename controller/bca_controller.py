@@ -62,6 +62,6 @@ def bcaController(app) :
             'transaction_data' : data['transaction_data'],
             'total_debet' : data['total_debit'],
             'total_kredit' : data['total_kredit'],
-            # 'analytics_data': data['analytics_data']    
+            'analytics_data': data['analytics_data']    
         }
     })

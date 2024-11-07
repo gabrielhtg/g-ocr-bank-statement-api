@@ -1,6 +1,8 @@
 import statistics
 from format_currency import format_currency
 
+from services.utils.convert_to_float import convertToFloat
+
 def getAnalysisData (transactionData) :
     freqDebit = 0
     arrDebit = []
@@ -9,17 +11,17 @@ def getAnalysisData (transactionData) :
     arrKredit = []
     
     for e in transactionData :
-        if e['debit'] != None :
-            freqDebit += 1
-            convertedDebet = float(e['debit'].replace(',', '').replace('.', '').replace('Rp ', '')) / 100
-            arrDebit.append(convertedDebet)
-            
+        if e['mutasi'] != None :
+            if 'DB' in e['mutasi'] :
+                freqDebit += 1
+                convertedDebet = convertToFloat(e['mutasi'])
+                arrDebit.append(convertedDebet)
+                
+            else :
+                freqKredit += 1
+                convertedKredit = convertToFloat(e['mutasi'])
+                arrKredit.append(convertedKredit)
         
-        if e['kredit'] != None :
-            freqKredit += 1
-            convertedKredit = float(e['kredit'].replace(',', '').replace('.', '').replace('Rp ', '')) / 100
-            arrKredit.append(convertedKredit)
-    
     return {
         'freq_debit' : freqDebit,
         'sum_debit' : format_currency(sum(arrDebit), currency_code='IDR'),
