@@ -322,13 +322,6 @@ def doOcrBca (imageArray, app, bankStatementType) :
                         saldoAkhir = saldoAkhir + ' ' + text
                         
             if thbTotalMutasiDebit != None :
-                print('Debit')
-                print(text)
-                print(cw < thrTotalMutasiDebit)
-                print(ch <= thbTotalMutasiDebit)
-                print(ch >= thbMutasiKredit)
-                print(cw > thlTotalMutasiDebit)
-                print()
                 if (
                     (cw < thrTotalMutasiDebit) 
                     and (ch <= thbTotalMutasiDebit) 
@@ -341,16 +334,7 @@ def doOcrBca (imageArray, app, bankStatementType) :
                     else :
                         totalMutasiDebit = totalMutasiDebit + ' ' + text
                     
-                    print(f'tmf ${totalMutasiDebit}')
-                        
             if thbTotalMutasiKredit != None :
-                print('Kredit')
-                print(text)
-                print(cw < thrTotalMutasiKredit)
-                print(ch <= thbTotalMutasiKredit)
-                print(ch >= thbSaldoAwal)
-                print(cw > thlTotalMutasiKredit)
-                print()
                 if (
                     (cw < thrTotalMutasiKredit) 
                     and (ch <= thbTotalMutasiKredit) 
@@ -362,8 +346,6 @@ def doOcrBca (imageArray, app, bankStatementType) :
                         
                     else :
                         totalMutasiKredit = totalMutasiKredit + ' ' + text
-                        
-                    print(f'tmk ${totalMutasiKredit}')
                         
             before = text
                 
