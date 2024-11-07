@@ -239,7 +239,7 @@ def doOcrBca (imageArray, app, bankStatementType) :
             if 'tanggal' in text.lower() and thbHeaderTable == None:
                 thbHeaderTable = tb + int(0.013 * tinggiGambar)
                 
-            if countSaldoAwal == 2 and thbTable == None:
+            if countSaldoAwal >= 2 and thbTable == None and page == len(imageArray):
                 thbTable = tb - int(0.001 * tinggiGambar)
                 
                 thbSaldoAwal = thbTable + int(0.014 * tinggiGambar)
@@ -248,7 +248,7 @@ def doOcrBca (imageArray, app, bankStatementType) :
                 
                 thbMutasiKredit = thbSaldoAwal + int(0.014 * tinggiGambar)
                 thlMutasiKredit = rb + int(0.03 * lebarGambar)
-                thrMutasiKredit = rb + int(0.28 * lebarGambar)
+                thrMutasiKredit = rb + int(0.23 * lebarGambar)
                 
                 thbTotalMutasiKredit = thbMutasiKredit
                 thlTotalMutasiKredit = thrMutasiKredit
@@ -256,7 +256,7 @@ def doOcrBca (imageArray, app, bankStatementType) :
                 
                 thbMutasiDebit = thbMutasiKredit + int(0.014 * tinggiGambar)
                 thlMutasiDebit = rb + int(0.03 * lebarGambar)
-                thrMutasiDebit = rb + int(0.28 * lebarGambar)
+                thrMutasiDebit = rb + int(0.23 * lebarGambar)
                 
                 thbTotalMutasiDebit = thbMutasiDebit
                 thlTotalMutasiDebit = thrMutasiDebit
@@ -284,8 +284,8 @@ def doOcrBca (imageArray, app, bankStatementType) :
                         
             if thbMutasiDebit != None :
                 if (
-                        (cw < thrMutasiDebit) 
-                        and (ch <= thbMutasiDebit) 
+                    (cw < thrMutasiDebit) 
+                    and (ch <= thbMutasiDebit) 
                     and (ch >= thbMutasiKredit)
                     and (cw > thlMutasiDebit)
                 ) :
@@ -322,6 +322,13 @@ def doOcrBca (imageArray, app, bankStatementType) :
                         saldoAkhir = saldoAkhir + ' ' + text
                         
             if thbTotalMutasiDebit != None :
+                print('Debit')
+                print(text)
+                print(cw < thrTotalMutasiDebit)
+                print(ch <= thbTotalMutasiDebit)
+                print(ch >= thbMutasiKredit)
+                print(cw > thlTotalMutasiDebit)
+                print()
                 if (
                     (cw < thrTotalMutasiDebit) 
                     and (ch <= thbTotalMutasiDebit) 
@@ -333,8 +340,17 @@ def doOcrBca (imageArray, app, bankStatementType) :
                         
                     else :
                         totalMutasiDebit = totalMutasiDebit + ' ' + text
+                    
+                    print(f'tmf ${totalMutasiDebit}')
                         
             if thbTotalMutasiKredit != None :
+                print('Kredit')
+                print(text)
+                print(cw < thrTotalMutasiKredit)
+                print(ch <= thbTotalMutasiKredit)
+                print(ch >= thbSaldoAwal)
+                print(cw > thlTotalMutasiKredit)
+                print()
                 if (
                     (cw < thrTotalMutasiKredit) 
                     and (ch <= thbTotalMutasiKredit) 
@@ -346,6 +362,8 @@ def doOcrBca (imageArray, app, bankStatementType) :
                         
                     else :
                         totalMutasiKredit = totalMutasiKredit + ' ' + text
+                        
+                    print(f'tmk ${totalMutasiKredit}')
                         
             before = text
                 
