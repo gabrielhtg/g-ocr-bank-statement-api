@@ -1,6 +1,6 @@
 from flask import jsonify, request
 
-from services.danamon_services.danamon_ocr_service import doOcrDanamon
+from services.bni_services.bni_ocr_service import doOcrBni
 from services.utils.check_is_zip import checkIsZip
 from services.utils.get_file_list_from_zip import getFileListFromZip
 from services.utils.return_fail_message import returnFailMessage
