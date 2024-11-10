@@ -7,6 +7,7 @@ from waitress import serve
 from controller.bca_controller import bcaController
 from controller.bni_controller import bniController
 from controller.bri_controller import briController
+from controller.cimb_controller import cimbController
 from controller.danamon_controller import danamonController
 from controller.permata_controller import permataController
 
@@ -53,3 +54,7 @@ def proceedDanamon () :
 @app.route('/proceed-bni', methods=['POST'])
 def proceedBni () : 
     return bniController(app)
+
+@app.route('/proceed-cimb', methods=['POST'])
+def proceedCimb () : 
+    return cimbController(app)
