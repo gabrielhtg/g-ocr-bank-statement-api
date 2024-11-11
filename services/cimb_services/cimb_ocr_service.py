@@ -313,9 +313,6 @@ def doOcrCimb (imageArray, app, bankStatementType) :
         # if not isBankStatementCorrect :
         #     return 400
         
-        print(textData)
-        print()
-        
         transactionData.extend(getTransactionData(textData, filename))
         
         if nextPage == False :

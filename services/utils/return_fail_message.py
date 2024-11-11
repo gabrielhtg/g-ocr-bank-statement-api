@@ -1,8 +1,9 @@
+from errno import errorcode
 from flask import jsonify
 
 
-def returnFailMessage(taskStatus, message) :
+def returnFailMessage(message: str, errorCode: int) :
     return jsonify({
-        'success' : taskStatus,
+        'success' : False,
         'data' : message
-    }), 400
+    }), errorCode

@@ -10,6 +10,7 @@ from services.bca_services.get_transaction_data import bcaGetTransactionData
 from services.utils.convert_to_float import convertToFloat
 from services.utils.correct_perspective import correctPerspective
 from services.utils.do_orc_easyocr import doEasyOcr
+from services.utils.exception_handler import exceptionHandler
 from services.utils.get_image_height import getImageHeight
 from services.utils.get_image_width import getImageWidth
 
@@ -352,49 +353,65 @@ def doOcrBca (imageArray, app, bankStatementType) :
         # if not isBankStatementCorrect :
         #     return 400
         
-        for t in text_ :
-            bbox, text, score = t
-            
-            bbox = [[int(coord[0]), int(coord[1])] for coord in bbox]
-                    
-            rb = bbox[1][0]
-            lb = bbox[0][0]
-            tb = bbox[1][1]
-            bb = bbox[2][1]
-            cw = lb + int(abs(rb - lb) / 2)
-            ch = tb + int(abs(bb - tb) / 2)
-            
-            if 'tanggal' in text.lower() and cw < (thlAlamat + int(0.073 * tinggiGambar)) and currentRow == 0:
-                thrTableCol1 = lb + int(0.063 * tinggiGambar)
-                thrTableCol2 = thrTableCol1 + int(0.253 * tinggiGambar)
-                thrTableCol3 = thrTableCol2 + int(0.0473 * tinggiGambar)
-                thrTableCol4 = thrTableCol3 + int(0.149 * tinggiGambar)
+        try :
+            for t in text_ :
+                bbox, text, score = t
                 
-            if thrTableCol1 != None and tb > thbHeaderTable and ch < thbTable :
-                textWithCol['text'] = text
+                bbox = [[int(coord[0]), int(coord[1])] for coord in bbox]
+                        
+                rb = bbox[1][0]
+                lb = bbox[0][0]
+                tb = bbox[1][1]
+                bb = bbox[2][1]
+                cw = lb + int(abs(rb - lb) / 2)
+                ch = tb + int(abs(bb - tb) / 2)
                 
-                if (cw < thrTableCol1) :
-                    currentRow += 1    
-                    textWithCol['col'] = 1
-                    textWithCol['row'] = currentRow
-                
-                if (cw > thrTableCol1 and cw < thrTableCol2) :
-                    textWithCol['col'] = 2
-                    textWithCol['row'] = currentRow
+                if 'tanggal' in text.lower() and cw < (thlAlamat + int(0.073 * tinggiGambar)) and currentRow == 0:
+                    thrTableCol1 = lb + int(0.063 * tinggiGambar)
+                    thrTableCol2 = thrTableCol1 + int(0.253 * tinggiGambar)
+                    thrTableCol3 = thrTableCol2 + int(0.0473 * tinggiGambar)
+                    thrTableCol4 = thrTableCol3 + int(0.149 * tinggiGambar)
                     
-                if (cw > thrTableCol2 and cw < thrTableCol3) :
-                    textWithCol['col'] = 3
-                    textWithCol['row'] = currentRow
+                if thrTableCol1 != None and tb > thbHeaderTable and ch < thbTable :
+                    textWithCol['text'] = text
                     
-                if (cw > thrTableCol3 and cw < thrTableCol4) :
-                    textWithCol['col'] = 4
-                    textWithCol['row'] = currentRow
+                    if (cw < thrTableCol1) :
+                        currentRow += 1    
+                        textWithCol['col'] = 1
+                        textWithCol['row'] = currentRow
                     
-                if (cw > thrTableCol4) :
-                    textWithCol['col'] = 5
-                    textWithCol['row'] = currentRow
+                    if (cw > thrTableCol1 and cw < thrTableCol2) :
+                        textWithCol['col'] = 2
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol2 and cw < thrTableCol3) :
+                        textWithCol['col'] = 3
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol3 and cw < thrTableCol4) :
+                        textWithCol['col'] = 4
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol4) :
+                        textWithCol['col'] = 5
+                        textWithCol['row'] = currentRow
+                        
+                    textData.append(textWithCol.copy())
                     
-                textData.append(textWithCol.copy())
+        except TypeError as e:
+            print('-' * 150)
+            print(f'Terjadi kesalahan pada gambar {filename}. Coba foto ulang gambar ini dengan lebih jelas!')
+            print(e)
+            print('-' * 150)
+            print()
+            return 400, f'Terjadi kesalahan pada gambar {filename}. Coba foto ulang gambar ini dengan lebih jelas!'
+        
+        except ValueError as e:
+            return exceptionHandler(
+                f'Terjadi kesalahan pada gambar {filename}. Coba foto ulang gambar ini dengan lebih jelas!',
+                400,
+                e
+            )   
     
         transactionData.extend(bcaGetTransactionData(textData, filename))
     
@@ -404,14 +421,26 @@ def doOcrBca (imageArray, app, bankStatementType) :
     data['nomor_rekening'] = nomorRekening
     data['periode'] = periode
     data['mata_uang'] = mataUang
-    data['saldo_awal'] = format_currency(convertToFloat(saldoAwal), currency_code='IDR')
+    
+    try :
+        data['saldo_awal'] = format_currency(convertToFloat(saldoAwal), currency_code='IDR')
+        
+    except ValueError as e:
+        return exceptionHandler(
+            f'Terjadi kesalahan pada gambar {filename} saat konversi saldo_awal summary. Coba foto ulang gambar ini dengan lebih jelas!',
+            400,
+            e
+        )
+        
     data['saldo_akhir'] = format_currency(convertToFloat(saldoAkhir), currency_code='IDR')
     data['mutasi_debit'] = format_currency(convertToFloat(mutasiDebit), currency_code='IDR')
     data['mutasi_kredit'] = format_currency(convertToFloat(mutasiKredit), currency_code='IDR')
+        
     data['total_mutasi_debit'] = totalMutasiDebit
     data['total_mutasi_kredit'] = totalMutasiKredit
     data['transaction_data'] = transactionData
     data['total_debit'] = getTotalDebit(transactionData)
     data['total_kredit'] = getTotalKredit(transactionData)
     data['analytics_data'] = getAnalysisData(data['transaction_data'])
-    return data
+    
+    return 200, data

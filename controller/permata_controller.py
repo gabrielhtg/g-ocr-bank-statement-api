@@ -25,23 +25,23 @@ def permataController(app) :
         fileList = getFileListFromZip(uploadedFiles[0], app, zipPassword)
             
         if fileList == 400 :
-            return returnFailMessage(False, 'Gagal mengekstrak zip! Password salah!')
+            return returnFailMessage('Gagal mengekstrak zip! Password salah!', 400)
 
         else :
             fileList.sort()
             
-            data = doOcrPermata(fileList, app, bankStatementType)
+            statusCode, data = doOcrPermata(fileList, app, bankStatementType)
 
-            if data == 400 :
-                return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
+            if data != 200 :
+                return returnFailMessage(data, statusCode)
             
     else :
         sortedData = sorted(uploadedFiles, key=lambda x: x.filename)
         
-        data = doOcrPermata(sortedData, app, bankStatementType)
+        statusCode, data = doOcrPermata(sortedData, app, bankStatementType)
         
-        if data == 400 :
-            return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
+        if data != 200 :
+            return returnFailMessage(data, statusCode)
 
     return jsonify({
         'message' : 'ok',

@@ -8,6 +8,7 @@ from services.permata_services.get_total_kredit import getTotalKredit
 from services.permata_services.get_transaction_data import getTransactionData
 from services.utils.correct_perspective import correctPerspective
 from services.utils.do_orc_easyocr import doEasyOcr
+from services.utils.exception_handler import exceptionHandler
 from services.utils.get_image_height import getImageHeight
 from services.utils.get_image_width import getImageWidth
 
@@ -245,38 +246,48 @@ def doOcrPermata (imageArray, app, bankStatementType) :
             if 'aman' in text.lower() and ch > (tinggiGambar - 0.1 * tinggiGambar) :
                 thbTable = tb + (0.005 * tinggiGambar)
                 
-            if thbHeaderTable != None and tb > thbHeaderTable and bb < thbTable :
-                if currentRow == 0 :
-                    currentRow += 1
+            try :
+                if thbHeaderTable != None and tb > thbHeaderTable and bb < thbTable :
+                    if currentRow == 0 :
+                        currentRow += 1
 
-                textWithCol['text'] = text
-                
-                if (cw < thrTableCol1) :
-                    currentRow += 1    
-                    textWithCol['col'] = 1
-                    textWithCol['row'] = currentRow
-                
-                if (cw > thrTableCol1 and cw < thrTableCol2) :
-                    textWithCol['col'] = 2
-                    textWithCol['row'] = currentRow
+                    textWithCol['text'] = text
                     
-                if (cw > thrTableCol2 and cw < thrTableCol3) :
-                    textWithCol['col'] = 3
-                    textWithCol['row'] = currentRow
+                    if (cw < thrTableCol1) :
+                        currentRow += 1    
+                        textWithCol['col'] = 1
+                        textWithCol['row'] = currentRow
                     
-                if (cw > thrTableCol3 and cw < thrTableCol4) :
-                    textWithCol['col'] = 4
-                    textWithCol['row'] = currentRow
+                    if (cw > thrTableCol1 and cw < thrTableCol2) :
+                        textWithCol['col'] = 2
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol2 and cw < thrTableCol3) :
+                        textWithCol['col'] = 3
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol3 and cw < thrTableCol4) :
+                        textWithCol['col'] = 4
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol4 and cw < thrTableCol5) :
+                        textWithCol['col'] = 5
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol5) :
+                        textWithCol['col'] = 6
+                        textWithCol['row'] = currentRow
+                        
+                    textData.append(textWithCol.copy())
                     
-                if (cw > thrTableCol4 and cw < thrTableCol5) :
-                    textWithCol['col'] = 5
-                    textWithCol['row'] = currentRow
-                    
-                if (cw > thrTableCol5) :
-                    textWithCol['col'] = 6
-                    textWithCol['row'] = currentRow
-                    
-                textData.append(textWithCol.copy())
+            except TypeError as e :
+                print('-' * 150)
+                print(f'Terjadi kesalahan pada gambar {filename}. Coba foto ulang gambar ini dengan lebih jelas!')
+                print(e)
+                print('-' * 150)
+                print()
+                return 400, f'Terjadi kesalahan pada gambar {filename}. Coba foto ulang gambar ini dengan lebih jelas!'
+            
         # if not isBankStatementCorrect :
         #     return 400
         transactionData.extend(getTransactionData(textData, filename))
@@ -294,4 +305,4 @@ def doOcrPermata (imageArray, app, bankStatementType) :
     data['total_debet'] = getTotalDebet(data['transaction_data'])
     data['total_kredit'] = getTotalKredit(data['transaction_data'])
     data['analytics_data'] = permataAnalysisData(data['transaction_data'])
-    return data
+    return 200, data
