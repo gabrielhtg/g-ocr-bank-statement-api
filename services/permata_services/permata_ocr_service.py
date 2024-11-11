@@ -242,6 +242,9 @@ def doOcrPermata (imageArray, app, bankStatementType) :
                 thrTableCol4 = rb + int(0.363 * tinggiGambar)
                 thrTableCol5 = rb + int(0.48 * tinggiGambar)
                 
+            if 'aman' in text.lower() and ch > (tinggiGambar - 0.1 * tinggiGambar) :
+                thbTable = tb + (0.005 * tinggiGambar)
+                
             if thbHeaderTable != None and tb > thbHeaderTable and bb < thbTable :
                 if currentRow == 0 :
                     currentRow += 1
