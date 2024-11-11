@@ -28,7 +28,7 @@ def ocbcController(app) :
             return returnFailMessage(False, 'Gagal mengekstrak zip! Password salah!')
 
         else :
-            fileList.sort(key=lambda x: int(x.filename.split("_")[-1].split(".")[0]))
+            fileList.sort(key=lambda x: int(x.split("_")[-1].split(".")[0]))
             
             data = doOcrOcbc(fileList, app, bankStatementType)
 
