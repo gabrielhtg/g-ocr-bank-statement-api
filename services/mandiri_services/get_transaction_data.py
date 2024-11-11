@@ -1,6 +1,8 @@
 from format_currency import format_currency
 from numpy import number
 
+from services.utils.convert_to_float import convertToFloat
+
 def mandiriGetTransactionData (textData, filename:str) :
     rowDataArr = []
     currentRow = 1
@@ -36,13 +38,13 @@ def mandiriGetTransactionData (textData, filename:str) :
                 currentData['refference_no'] = e['text']
                 
             if e['col'] == 5 :
-                currentData['debit'] = e['text']
+                currentData['debit'] = format_currency(convertToFloat(e['text']), currency_code='IDR')
                 
             if e['col'] == 6 :
-                currentData['kredit'] = e['text']
+                currentData['kredit'] = format_currency(convertToFloat(e['text']), currency_code='IDR')
                 
             if e['col'] == 7 :
-                currentData['saldo'] = e['text']
+                currentData['saldo'] = format_currency(convertToFloat(e['text']), currency_code='IDR')
             
         else :
             beforeRow = currentRow
@@ -75,13 +77,13 @@ def mandiriGetTransactionData (textData, filename:str) :
                 currentData['refference_no'] = e['text']
                 
             if e['col'] == 5 :
-                currentData['debit'] = e['text']
+                currentData['debit'] = format_currency(convertToFloat(e['text']), currency_code='IDR')
                 
             if e['col'] == 6 :
-                currentData['kredit'] = e['text']
+                currentData['kredit'] = format_currency(convertToFloat(e['text']), currency_code='IDR')
                 
             if e['col'] == 7 :
-                currentData['saldo'] = e['text']
+                currentData['saldo'] = format_currency(convertToFloat(e['text']), currency_code='IDR')
                 
         
     currentData['filename'] = filename            
