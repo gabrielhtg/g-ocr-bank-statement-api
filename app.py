@@ -9,8 +9,9 @@ from controller.bni_controller import bniController
 from controller.bri_controller import briController
 from controller.cimb_controller import cimbController
 from controller.danamon_controller import danamonController
+from controller.mandiri_controller import mandiriController
+from controller.ocbc_controller import ocbcController
 from controller.permata_controller import permataController
-
 
 app = Flask(__name__)
 CORS(app)
@@ -58,3 +59,11 @@ def proceedBni () :
 @app.route('/proceed-cimb', methods=['POST'])
 def proceedCimb () : 
     return cimbController(app)
+
+@app.route('/proceed-ocbc', methods=['POST'])
+def proceedOcbc () : 
+    return ocbcController(app)
+
+@app.route('/proceed-mandiri', methods=['POST'])
+def proceedMandiri () : 
+    return mandiriController(app)

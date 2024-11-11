@@ -1,11 +1,11 @@
 from flask import jsonify, request
 
-from services.ocbc_services.ocbc_ocr_service import doOcrOcbc
+from services.mandiri_services.mandiri_ocr_service import doOcrMandiri
 from services.utils.check_is_zip import checkIsZip
 from services.utils.get_file_list_from_zip import getFileListFromZip
 from services.utils.return_fail_message import returnFailMessage
 
-def ocbcController(app) :
+def mandiriController(app) :
     uploadedFiles = request.files.getlist('files')
     zipPassword = ''
     bankStatementType = request.form.get('bank-statement-type')
@@ -28,17 +28,17 @@ def ocbcController(app) :
             return returnFailMessage(False, 'Gagal mengekstrak zip! Password salah!')
 
         else :
-            fileList.sort(key=lambda x: int(x.filename.split("_")[-1].split(".")[0]))
+            fileList.sort()
             
-            data = doOcrOcbc(fileList, app, bankStatementType)
+            data = doOcrMandiri(fileList, app, bankStatementType)
 
             if data == 400 :
                 return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
             
     else :
-        sortedData = sorted(uploadedFiles, key=lambda x: int(x.filename.split("_")[-1].split(".")[0]))
+        sortedData = sorted(uploadedFiles, key=lambda x: x.filename)
         
-        data = doOcrOcbc(sortedData, app, bankStatementType)
+        data = doOcrMandiri(sortedData, app, bankStatementType)
         
         if data == 400 :
             return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
@@ -46,13 +46,11 @@ def ocbcController(app) :
     return jsonify({
         'message' : 'ok',
         'data' : {
-            'pemilik_rekening' : data['pemilik_rekening'],
-            'alamat' : data['alamat'],
+            'period' : data['period'],
             'nomor_rekening' : data['nomor_rekening'],
-            'cabang' : data['cabang'],
-            'periode' : data['periode'],
-            'tanggal_percetakan' : data['tanggal_percetakan'],
-            'mata_uang' : data['mata_uang'],
+            'pemilik_rekening' : data['pemilik_rekening'],
+            'currency' : data['currency'],
+            'branch' : data['branch'],
             'transaction_data' : data['transaction_data'],
             'total_debet' : data['total_debet'],
             'total_kredit' : data['total_kredit'],
