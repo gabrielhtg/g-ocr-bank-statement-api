@@ -1,6 +1,8 @@
 from format_currency import format_currency
 from numpy import number
 
+from services.utils.convert_to_float import convertToFloat
+
 def danamonGetTransactionData (textData, filename:str) :
     rowDataArr = []
     currentRow = 1
@@ -42,19 +44,19 @@ def danamonGetTransactionData (textData, filename:str) :
                 
             if e['col'] == 5 :
                 currentData['debit'] = format_currency(
-                    float(int(e['text'].replace(',', '').replace('.', ''))/ 100),
+                    convertToFloat(e['text']),
                     currency_code='IDR'
                 )
                 
             if e['col'] == 6 :
                 currentData['kredit'] = format_currency(
-                    float(int(e['text'].replace(',', '').replace('.', ''))/ 100),
+                    convertToFloat(e['text']),
                     currency_code='IDR'
                 )
                 
             if e['col'] == 7 :
                 currentData['saldo'] = format_currency(
-                    float(int(e['text'].replace(',', '').replace('.', ''))/ 100),
+                    convertToFloat(e['text']),
                     currency_code='IDR'
                 )
             

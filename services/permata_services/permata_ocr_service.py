@@ -74,6 +74,8 @@ def doOcrPermata (imageArray, app, bankStatementType) :
     currentRow = 0
     
     transactionData = []
+    
+    isTotalDetected = False
 
     for e in imageArray:
         page += 1
@@ -234,6 +236,11 @@ def doOcrPermata (imageArray, app, bankStatementType) :
                         else :
                             tanggalLaporan = tanggalLaporan + ' - ' + text
             
+            if 'total' in text.lower() and ch > 0.35 * tinggiGambar:
+                thbTable = tb + (0.005 * tinggiGambar)
+                isTotalDetected = True
+                continue
+            
             if 'gl' in text.lower() and 'rx' in text.lower() and currentRow == 0:
                 thbHeaderTable = tb + int(0.041 * tinggiGambar)
                 thbTable = tb + int(0.575 * tinggiGambar)
@@ -243,7 +250,7 @@ def doOcrPermata (imageArray, app, bankStatementType) :
                 thrTableCol4 = rb + int(0.363 * tinggiGambar)
                 thrTableCol5 = rb + int(0.48 * tinggiGambar)
                 
-            if 'aman' in text.lower() and ch > (tinggiGambar - 0.1 * tinggiGambar) :
+            if 'aman' in text.lower() and ch > (tinggiGambar - 0.1 * tinggiGambar) and isTotalDetected == False:
                 thbTable = tb + (0.005 * tinggiGambar)
                 
             try :
@@ -290,8 +297,9 @@ def doOcrPermata (imageArray, app, bankStatementType) :
             
         # if not isBankStatementCorrect :
         #     return 400
+        
         transactionData.extend(getTransactionData(textData, filename))
-    
+
     data['pemilik_rekening'] = pemilikRekening
     data['alamat'] = alamat
     data['periode_laporan'] = periodeLaporan

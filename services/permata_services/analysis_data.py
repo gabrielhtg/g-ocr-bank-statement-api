@@ -23,6 +23,12 @@ def permataAnalysisData (transactionData) :
             convertedKredit = convertToFloat(e['kredit'])
             arrKredit.append(convertedKredit)
     
+    if (len(arrDebit) == 0) :
+        arrDebit.append(0)
+        
+    if (len(arrKredit) == 0) :
+        arrKredit.append(0)
+    
     return {
         'freq_debit' : freqDebit,
         'sum_debit' : format_currency(sum(arrDebit), currency_code='IDR'),
