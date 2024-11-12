@@ -287,10 +287,10 @@ def doOcrOcbc (imageArray, app, bankStatementType) :
                     textData.append(textWithCol.copy())
             except ValueError as e:
                 return exceptionHandler(
-                f'Terjadi kesalahan pada gambar {filename}. Coba foto ulang gambar ini dengan lebih jelas!',
-                400,
-                e
-            ) 
+                    f'Terjadi kesalahan pada gambar {filename}. Coba foto ulang gambar ini dengan lebih jelas!',
+                    400,
+                    e
+                ) 
                 
         # if not isBankStatementCorrect :
         #     return 400
