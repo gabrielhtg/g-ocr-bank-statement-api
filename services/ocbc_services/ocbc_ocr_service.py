@@ -8,6 +8,7 @@ from services.ocbc_services.get_total_kredit import getTotalKredit
 from services.ocbc_services.get_transaction_data import ocbcGetTransactionData
 from services.utils.correct_perspective import correctPerspective
 from services.utils.do_orc_easyocr import doEasyOcr
+from services.utils.exception_handler import exceptionHandler
 from services.utils.get_image_height import getImageHeight
 from services.utils.get_image_width import getImageWidth
 
@@ -251,38 +252,46 @@ def doOcrOcbc (imageArray, app, bankStatementType) :
                 thbTable = tb
                 continue
                 
-            if thbHeaderTable != None and ch > thbHeaderTable and ch < thbTable :
-                if currentRow == 0 :
-                    currentRow += 1
+            try :
+                if thbHeaderTable != None and ch > thbHeaderTable and ch < thbTable :
+                    if currentRow == 0 :
+                        currentRow += 1
 
-                textWithCol['text'] = text
+                    textWithCol['text'] = text
+                    
+                    if (cw < thrTableCol1) :
+                        currentRow += 1    
+                        textWithCol['col'] = 1
+                        textWithCol['row'] = currentRow
+                    
+                    if (cw > thrTableCol1 and cw < thrTableCol2) :
+                        textWithCol['col'] = 2
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol2 and cw < thrTableCol3) :
+                        textWithCol['col'] = 3
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol3 and cw < thrTableCol4) :
+                        textWithCol['col'] = 4
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol4 and cw < thrTableCol5) :
+                        textWithCol['col'] = 5
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol5) :
+                        textWithCol['col'] = 6
+                        textWithCol['row'] = currentRow
+                        
+                    textData.append(textWithCol.copy())
+            except ValueError as e:
+                return exceptionHandler(
+                f'Terjadi kesalahan pada gambar {filename}. Coba foto ulang gambar ini dengan lebih jelas!',
+                400,
+                e
+            ) 
                 
-                if (cw < thrTableCol1) :
-                    currentRow += 1    
-                    textWithCol['col'] = 1
-                    textWithCol['row'] = currentRow
-                
-                if (cw > thrTableCol1 and cw < thrTableCol2) :
-                    textWithCol['col'] = 2
-                    textWithCol['row'] = currentRow
-                    
-                if (cw > thrTableCol2 and cw < thrTableCol3) :
-                    textWithCol['col'] = 3
-                    textWithCol['row'] = currentRow
-                    
-                if (cw > thrTableCol3 and cw < thrTableCol4) :
-                    textWithCol['col'] = 4
-                    textWithCol['row'] = currentRow
-                    
-                if (cw > thrTableCol4 and cw < thrTableCol5) :
-                    textWithCol['col'] = 5
-                    textWithCol['row'] = currentRow
-                    
-                if (cw > thrTableCol5) :
-                    textWithCol['col'] = 6
-                    textWithCol['row'] = currentRow
-                    
-                textData.append(textWithCol.copy())
         # if not isBankStatementCorrect :
         #     return 400
         
