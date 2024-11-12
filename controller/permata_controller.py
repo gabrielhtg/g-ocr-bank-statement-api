@@ -32,7 +32,7 @@ def permataController(app) :
             
             statusCode, data = doOcrPermata(fileList, app, bankStatementType)
 
-            if data != 200 :
+            if statusCode != 200 :
                 return returnFailMessage(data, statusCode)
             
     else :
@@ -40,7 +40,7 @@ def permataController(app) :
         
         statusCode, data = doOcrPermata(sortedData, app, bankStatementType)
         
-        if data != 200 :
+        if statusCode != 200 :
             return returnFailMessage(data, statusCode)
 
     return jsonify({

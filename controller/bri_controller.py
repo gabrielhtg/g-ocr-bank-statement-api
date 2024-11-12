@@ -31,18 +31,18 @@ def briController(app) :
         else :
             fileList.sort()
             
-            data = doOcrBri(fileList, app, bankStatementType)
+            statusCode, data = doOcrBri(fileList, app, bankStatementType)
 
-            if data == 400 :
-                return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
+            if statusCode != 200 :
+                return returnFailMessage(data, statusCode)
             
     else :
         sortedData = sorted(uploadedFiles, key=lambda x: x.filename)
         
         data = doOcrBri(sortedData, app, bankStatementType)
         
-        if data == 400 :
-            return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
+        if statusCode != 200 :
+            return returnFailMessage(data, statusCode)
 
     return jsonify({
         'message' : 'ok',

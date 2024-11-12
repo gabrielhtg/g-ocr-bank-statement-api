@@ -347,7 +347,7 @@ def doOcrBri (imageArray, app, bankStatementType) :
                         rowData.append(cleanDebitBri(text))
                     except ValueError as e :
                         return exceptionHandler(
-                            f'Gambar {filename} - Gagal melakukan cleaning data pada debet ketika text = {text}',
+                            f'Gambar {filename} - Gagal melakukan cleaning data pada debet ketika text = {text}. Silakan upload foto kembali dengan kualitas yang lebih baik.',
                             400,
                             e
                         )
@@ -361,7 +361,7 @@ def doOcrBri (imageArray, app, bankStatementType) :
                         rowData.append(cleanKreditBri(text))
                     except ValueError as e :
                         return exceptionHandler(
-                            f'Gambar {filename} - Gagal melakukan cleaning data pada kredit ketika text = {text}',
+                            f'Gambar {filename} - Gagal melakukan cleaning data pada kredit ketika text = {text}. Silakan upload foto kembali dengan kualitas yang lebih baik.',
                             400,
                             e
                         )
@@ -374,7 +374,7 @@ def doOcrBri (imageArray, app, bankStatementType) :
                         rowData.append(cleanSaldoBri(text))
                     except ValueError as e :
                         return exceptionHandler(
-                            f'Gambar {filename} - Gagal melakukan cleaning data pada saldo ketika text = {text}',
+                            f'Gambar {filename} - Gagal melakukan cleaning data pada saldo ketika text = {text}. Silakan upload foto kembali dengan kualitas yang lebih baik.',
                             400,
                             e
                         )
