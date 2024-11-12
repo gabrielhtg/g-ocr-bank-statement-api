@@ -38,6 +38,7 @@ def mandiriGetTransactionData (textData, filename:str) :
                 currentData['refference_no'] = e['text']
                 
             if e['col'] == 5 :
+                print(e['text'])
                 currentData['debit'] = format_currency(convertToFloat(e['text']), currency_code='IDR')
                 
             if e['col'] == 6 :

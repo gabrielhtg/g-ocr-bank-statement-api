@@ -399,16 +399,15 @@ def doOcrBca (imageArray, app, bankStatementType) :
                     textData.append(textWithCol.copy())
                     
         except TypeError as e:
-            print('-' * 150)
-            print(f'Terjadi kesalahan pada gambar {filename}. Coba foto ulang gambar ini dengan lebih jelas!')
-            print(e)
-            print('-' * 150)
-            print()
-            return 400, f'Terjadi kesalahan pada gambar {filename}. Coba foto ulang gambar ini dengan lebih jelas!'
+            return exceptionHandler(
+                f'An error occurred with image {filename}. Try rephotographing this image more clearly!',
+                400,
+                e
+            )
         
         except ValueError as e:
             return exceptionHandler(
-                f'Terjadi kesalahan pada gambar {filename}. Coba foto ulang gambar ini dengan lebih jelas!',
+                f'An error occurred with image {filename}. Try rephotographing this image more clearly!',
                 400,
                 e
             )   
@@ -427,7 +426,7 @@ def doOcrBca (imageArray, app, bankStatementType) :
         
     except ValueError as e:
         return exceptionHandler(
-            f'Terjadi kesalahan pada gambar {filename} saat konversi saldo_awal summary. Coba foto ulang gambar ini dengan lebih jelas!',
+            f'An error occurred in image {filename} during conversion of initial_balance summary. Try rephotographing this image more clearly!',
             400,
             e
         )

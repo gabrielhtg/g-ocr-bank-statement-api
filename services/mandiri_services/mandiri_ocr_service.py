@@ -226,7 +226,7 @@ def doOcrMandiri (imageArray, app, bankStatementType) :
                     textData.append(textWithCol.copy())
             except ValueError as e:
                 return exceptionHandler(
-                    f'Terjadi kesalahan pada gambar {filename}. Coba foto ulang gambar ini dengan lebih jelas!',
+                    f'An error occurred with image {filename}. Try rephotographing this image more clearly!',
                     400,
                     e
                 ) 
