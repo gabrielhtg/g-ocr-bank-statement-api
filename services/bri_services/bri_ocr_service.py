@@ -7,6 +7,7 @@ from services.bri_services.clean_summary_bri import cleanSummaryBri
 from services.bri_services.clean_tanggal_transaksi_bri import cleanTanggalTransaksiBri
 from services.utils.correct_perspective import correctPerspective
 from services.utils.do_orc_easyocr import doEasyOcr
+from services.utils.exception_handler import exceptionHandler
 from services.utils.get_image_height import getImageHeight
 from services.utils.get_image_width import getImageWidth
 from services.utils.is_current_page_the_right_bank_statement_type import isCurrentPageTheRightBankStatementType;
@@ -342,19 +343,42 @@ def doOcrBri (imageArray, app, bankStatementType) :
                 elif not isDebetVisited:
                     titikKiriDebet = lb
                     titikKananDebet = rb
-                    rowData.append(cleanDebitBri(text))
+                    try : 
+                        rowData.append(cleanDebitBri(text))
+                    except ValueError as e :
+                        return exceptionHandler(
+                            f'Gambar {filename} - Gagal melakukan cleaning data pada debet ketika text = {text}',
+                            400,
+                            e
+                        )
+                        
                     isDebetVisited = True
                     
                 elif not isKreditVisited:
                     titikKiriKredit = lb
                     titikKananKredit = rb
-                    rowData.append(cleanKreditBri(text))
+                    try : 
+                        rowData.append(cleanKreditBri(text))
+                    except ValueError as e :
+                        return exceptionHandler(
+                            f'Gambar {filename} - Gagal melakukan cleaning data pada kredit ketika text = {text}',
+                            400,
+                            e
+                        )
                     isKreditVisited = True
                     
                 elif not isSaldoVisited:
                     titikKiriSaldo = lb
                     titikKananSaldo = rb
-                    rowData.append(cleanSaldoBri(text))
+                    try : 
+                        rowData.append(cleanSaldoBri(text))
+                    except ValueError as e :
+                        return exceptionHandler(
+                            f'Gambar {filename} - Gagal melakukan cleaning data pada saldo ketika text = {text}',
+                            400,
+                            e
+                        )
+                    
                     isSaldoVisited = True
                 
             textBefore = text
