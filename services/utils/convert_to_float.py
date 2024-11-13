@@ -3,12 +3,20 @@ def convertToFloat (text: str) :
       return None
     
     else:
-      return float (text
-                    .replace('.', '')
-                    .replace(',', '')
-                    .replace(' ', '')
-                    .replace('DB', '')
-                    .replace('O', '0')
-                    .replace('o', '0')
-                    .replace('Rp', '')
-                  ) / 100
+      try :
+        return float (text
+                      .replace('.', '')
+                      .replace(',', '')
+                      .replace(' ', '')
+                      .replace('DB', '')
+                      .replace('O', '0')
+                      .replace('o', '0')
+                      .replace('Rp', '')
+                      .replace('/', '')
+                      .replace('l', '')
+                      .replace('|', '')
+                      .replace(']', '')
+                      .replace('[', '')
+                    ) / 100
+      except ValueError as e:
+        return float(0)

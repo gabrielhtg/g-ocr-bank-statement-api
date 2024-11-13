@@ -1,0 +1,9 @@
+easyocr
+flask
+flask-cors
+format-currency
+waitress
+opencv-python
+waitress
+pyzipper
+matplotlib
