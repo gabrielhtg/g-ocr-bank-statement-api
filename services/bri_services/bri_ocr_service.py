@@ -1,11 +1,13 @@
 import os
 from matplotlib.dviread import Page
 from werkzeug.utils import secure_filename
+from format_currency import format_currency
 
 from services.bri_services.get_analysis_data import briAnalysisData
 from services.bri_services.get_total_debit import getTotalDebit
 from services.bri_services.get_total_kredit import getTotalKredit
 from services.bri_services.get_transaction_data import briGetTransactionData
+from services.utils.convert_to_float import convertToFloat
 from services.utils.correct_perspective import correctPerspective
 from services.utils.do_orc_easyocr import doEasyOcr
 from services.utils.get_image_height import getImageHeight
@@ -21,6 +23,10 @@ def doOcrBri (imageArray, app, bankStatementType) :
     periodeTransaksi = None
     unitKerja = None
     alamatUnitKerja = None
+    saldoAwal = None
+    totalTransaksiDebit = None
+    totalTransaksiKredit = None
+    saldoAkhir = None
     
     periodeLaporan = None
     nomorNasabah = None
@@ -72,6 +78,26 @@ def doOcrBri (imageArray, app, bankStatementType) :
     thbAlamatUnitKerja = None
     thtAlamatUnitKerja = None
     thlAlamatUnitKerja = None
+    
+    thrSaldoAwal = None
+    thbSaldoAwal = None
+    thtSaldoAwal = None
+    thlSaldoAwal = None
+
+    thrTotalTransaksiDebit = None
+    thbTotalTransaksiDebit = None
+    thtTotalTransaksiDebit = None
+    thlTotalTransaksiDebit = None
+
+    thrTotalTransaksiKredit = None
+    thbTotalTransaksiKredit = None
+    thtTotalTransaksiKredit = None
+    thlTotalTransaksiKredit = None
+
+    thrSaldoAkhir = None
+    thbSaldoAkhir = None
+    thtSaldoAkhir = None
+    thlSaldoAkhir = None
     
     data = {}
     thbHeaderTable = None
@@ -288,7 +314,83 @@ def doOcrBri (imageArray, app, bankStatementType) :
                 thrTableCol3 = thrTableCol2 + int(0.069 * lebarGambar)
                 thrTableCol4 = thrTableCol3 + int(0.154 * lebarGambar)
                 thrTableCol5 = thrTableCol4 + int(0.152 * lebarGambar)
-                
+            
+            if page > 1 :
+                if 'tanggal' in text.lower() and 'ran' in text.lower() :
+                    thbHeaderTable = tb + int(0.025 * tinggiGambar)
+                    
+                    thrTableCol1 = rb + int(0.005 * lebarGambar)
+                    thrTableCol2 = thrTableCol1 + int(0.263 * lebarGambar)
+                    thrTableCol3 = thrTableCol2 + int(0.069 * lebarGambar)
+                    thrTableCol4 = thrTableCol3 + int(0.154 * lebarGambar)
+                    thrTableCol5 = thrTableCol4 + int(0.152 * lebarGambar)
+                    
+                if 'saldo awal' in text.lower() :
+                    thbTable = tb + int(0.005 * tinggiGambar)
+                    thtTotalTransaksiDebit = thtSaldoAwal
+                    thtTotalTransaksiKredit = thtSaldoAwal
+                    thtSaldoAkhir = thtSaldoAwal
+                    
+                    thtSaldoAwal = bb + int(0.013 * tinggiGambar)
+                    thlSaldoAwal = lb - int(0.073 * lebarGambar)
+                    thrSaldoAwal = rb + int(0.073 * lebarGambar) 
+                    thbSaldoAwal = thtSaldoAwal + int(0.02 * tinggiGambar) 
+                    
+                    thlTotalTransaksiDebit = thrSaldoAwal
+                    thrTotalTransaksiDebit = thrSaldoAwal + int(0.23 * lebarGambar) 
+                    thtTotalTransaksiDebit = bb + int(0.013 * tinggiGambar)
+                    thbTotalTransaksiDebit = thtSaldoAwal + int(0.02 * tinggiGambar)
+                    
+                    thlTotalTransaksiKredit = thrTotalTransaksiDebit
+                    thrTotalTransaksiKredit = thrTotalTransaksiDebit + int(0.21 * lebarGambar) 
+                    thtTotalTransaksiKredit = bb + int(0.013 * tinggiGambar)
+                    thbTotalTransaksiKredit = thtSaldoAwal + int(0.02 * tinggiGambar)
+                    
+                    thlSaldoAkhir = thrTotalTransaksiKredit
+                    thrSaldoAkhir = thrTotalTransaksiKredit + int(0.28 * lebarGambar) 
+                    thtSaldoAkhir = bb + int(0.013 * tinggiGambar)
+                    thbSaldoAkhir = thtSaldoAwal + int(0.02 * tinggiGambar)
+                    
+                if thrSaldoAwal != None:
+                    if (
+                        (cw < thrSaldoAwal) 
+                        and (cw > thlSaldoAwal) 
+                        and (ch > thtSaldoAwal)
+                        and (ch < thbSaldoAwal)
+                    ) :
+                        if saldoAwal == None :
+                            saldoAwal = format_currency(convertToFloat(text))
+                            
+                if thrTotalTransaksiDebit != None:
+                    if (
+                        (cw < thrTotalTransaksiDebit) 
+                        and (cw > thlTotalTransaksiDebit) 
+                        and (ch > thtTotalTransaksiDebit)
+                        and (ch < thbTotalTransaksiDebit)
+                    ) :
+                        if totalTransaksiDebit == None :
+                            totalTransaksiDebit = format_currency(convertToFloat(text))
+                            
+                if thrTotalTransaksiKredit != None:
+                    if (
+                        (cw < thrTotalTransaksiKredit) 
+                        and (cw > thlTotalTransaksiKredit) 
+                        and (ch > thtTotalTransaksiKredit)
+                        and (ch < thbTotalTransaksiKredit)
+                    ) :
+                        if totalTransaksiKredit == None :
+                            totalTransaksiKredit = format_currency(convertToFloat(text))
+                            
+                if thrSaldoAkhir != None:
+                    if (
+                        (cw < thrSaldoAkhir) 
+                        and (cw > thlSaldoAkhir) 
+                        and (ch > thtSaldoAkhir)
+                        and (ch < thbSaldoAkhir)
+                    ) :
+                        if saldoAkhir == None :
+                            saldoAkhir = format_currency(convertToFloat(text))
+                    
             if thbHeaderTable != None and tb > thbHeaderTable and ch < thbTable :
                 if currentRow == 0 :
                     currentRow += 1
@@ -325,17 +427,7 @@ def doOcrBri (imageArray, app, bankStatementType) :
         #     return 400
         
         transactionData.extend(briGetTransactionData(textData, filename))
-    
-    pemilikRekening = None
-    alamat = None
-    nomorRekening = None
-    namaProduk = None
-    valuta = None
-    tanggalLaporan = None
-    periodeTransaksi = None
-    unitKerja = None
-    alamatUnitKerja = None
-    
+
     data['pemilik_rekening'] = pemilikRekening
     data['alamat'] = alamat
     data['nomor_rekening'] = nomorRekening
@@ -343,8 +435,12 @@ def doOcrBri (imageArray, app, bankStatementType) :
     data['valuta'] = valuta
     data['tanggal_laporan'] = tanggalLaporan
     data['periode_transaksi'] = periodeTransaksi
+    data['saldo_awal'] = saldoAwal
+    data['saldo_akhir'] = saldoAkhir
+    data['total_transaksi_debit'] = totalTransaksiDebit
+    data['total_transaksi_kredit'] = totalTransaksiKredit
     data['transaction_data'] = transactionData
     data['total_debit'] = getTotalDebit(transactionData)
     data['total_kredit'] = getTotalKredit(transactionData)
     data['analytics_data'] = briAnalysisData(data['transaction_data'])
-    return data
+    return 200, data

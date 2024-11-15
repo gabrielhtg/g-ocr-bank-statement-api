@@ -1,5 +1,7 @@
 from format_currency import format_currency
 
+from services.utils.convert_to_float import convertToFloat
+
 def getTotalKredit(arrayDebet) :
     totalDebet = 0
     
@@ -8,6 +10,6 @@ def getTotalKredit(arrayDebet) :
             continue
         
         else :
-            totalDebet += float(e['kredit'].replace('.', '').replace(',', '.').replace('Rp ', ''))
+            totalDebet += convertToFloat(e['kredit'])
             
     return format_currency(totalDebet, currency_code='IDR')

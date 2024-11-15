@@ -38,7 +38,7 @@ def briController(app) :
     else :
         sortedData = sorted(uploadedFiles, key=lambda x: x.filename)
         
-        data = doOcrBri(sortedData, app, bankStatementType)
+        statusCode, data = doOcrBri(sortedData, app, bankStatementType)
         
         if statusCode != 200 :
             return returnFailMessage(data, statusCode)
@@ -57,5 +57,9 @@ def briController(app) :
             'total_debit' : data['total_debit'],
             'total_kredit' : data['total_kredit'],
             'analytics_data' : data['analytics_data'],
+            'saldo_awal' : data['saldo_awal'],
+            'saldo_akhir' : data['saldo_akhir'],
+            'total_transaksi_debit' : data['total_transaksi_debit'],
+            'total_transaksi_kredit' : data['total_transaksi_kredit'],
         }
     })
