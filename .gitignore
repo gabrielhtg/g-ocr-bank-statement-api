@@ -1,8 +1,6 @@
 /data
-/__pycache__
+**/__pycache__/
 /uploads
 /extracted_data
 /.idea
 /.vscode
-/controller/__pycache__
-/services/__pycache__
