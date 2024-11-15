@@ -5,8 +5,8 @@ from services.utils.convert_to_float import convertToFloat
 
 def briGetTransactionData (textData, filename:str) :
     rowDataArr = []
-    currentRow = 1
-    beforeRow = 1
+    currentRow = textData[0]['row']
+    beforeRow = textData[0]['row']
     currentData = {
         'tanggal_transaksi' : None,
         'uraian_transaksi' : None,
