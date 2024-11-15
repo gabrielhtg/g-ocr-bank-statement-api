@@ -440,6 +440,8 @@ def doOcrBri (imageArray, app, bankStatementType) :
     data['total_transaksi_debit'] = totalTransaksiDebit
     data['total_transaksi_kredit'] = totalTransaksiKredit
     data['transaction_data'] = transactionData
+    data['unit_kerja'] = unitKerja
+    data['alamat_unit_kerja'] = alamatUnitKerja
     data['total_debit'] = getTotalDebit(transactionData)
     data['total_kredit'] = getTotalKredit(transactionData)
     data['analytics_data'] = briAnalysisData(data['transaction_data'])

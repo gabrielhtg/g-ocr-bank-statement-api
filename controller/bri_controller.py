@@ -57,6 +57,8 @@ def briController(app) :
             'total_debit' : data['total_debit'],
             'total_kredit' : data['total_kredit'],
             'analytics_data' : data['analytics_data'],
+            'unit_kerja' : data['unit_kerja'],
+            'alamat_unit_kerja' : data['alamat_unit_kerja'],
             'saldo_awal' : data['saldo_awal'],
             'saldo_akhir' : data['saldo_akhir'],
             'total_transaksi_debit' : data['total_transaksi_debit'],
