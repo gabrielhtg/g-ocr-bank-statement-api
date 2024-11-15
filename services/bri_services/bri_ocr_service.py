@@ -392,8 +392,8 @@ def doOcrBri (imageArray, app, bankStatementType) :
                             saldoAkhir = format_currency(convertToFloat(text))
                     
             if thbHeaderTable != None and tb > thbHeaderTable and ch < thbTable :
-                if currentRow == 0 :
-                    currentRow += 1
+                # if currentRow == 0 :
+                #     currentRow += 1
 
                 textWithCol['text'] = text
                 
