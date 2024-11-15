@@ -1,7 +1,6 @@
 from flask import jsonify, request
 
 from services.bri_services.bri_ocr_service import doOcrBri
-from services.bri_services.get_bri_analysis import getBriAnalysisData
 from services.utils.check_is_zip import checkIsZip
 from services.utils.get_file_list_from_zip import getFileListFromZip
 from services.utils.return_fail_message import returnFailMessage
@@ -47,18 +46,16 @@ def briController(app) :
     return jsonify({
         'message' : 'ok',
         'data' : {
-            'transaction_data' : data['transaction_data'],
-            'banyak_data' : len(data['transaction_data']),
-            'summary_data' : data['summary_data'],
-            'analysis_data' : getBriAnalysisData(data['transaction_data'], data['summary_data']),
             'pemilik_rekening' : data['pemilik_rekening'],
-            'tanggal_laporan' : data['tanggal_laporan'],
-            'periode_transaksi' : data['periode_transaksi'],
             'alamat' : data['alamat'],
             'nomor_rekening' : data['nomor_rekening'],
             'nama_produk' : data['nama_produk'],
             'valuta' : data['valuta'],
-            'unit_kerja' : data['unit_kerja'],
-            'alamat_unit_kerja' : data['alamat_unit_kerja']
+            'tanggal_laporan' : data['tanggal_laporan'],
+            'periode_transaksi' : data['periode_transaksi'],
+            'transaction_data' : data['transaction_data'],
+            'total_debit' : data['total_debit'],
+            'total_kredit' : data['total_kredit'],
+            'analytics_data' : data['analytics_data'],
         }
     })

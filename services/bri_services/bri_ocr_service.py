@@ -1,125 +1,98 @@
 import os
-
-from services.bri_services.clean_debit_bri import cleanDebitBri
-from services.bri_services.clean_kredit_bri import cleanKreditBri
-from services.bri_services.clean_saldo_bri import cleanSaldoBri
-from services.bri_services.clean_summary_bri import cleanSummaryBri
-from services.bri_services.clean_tanggal_transaksi_bri import cleanTanggalTransaksiBri
-from services.utils.correct_perspective import correctPerspective
-from services.utils.do_orc_easyocr import doEasyOcr
-from services.utils.exception_handler import exceptionHandler
-from services.utils.get_image_height import getImageHeight
-from services.utils.get_image_width import getImageWidth
-from services.utils.is_current_page_the_right_bank_statement_type import isCurrentPageTheRightBankStatementType;
-
+from matplotlib.dviread import Page
 from werkzeug.utils import secure_filename
 
+from services.bri_services.get_analysis_data import briAnalysisData
+from services.bri_services.get_total_debit import getTotalDebit
+from services.bri_services.get_total_kredit import getTotalKredit
+from services.bri_services.get_transaction_data import briGetTransactionData
+from services.utils.correct_perspective import correctPerspective
+from services.utils.do_orc_easyocr import doEasyOcr
+from services.utils.get_image_height import getImageHeight
+from services.utils.get_image_width import getImageWidth
+
 def doOcrBri (imageArray, app, bankStatementType) :
-    # 4 data yang disimpan di bawah ini masih dummy
-    # belum tentu digunakan
-    # ! sementara ini tidak digunakan
-    # tanggal_laporan = text_[8][1]
-    # kepada_yth = text_[10][1]
-    # periode_transaksi_start = text_[12][1]
-    # periode_transaksi_end = text_[13][1]
-    
-    titikKananTanggalTransaksi = None
-
-    titikKiriUraianTransaksi = None
-    thresholdUraianTransaksi = None
-
-    titikKiriTeller = None
-
-
-    titikKiriKredit = None
-
-    # saklar yang kita gunakan untuk pengumpulan data transaksi
-    startGetTransactionData = False
-    
-    # saklar yang kita gunakan untuk pengumpulan summary dari gambar
-    startGetSummary = False
-    
-    # ini digunakan untuk menghitung banyak data summary yang sudah dilakukan OCR
-    # sejak kode ini dibuat, maksimal ada 4 
-    summaryDataCount = 0
-    
-    # text sebelumnya (-1 iterasi saat ini)
-    textBefore = None
-
-    # menyimpan semua data transaksi
-    transactionData = []
-    rowData = []
-    summaryData = []
-
-    # menyimpan visited state pada tiap kolom yang ada pada tabel transaksi
-    isTanggalTransaksiVisited = False
-    isUraianTransaksiVisited = False
-    isTellerVisited = False
-    isDebetVisited = False
-    isKreditVisited = False
-    isSaldoVisited = False
-    
-    # digunakan untuk memeriksa apakah halaman yang diupload masih merupakan
-    # tipe bank statement yang sama dengan yang dimasukkan user
-    isBankStatementCorrect = False
-    
-    # merepresentasikan value dari gambar ke berapa saat ini yang dilakukan ocr
-    banyakKataYangDiScan = 0
-    
     pemilikRekening = None
-    tanggalLaporan = None
-    periodeTransaksi = None
     alamat = None
     nomorRekening = None
     namaProduk = None
     valuta = None
+    tanggalLaporan = None
+    periodeTransaksi = None
     unitKerja = None
     alamatUnitKerja = None
+    
+    periodeLaporan = None
+    nomorNasabah = None
+    cabang = None
+    pemilikRekening = None
+    alamat = None
 
-    thrBox = None
-    thbBox = None
+    thrPemilikRekening = None
+    thbPemilikRekening = None
+    thtPemilikRekening = None
+    thlPemilikRekening = None
 
+    thrAlamat = None
     thbAlamat = None
-
-    thrTanggalLaporan = None
-    thlTanggalLaporan = None
-    thbTanggalLaporan = None
-
-    thrPeriodeTransaksi = None
-    thlPeriodeTransaksi = None
-    thbPeriodeTransaksi = None
-    thtPeriodeTransaksi = None
+    thtAlamat = None
+    thlAlamat = None
 
     thrNomorRekening = None
-    thlNomorRekening = None
     thbNomorRekening = None
     thtNomorRekening = None
-
-    thrUnitKerja = None
-    thlUnitKerja = None
-    thbUnitKerja = None
-    thtUnitKerja = None
-
-    thrAlamatUnitKerja = None
-    thlAlamatUnitKerja = None
-    thbAlamatUnitKerja = None
-    thtAlamatUnitKerja = None
+    thlNomorRekening = None
 
     thrNamaProduk = None
-    thlNamaProduk = None
     thbNamaProduk = None
     thtNamaProduk = None
+    thlNamaProduk = None
 
     thrValuta = None
-    thlValuta = None
     thbValuta = None
     thtValuta = None
+    thlValuta = None
+
+    thrTanggalLaporan = None
+    thbTanggalLaporan = None
+    thtTanggalLaporan = None
+    thlTanggalLaporan = None
+
+    thrPeriodeLaporan = None
+    thbPeriodeLaporan = None
+    thtPeriodeLaporan = None
+    thlPeriodeLaporan = None
+
+    thrUnitKerja = None
+    thbUnitKerja = None
+    thtUnitKerja = None
+    thlUnitKerja = None
+
+    thrAlamatUnitKerja = None
+    thbAlamatUnitKerja = None
+    thtAlamatUnitKerja = None
+    thlAlamatUnitKerja = None
     
     data = {}
+    thbHeaderTable = None
+    thbTable = None
+    thrTableCol1 = None
+    thrTableCol2 = None
+    thrTableCol3 = None
+    thrTableCol4 = None
+    thrTableCol5 = None
+    thrTableCol6 = None
+
+    currentRow = 0
+    textData = []
+    textWithCol = {}
+    transactionData = []
     page = 0
     
     for e in imageArray:
         page += 1
+        textData.clear()
+        
         if isinstance(e, str) :
             filename = secure_filename(e)
             file_path = os.path.join(app.config['EXTRACT_FOLDER'], filename)
@@ -142,275 +115,236 @@ def doOcrBri (imageArray, app, bankStatementType) :
         text_ = doEasyOcr(perspectiveCorrectedImage)
 
         for e in text_ :
-            box, text, score = e
+            bbox, text, score = e
+    
+            bbox = [[int(coord[0]), int(coord[1])] for coord in bbox]
+                    
+            rb = bbox[1][0]
+            lb = bbox[0][0]
+            tb = bbox[1][1]
+            bb = bbox[2][1]
+            cw = lb + int(abs(rb - lb) / 2)
+            ch = tb + int(abs(bb - tb) / 2)
             
-            banyakKataYangDiScan += 1
-            
-            if not isBankStatementCorrect:
-                if banyakKataYangDiScan < 7 :
-                    isBankStatementCorrect = isCurrentPageTheRightBankStatementType(bankStatementType, text)
-                
-            lb = box[0][0]
-            rb = box[1][0]
-            tb = box[0][1]
-            bb = box[2][1]
-            
-            if page == 1 : 
-                if 'epada' in text.lower() :
-                    thrBox = lb + int(0.328 * lebarGambar)
-                    continue
-                
-                # pengecekan tanggal laporan    
-                if 'gal' in text.lower() and 'oran' in text.lower() :
-                    thrTanggalLaporan = lb + int(0.228 * lebarGambar)
-                    thlTanggalLaporan = lb + int(0.128 * lebarGambar)
-                    thbTanggalLaporan = tb + int(0.02 * tinggiGambar)
+            if page == 1 :
+                if 'bri' in text.lower() and ch < 0.3 * tinggiGambar:
+                    thlPemilikRekening = lb + int(0.005 * lebarGambar)
+                    thrPemilikRekening = thlPemilikRekening + int(0.34 * lebarGambar)
+                    thtPemilikRekening = tb + int(0.11 * tinggiGambar)
+                    thbPemilikRekening = thtPemilikRekening + int(0.026 * tinggiGambar)
                     
-                # pengecekan periode transaksi
-                if 'ode' in text.lower() and 'sak' in text.lower() :
-                    thrPeriodeTransaksi = lb + int(0.228 * lebarGambar)
-                    thlPeriodeTransaksi = lb + int(0.128 * lebarGambar)
-                    thbPeriodeTransaksi = tb + int(0.025 * tinggiGambar)
-                    thtPeriodeTransaksi = tb - int(0.0005 * tinggiGambar)
+                    thlAlamat = lb + int(0.005 * lebarGambar)
+                    thrAlamat = thlPemilikRekening + int(0.34 * lebarGambar)
+                    thtAlamat = thbPemilikRekening
+                    thbAlamat = thtAlamat + int(0.045 * tinggiGambar)
                     
-                if 'no' in text.lower() and 'rek' in text.lower() :
-                    thrNomorRekening = lb + int(0.24 * lebarGambar)
-                    thlNomorRekening = lb + int(0.123 * lebarGambar)
-                    thbNomorRekening = tb + int(0.025 * tinggiGambar)
-                    thtNomorRekening = tb - int(0.0005 * tinggiGambar)
+                if 'kening' in text.lower() and ch < 0.3 * tinggiGambar :
+                    thlNomorRekening = rb + int(0.08 * lebarGambar)
+                    thrNomorRekening = rb + int(0.3 * lebarGambar)
+                    thtNomorRekening = tb - int(0.005 * tinggiGambar)
+                    thbNomorRekening = bb + int(0.005 * tinggiGambar)
                     
-                if 'ma' in text.lower() and 'prod' in text.lower() :
-                    thrNamaProduk = lb + int(0.24 * lebarGambar)
-                    thlNamaProduk = lb + int(0.123 * lebarGambar)
-                    thbNamaProduk = tb + int(0.025 * tinggiGambar)
-                    thtNamaProduk = tb - int(0.0005 * tinggiGambar)
+                if 'oduk' in text.lower() and ch < 0.4 * tinggiGambar :
+                    thlNamaProduk = rb + int(0.08 * lebarGambar)
+                    thrNamaProduk = rb + int(0.3 * lebarGambar)
+                    thtNamaProduk = tb - int(0.005 * tinggiGambar)
+                    thbNamaProduk = bb + int(0.005 * tinggiGambar)
                     
-                if 'uta' in text.lower() and 'val' in text.lower() :
-                    thrValuta = lb + int(0.24 * lebarGambar)
-                    thlValuta = lb + int(0.123 * lebarGambar)
-                    thbValuta = tb + int(0.025 * tinggiGambar)
-                    thtValuta = tb - int(0.0005 * tinggiGambar)
+                if 'valuta' in text.lower() and ch < 0.4 * tinggiGambar :
+                    thlValuta = rb + int(0.08 * lebarGambar)
+                    thrValuta = rb + int(0.3 * lebarGambar)
+                    thtValuta = tb - int(0.005 * tinggiGambar)
+                    thbValuta = bb + int(0.005 * tinggiGambar)
                     
-                if 'nit' in text.lower() and 'erj' in text.lower() and 'mat' not in text.lower():
-                    thrUnitKerja = lb + int(0.4 * lebarGambar)
-                    thlUnitKerja = lb + int(0.128 * lebarGambar)
-                    thbUnitKerja = tb + int(0.023 * tinggiGambar)
-                    thtUnitKerja = tb - int(0.0005 * tinggiGambar)
+                if 'tang' in text.lower() and ch < 0.2 * tinggiGambar :
+                    thlTanggalLaporan = rb + int(0.03 * lebarGambar)
+                    thrTanggalLaporan = rb + int(0.3 * lebarGambar)
+                    thtTanggalLaporan = tb - int(0.005 * tinggiGambar)
+                    thbTanggalLaporan = bb + int(0.005 * tinggiGambar)
                     
-                if 'nit' in text.lower() and 'erj' in text.lower() and 'mat' in text.lower():
-                    thrAlamatUnitKerja = lb + int(0.4 * lebarGambar)
-                    thlAlamatUnitKerja = lb + int(0.128 * lebarGambar)
-                    thbAlamatUnitKerja = tb + int(0.023 * tinggiGambar)
-                    thtAlamatUnitKerja = tb - int(0.0005 * tinggiGambar)
-                
-                # pengecekan alamat dan pemilik rekening
-                if thrBox != None :
-                    if rb < thrBox :
+                if 'aksi' in text.lower() and ch < 0.3 * tinggiGambar :
+                    thlPeriodeTransaksi = rb + int(0.03 * lebarGambar)
+                    thrPeriodeTransaksi = rb + int(0.3 * lebarGambar)
+                    thtPeriodeTransaksi = tb - int(0.005 * tinggiGambar)
+                    thbPeriodeTransaksi = bb + int(0.005 * tinggiGambar)
+                    
+                if 'kerja' in text.lower() and 'alamat' not in text.lower() and ch < 0.4 * tinggiGambar :
+                    thlUnitKerja = rb + int(0.03 * lebarGambar)
+                    thrUnitKerja = rb + int(0.3 * lebarGambar)
+                    thtUnitKerja = tb - int(0.005 * tinggiGambar)
+                    thbUnitKerja = bb + int(0.005 * tinggiGambar)
+                    
+                if 'alamat' in text.lower() and ch < 0.4 * tinggiGambar :
+                    thlAlamatUnitKerja = rb + int(0.03 * lebarGambar)
+                    thrAlamatUnitKerja = rb + int(0.3 * lebarGambar)
+                    thtAlamatUnitKerja = tb - int(0.005 * tinggiGambar)
+                    thbAlamatUnitKerja = bb + int(0.02 * tinggiGambar)
+                    
+                if thrPemilikRekening != None:
+                    if (
+                        (cw < thrPemilikRekening) 
+                        and (cw > thlPemilikRekening) 
+                        and (ch > thtPemilikRekening)
+                        and (ch < thbPemilikRekening)
+                    ) :
                         if pemilikRekening == None :
                             pemilikRekening = text
                             
-                        elif pemilikRekening != None :
-                            if alamat == None :
-                                alamat = text
-                                thbAlamat = bb + int(0.0005 * tinggiGambar)
+                        else :
+                            if pemilikRekening == None:
+                                pemilikRekening = text
                             
-                            elif thbAlamat >= tb :
-                                alamat = alamat + ' ' + text
-                    
-                if (thrTanggalLaporan != None) :
-                    if (lb > thlTanggalLaporan) and (bb <= thbTanggalLaporan) :
-                        tanggalLaporan = text
-                        
-                if thrPeriodeTransaksi != None :
-                    if (lb > thlPeriodeTransaksi) and (bb <= thbPeriodeTransaksi) and (tb >= thtPeriodeTransaksi) :
+                if thrAlamat != None:
+                    if (
+                        (cw < thrAlamat) 
+                        and (cw > thlAlamat) 
+                        and (ch > thtAlamat)
+                        and (ch < thbAlamat)
+                    ) :
+                        if alamat == None :
+                            alamat = text.strip()
+                            
+                        else : 
+                            alamat = alamat + ' ' + text.strip()
+                
+                if thrNomorRekening != None:
+                    if (
+                        (cw < thrNomorRekening) 
+                        and (cw > thlNomorRekening) 
+                        and (ch > thtNomorRekening)
+                        and (ch < thbNomorRekening)
+                    ) :
+                        if nomorRekening == None :
+                            nomorRekening = text.strip()
+                            
+                if thrNamaProduk != None:
+                    if (
+                        (cw < thrNamaProduk) 
+                        and (cw > thlNamaProduk) 
+                        and (ch > thtNamaProduk)
+                        and (ch < thbNamaProduk)
+                    ) :
+                        if namaProduk == None :
+                            namaProduk = text.strip()
+                            
+                if thrValuta != None:
+                    if (
+                        (cw < thrValuta) 
+                        and (cw > thlValuta) 
+                        and (ch > thtValuta)
+                        and (ch < thbValuta)
+                    ) :
+                        if valuta == None :
+                            valuta = text.strip()
+                            
+                if thrTanggalLaporan != None:
+                    if (
+                        (cw < thrTanggalLaporan) 
+                        and (cw > thlTanggalLaporan) 
+                        and (ch > thtTanggalLaporan)
+                        and (ch < thbTanggalLaporan)
+                    ) :
+                        if tanggalLaporan == None :
+                            tanggalLaporan = text.strip()
+                            
+                if thrPeriodeTransaksi != None:
+                    if (
+                        (cw < thrPeriodeTransaksi) 
+                        and (cw > thlPeriodeTransaksi) 
+                        and (ch > thtPeriodeTransaksi)
+                        and (ch < thbPeriodeTransaksi)
+                    ) :
                         if periodeTransaksi == None :
-                            periodeTransaksi = text
+                            periodeTransaksi = text.strip()
                             
                         else :
-                            periodeTransaksi = periodeTransaksi + ' - ' + text
+                            periodeTransaksi = periodeTransaksi + ' - ' + text.strip()
                             
-                if thrNomorRekening != None: 
-                    if (lb > thlNomorRekening) and (bb <= thbNomorRekening) and (tb >= thtNomorRekening) and (rb <= thrNomorRekening):
-                        nomorRekening = text
-                        
-                if thrNamaProduk != None: 
-                    if (lb > thlNamaProduk) and (bb <= thbNamaProduk) and (tb >= thtNamaProduk) and (rb <= thrNamaProduk):
-                        namaProduk = text
-                        
-                if thrUnitKerja != None: 
-                    if (lb > thlUnitKerja) and (bb <= thbUnitKerja) and (tb >= thtUnitKerja) and (rb <= thrUnitKerja):
-                        unitKerja = text
-                        
-                if thrValuta != None: 
-                    if (lb > thlValuta) and (bb <= thbValuta) and (tb >= thtValuta) and (rb <= thrValuta):
-                        valuta = text
-                        
-                if thrAlamatUnitKerja != None: 
-                    if (lb > thlAlamatUnitKerja) and (bb <= thbAlamatUnitKerja) and (tb >= thtAlamatUnitKerja) and (rb <= thrAlamatUnitKerja):
-                        if alamatUnitKerja == None:
-                            alamatUnitKerja = text
+                if thrUnitKerja != None:
+                    if (
+                        (cw < thrUnitKerja) 
+                        and (cw > thlUnitKerja) 
+                        and (ch > thtUnitKerja)
+                        and (ch < thbUnitKerja)
+                    ) :
+                        if unitKerja == None :
+                            unitKerja = text.strip()
                             
-                        else :
-                            alamatUnitKerja = alamatUnitKerja + ' ' + text
-            
-            # ini menyimpan data perbarisnya yang nanti akan dimasukkan ke dalam 
-            # variable transaction data
-            
-            # melakukan pengecekan hingga nanti mendapatkan tabel transaksi
-            if 'ance' in text.lower() and 'edit' in textBefore.lower() and 'osi' not in text.lower():
-                startGetTransactionData = True
-                continue
-            
-            # ketika sudah masuk ke bagian tabel transaksi, maka akan mulai mengambil data
-            # dan block code ini akan dieksekusi
-            if startGetTransactionData:
+                if thrAlamatUnitKerja != None:
+                    if (
+                        (cw < thrAlamatUnitKerja) 
+                        and (cw > thlAlamatUnitKerja) 
+                        and (ch > thtAlamatUnitKerja)
+                        and (ch < thbAlamatUnitKerja)
+                    ) :
+                        if alamatUnitKerja == None :
+                            alamatUnitKerja = text.strip()
+                    
+            if 'tanggal' in text.lower() and 'ran' in text.lower() and currentRow == 0 and ch > 0.3 * tinggiGambar:
+                thbHeaderTable = tb + int(0.025 * tinggiGambar)
+                thbTable = tb + int(0.49 * tinggiGambar)
+                thrTableCol1 = rb + int(0.005 * lebarGambar)
+                thrTableCol2 = thrTableCol1 + int(0.263 * lebarGambar)
+                thrTableCol3 = thrTableCol2 + int(0.069 * lebarGambar)
+                thrTableCol4 = thrTableCol3 + int(0.154 * lebarGambar)
+                thrTableCol5 = thrTableCol4 + int(0.152 * lebarGambar)
                 
-                # ini adalah kondisi ketika sudah masuk ke akhir halaman
-                if isSaldoVisited and lb > titikKiriKredit :
-                    rowData.append(filename)
-                    transactionData.append(rowData.copy())
-                    rowData.clear()
-                    startGetTransactionData = False
-                    isTanggalTransaksiVisited = False
-                    isUraianTransaksiVisited = False
-                    isTellerVisited = False
-                    isDebetVisited = False
-                    isKreditVisited = False
-                    isSaldoVisited = False
-                    continue
+            if thbHeaderTable != None and tb > thbHeaderTable and ch < thbTable :
+                if currentRow == 0 :
+                    currentRow += 1
+
+                textWithCol['text'] = text
                 
-                if len(transactionData) > 0 and 'aldo' in text.lower() and 'al' in text.lower() :
-                    rowData.append(filename)
-                    transactionData.append(rowData.copy())
-                    rowData.clear()
-                    startGetTransactionData = False
-                    isTanggalTransaksiVisited = False
-                    isUraianTransaksiVisited = False
-                    isTellerVisited = False
-                    isDebetVisited = False
-                    isKreditVisited = False
-                    isSaldoVisited = False
-                    continue
+                if (cw < thrTableCol1) :
+                    currentRow += 1    
+                    textWithCol['col'] = 1
+                    textWithCol['row'] = currentRow
                 
-                if isTanggalTransaksiVisited and len(rowData) >= 6 and titikKananTanggalTransaksi < lb and rb < titikKiriTeller :
-                    rowData[1] = str(rowData[1]) + '\n' + text
-                    titikKiriUraianTransaksi = lb
-                    titikKananUraianTransaksi = rb
+                if (cw > thrTableCol1 and cw < thrTableCol2) :
+                    textWithCol['col'] = 2
+                    textWithCol['row'] = currentRow
                     
-                if isTanggalTransaksiVisited and len(rowData) >= 6 and rb < titikKiriUraianTransaksi:
-                    rowData.append(filename)
-                    transactionData.append(rowData.copy())
-                    rowData.clear()
-                    isTanggalTransaksiVisited = False
-                    isUraianTransaksiVisited = False
-                    isTellerVisited = False
-                    isDebetVisited = False
-                    isKreditVisited = False
-                    isSaldoVisited = False  
+                if (cw > thrTableCol2 and cw < thrTableCol3) :
+                    textWithCol['col'] = 3
+                    textWithCol['row'] = currentRow
                     
-                    # memasukkan data
-                    titikKiriTanggalTransaksi = lb
-                    titikKananTanggalTransaksi = rb
-                    rowData.append(cleanTanggalTransaksiBri(text))
-                    isTanggalTransaksiVisited = True
-                    continue
+                if (cw > thrTableCol3 and cw < thrTableCol4) :
+                    textWithCol['col'] = 4
+                    textWithCol['row'] = currentRow
                     
-                if not isTanggalTransaksiVisited:
-                    titikKiriTanggalTransaksi = lb
-                    titikKananTanggalTransaksi = rb
-                    thresholdUraianTransaksi = int(titikKananTanggalTransaksi + (0.272 * lebarGambar))
-                    rowData.append(cleanTanggalTransaksiBri(text))
-                    isTanggalTransaksiVisited = True
+                if (cw > thrTableCol4 and cw < thrTableCol5) :
+                    textWithCol['col'] = 5
+                    textWithCol['row'] = currentRow
                     
-                elif not isUraianTransaksiVisited:
-                    titikKiriUraianTransaksi = lb
-                    titikKananUraianTransaksi = rb
-                    rowData.append(text)
-                    isUraianTransaksiVisited = True
+                if (cw > thrTableCol5) :
+                    textWithCol['col'] = 6
+                    textWithCol['row'] = currentRow
                     
-                elif not isTellerVisited:
-                    if lb > thresholdUraianTransaksi :
-                        titikKiriTeller = lb
-                        titikKananTeller = rb
-                        rowData.append(text)
-                        isTellerVisited = True
-                    
-                    else:
-                        rowData[1] = str(rowData[1]) + '\n' + text
-                        titikKiriUraianTransaksi = lb
-                        titikKananUraianTransaksi = rb
-                        
-                elif not isDebetVisited:
-                    titikKiriDebet = lb
-                    titikKananDebet = rb
-                    try : 
-                        rowData.append(cleanDebitBri(text))
-                    except ValueError as e :
-                        return exceptionHandler(
-                            f'Gambar {filename} - Gagal melakukan cleaning data pada debet ketika text = {text}. Silakan upload foto kembali dengan kualitas yang lebih baik.',
-                            400,
-                            e
-                        )
-                        
-                    isDebetVisited = True
-                    
-                elif not isKreditVisited:
-                    titikKiriKredit = lb
-                    titikKananKredit = rb
-                    try : 
-                        rowData.append(cleanKreditBri(text))
-                    except ValueError as e :
-                        return exceptionHandler(
-                            f'Gambar {filename} - Gagal melakukan cleaning data pada kredit ketika text = {text}. Silakan upload foto kembali dengan kualitas yang lebih baik.',
-                            400,
-                            e
-                        )
-                    isKreditVisited = True
-                    
-                elif not isSaldoVisited:
-                    titikKiriSaldo = lb
-                    titikKananSaldo = rb
-                    try : 
-                        rowData.append(cleanSaldoBri(text))
-                    except ValueError as e :
-                        return exceptionHandler(
-                            f'Gambar {filename} - Gagal melakukan cleaning data pada saldo ketika text = {text}. Silakan upload foto kembali dengan kualitas yang lebih baik.',
-                            400,
-                            e
-                        )
-                    
-                    isSaldoVisited = True
-                
-            textBefore = text
-            
-            if 'sing' in text.lower() and 'ance' in text.lower() :
-                startGetSummary = True 
-                continue
-            
-            if startGetSummary :
-                summaryDataCount += 1
-                summaryData.append(cleanSummaryBri(text))
-                
-                if summaryDataCount == 4 :
-                    break
-                
-            if 'bilang' in text.lower() :
-                startGetSummary = False
-                continue
-            
-        if not isBankStatementCorrect :
-            return 400
+                textData.append(textWithCol.copy())
+        # if not isBankStatementCorrect :
+        #     return 400
+        
+        transactionData.extend(briGetTransactionData(textData, filename))
+    
+    pemilikRekening = None
+    alamat = None
+    nomorRekening = None
+    namaProduk = None
+    valuta = None
+    tanggalLaporan = None
+    periodeTransaksi = None
+    unitKerja = None
+    alamatUnitKerja = None
     
     data['pemilik_rekening'] = pemilikRekening
-    data['tanggal_laporan'] = tanggalLaporan
-    data['periode_transaksi'] = periodeTransaksi
     data['alamat'] = alamat
     data['nomor_rekening'] = nomorRekening
     data['nama_produk'] = namaProduk
     data['valuta'] = valuta
-    data['unit_kerja'] = unitKerja
-    data['alamat_unit_kerja'] = alamatUnitKerja
+    data['tanggal_laporan'] = tanggalLaporan
+    data['periode_transaksi'] = periodeTransaksi
     data['transaction_data'] = transactionData
-    data['summary_data'] = summaryData
-    
+    data['total_debit'] = getTotalDebit(transactionData)
+    data['total_kredit'] = getTotalKredit(transactionData)
+    data['analytics_data'] = briAnalysisData(data['transaction_data'])
     return data

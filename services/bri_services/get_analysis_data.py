@@ -1,9 +1,7 @@
 import statistics
 from format_currency import format_currency
 
-from services.permata_services.convert_to_float import convertToFloat
-
-def permataAnalysisData (transactionData) :
+def briAnalysisData (transactionData) :
     freqDebit = 0
     arrDebit = []
     
@@ -11,22 +9,16 @@ def permataAnalysisData (transactionData) :
     arrKredit = []
     
     for e in transactionData :
-        if e['debet'] != None :
+        if e['debit'] != None :
             freqDebit += 1
-            convertedDebet = convertToFloat(e['debet'])
+            convertedDebet = float(e['debit'].replace(',', '').replace('.', '').replace('Rp ', '')) / 100
             arrDebit.append(convertedDebet)
             
         
         if e['kredit'] != None :
             freqKredit += 1
-            convertedKredit = convertToFloat(e['kredit'])
+            convertedKredit = float(e['kredit'].replace(',', '').replace('.', '').replace('Rp ', '')) / 100
             arrKredit.append(convertedKredit)
-    
-    if (len(arrDebit) == 0) :
-        arrDebit.append(0)
-        
-    if (len(arrKredit) == 0) :
-        arrKredit.append(0)
     
     return {
         'freq_debit' : freqDebit,
