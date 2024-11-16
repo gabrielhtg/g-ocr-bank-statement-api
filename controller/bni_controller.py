@@ -53,8 +53,13 @@ def bniController(app) :
             'pemilik_rekening' : data['pemilik_rekening'],
             'alamat' : data['alamat'],
             'transaction_data' : data['transaction_data'],
+            'total_debet_by_ocr' : data['total_debet_by_ocr'],
+            'total_kredit_by_ocr' : data['total_kredit_by_ocr'],
+            'ending_balance' : data['ending_balance'],
             'total_debet' : data['total_debet'],
-            'total_kredit' : data['total_kredit'],
+            'total_credit' : data['total_credit'],
+            'total_debet_amount' : data['total_debet_amount'],
+            'total_credit_amount' : data['total_credit_amount'],
             'analytics_data': data['analytics_data']    
         }
     })

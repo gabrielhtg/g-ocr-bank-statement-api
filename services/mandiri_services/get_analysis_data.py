@@ -31,6 +31,7 @@ def mandiriAnalysisData (transactionData) :
         'avg_kredit' : format_currency(statistics.mean(arrKredit), currency_code='IDR'),
         'min_kredit' : format_currency(min(arrKredit), currency_code='IDR'),
         'max_kredit' : format_currency(max(arrKredit), currency_code='IDR'),
-        'net_balance' : format_currency(sum(arrKredit) - sum(arrDebit), currency_code='IDR')
+        'net_balance' : format_currency(sum(arrKredit) - sum(arrDebit), currency_code='IDR'),
+        'total_transaction' : freqDebit + freqKredit
     }
     

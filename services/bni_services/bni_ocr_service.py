@@ -20,6 +20,11 @@ def doOcrBni (imageArray, app, bankStatementType) :
     akunRekening = None
     tipeAkun = None
     periodeRekening = None
+    endingBalance = None
+    totalDebet = None
+    totalCredit = None
+    totalDebetAmount = None
+    totalCreditAmount = None
 
     thrPemilikRekening = None
     thtPemilikRekening = None
@@ -55,20 +60,35 @@ def doOcrBni (imageArray, app, bankStatementType) :
     thrTableCol5 = None
     thrTableCol6 = None
     thrTableCol7 = None
-    thrTableCol8 = None
 
     currentRow = 0
     textData = []
     textWithCol = {}
 
-    postingData = None
-    effectiveDate = None
-    branch = None
-    journal = None
-    transactionDescription = None
-    amount = None
-    debitCredit = None
-    balance = None
+    thrEndingBalance = None
+    thtEndingBalance = None
+    thbEndingBalance = None
+    thlEndingBalance = None
+
+    thrTotalDebet = None
+    thtTotalDebet = None
+    thbTotalDebet = None
+    thlTotalDebet = None
+
+    thrTotalCredit = None
+    thtTotalCredit = None
+    thbTotalCredit = None
+    thlTotalCredit = None
+
+    thrTotalDebetAmount = None
+    thtTotalDebetAmount = None
+    thbTotalDebetAmount = None
+    thlTotalDebetAmount = None
+
+    thrTotalCreditAmount = None
+    thtTotalCreditAmount = None
+    thbTotalCreditAmount = None
+    thlTotalCreditAmount = None
     
     transactionData = []
     data = {}
@@ -190,7 +210,7 @@ def doOcrBni (imageArray, app, bankStatementType) :
                             
                         else :
                             periodeRekening = periodeRekening + ' ' + text
-                
+            
             if 'ting' in text.lower() and 'te' in text.lower() and currentRow == 0:
                 thbHeaderTable = tb + int(0.015 * tinggiGambar)
                 thbTable = tb + int(0.575 * tinggiGambar)
@@ -202,14 +222,86 @@ def doOcrBni (imageArray, app, bankStatementType) :
                 thrTableCol6 = thrTableCol5 + int(0.11 * lebarGambar)
                 thrTableCol7 = thrTableCol6 + int(0.045 * lebarGambar)
                 
-                # cv.line(
-                #         img,
-                #         (thrTableCol1, thbHeaderTable),
-                #         (thrTableCol1, tinggiGambar),
-                #         (0, 255, 0),
-                #         2
-                #     )
-
+            if (page == len(imageArray)) :        
+                if 'ending' in text.lower() :
+                    thbTable = tb - int(0.005 * tinggiGambar)
+                    thtEndingBalance = thbTable
+                    thrEndingBalance = lebarGambar - int(0.005 * lebarGambar)
+                    thlEndingBalance = lb
+                    thbEndingBalance = thtEndingBalance + int(0.02 * tinggiGambar)
+                    
+                if 'total' in text.lower() and 'debet' in text.lower():
+                    thtTotalDebet = thbTable + int(0.022 * tinggiGambar)
+                    thrTotalDebet = rb + int(0.1 * lebarGambar)
+                    thlTotalDebet = rb + int(0.01 * lebarGambar)
+                    thbTotalDebet = thtTotalDebet + int(0.02 * tinggiGambar)
+                    
+                    thtTotalDebetAmount = thbTable + int(0.022 * tinggiGambar)
+                    thlTotalDebetAmount = thrTotalDebet
+                    thrTotalDebetAmount = rb + int(0.3 * lebarGambar)
+                    thbTotalDebetAmount = thtTotalDebetAmount + int(0.02 * tinggiGambar)
+                    
+                if 'total' in text.lower() and 'credit' in text.lower():
+                    thtTotalCredit = thbTable + int(0.042 * tinggiGambar)
+                    thrTotalCredit = rb + int(0.1 * lebarGambar)
+                    thlTotalCredit = rb + int(0.01 * lebarGambar)
+                    thbTotalCredit = thtTotalCredit + int(0.02 * tinggiGambar)
+                    
+                    thtTotalCreditAmount = thtTotalCredit
+                    thlTotalCreditAmount = thrTotalCredit
+                    thrTotalCreditAmount = rb + int(0.3 * lebarGambar)
+                    thbTotalCreditAmount = thbTotalCredit
+                    
+                if thrEndingBalance != None:
+                    if (
+                        (cw < thrEndingBalance) 
+                        and (ch <= thbEndingBalance) 
+                        and (ch >= thtEndingBalance)
+                        and (cw > thlEndingBalance)
+                    ) :
+                        if endingBalance == None :
+                            endingBalance = text
+                            
+                if thrTotalDebet != None:
+                    if (
+                        (cw < thrTotalDebet) 
+                        and (ch <= thbTotalDebet) 
+                        and (ch >= thtTotalDebet)
+                        and (cw > thlTotalDebet)
+                    ) :
+                        if totalDebet == None :
+                            totalDebet = text
+                            
+                if thrTotalCredit != None:
+                    if (
+                        (cw < thrTotalCredit) 
+                        and (ch <= thbTotalCredit) 
+                        and (ch >= thtTotalCredit)
+                        and (cw > thlTotalCredit)
+                    ) :
+                        if totalCredit == None :
+                            totalCredit = text
+                            
+                if thrTotalCreditAmount != None:
+                    if (
+                        (cw < thrTotalCreditAmount) 
+                        and (ch <= thbTotalCreditAmount) 
+                        and (ch >= thtTotalCreditAmount)
+                        and (cw > thlTotalCreditAmount)
+                    ) :
+                        if totalCreditAmount == None :
+                            totalCreditAmount = text
+                
+                if thrTotalDebetAmount != None:
+                    if (
+                        (cw < thrTotalDebetAmount) 
+                        and (ch <= thbTotalDebetAmount) 
+                        and (ch >= thtTotalDebetAmount)
+                        and (cw > thlTotalDebetAmount)
+                    ) :
+                        if totalDebetAmount == None :
+                            totalDebetAmount = text
+                
             if thbHeaderTable != None and ch > thbHeaderTable :
                 textWithCol['text'] = text
                 
@@ -272,7 +364,12 @@ def doOcrBni (imageArray, app, bankStatementType) :
     data['pemilik_rekening'] = pemilikRekening
     data['alamat'] = alamat
     data['transaction_data'] = transactionData
-    data['total_debet'] = getTotalDebit(transactionData)
-    data['total_kredit'] = getTotalKredit(transactionData)
+    data['ending_balance'] = endingBalance
+    data['total_debet'] = totalDebet
+    data['total_credit'] = totalCredit
+    data['total_debet_amount'] = totalDebetAmount
+    data['total_credit_amount'] = totalCreditAmount
+    data['total_debet_by_ocr'] = getTotalDebit(transactionData)
+    data['total_kredit_by_ocr'] = getTotalKredit(transactionData)
     data['analytics_data'] = bniAnalysisData(data['transaction_data'])
     return data
