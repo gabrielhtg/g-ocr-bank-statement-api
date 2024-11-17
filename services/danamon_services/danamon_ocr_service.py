@@ -200,59 +200,73 @@ def doOcrDanamon (imageArray, app, bankStatementType) :
                                     
                             else :
                                 alamat = alamat + ' ' + text
+            try :    
+                if ('efektif' in text.lower() and ch > int(0.5 * tinggiGambar)) :
+                    break
                 
-            if ('efektif' in text.lower() and ch > int(0.5 * tinggiGambar)) :
-                break
-            
-            if ('akhir' in text.lower() and 'aporan' in text.lower()) :
-                break
-            
-            if 'ket' in text.lower() and 'rang' in text.lower() and currentRow == 0:
-                thbHeaderTable = tb + int(0.021 * tinggiGambar)
-                thbTable = tb + int(0.575 * tinggiGambar)
-                thrTableCol1 = rb - int(0.115 * tinggiGambar)
-                thrTableCol2 = thrTableCol1 + int(0.029 * tinggiGambar)
-                thrTableCol3 = thrTableCol2 + int(0.13 * tinggiGambar)
-                thrTableCol4 = thrTableCol3 + int(0.12 * tinggiGambar)
-                thrTableCol5 = thrTableCol4 + int(0.094 * tinggiGambar)
-                thrTableCol6 = thrTableCol5 + int(0.1 * tinggiGambar)
+                if ('akhir' in text.lower() and 'aporan' in text.lower()) :
+                    break
                 
-            if thbHeaderTable != None and tb > thbHeaderTable and ch < thbTable :
-                if currentRow == 0 :
-                    currentRow += 1
+                if 'ket' in text.lower() and 'rang' in text.lower() and currentRow == 0:
+                    thbHeaderTable = tb + int(0.021 * tinggiGambar)
+                    thbTable = tb + int(0.575 * tinggiGambar)
+                    thrTableCol1 = rb - int(0.115 * tinggiGambar)
+                    thrTableCol2 = thrTableCol1 + int(0.029 * tinggiGambar)
+                    thrTableCol3 = thrTableCol2 + int(0.13 * tinggiGambar)
+                    thrTableCol4 = thrTableCol3 + int(0.12 * tinggiGambar)
+                    thrTableCol5 = thrTableCol4 + int(0.094 * tinggiGambar)
+                    thrTableCol6 = thrTableCol5 + int(0.1 * tinggiGambar)
+                    
+                if thbHeaderTable != None and tb > thbHeaderTable and ch < thbTable :
+                    if currentRow == 0 :
+                        currentRow += 1
 
-                textWithCol['text'] = text
-                
-                if (cw < thrTableCol1) :
-                    currentRow += 1    
-                    textWithCol['col'] = 1
-                    textWithCol['row'] = currentRow
-                
-                if (cw > thrTableCol1 and cw < thrTableCol2) :
-                    textWithCol['col'] = 2
-                    textWithCol['row'] = currentRow
+                    textWithCol['text'] = text
                     
-                if (cw > thrTableCol2 and cw < thrTableCol3) :
-                    textWithCol['col'] = 3
-                    textWithCol['row'] = currentRow
+                    if (cw < thrTableCol1) :
+                        currentRow += 1    
+                        textWithCol['col'] = 1
+                        textWithCol['row'] = currentRow
                     
-                if (cw > thrTableCol3 and cw < thrTableCol4) :
-                    textWithCol['col'] = 4
-                    textWithCol['row'] = currentRow
+                    if (cw > thrTableCol1 and cw < thrTableCol2) :
+                        textWithCol['col'] = 2
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol2 and cw < thrTableCol3) :
+                        textWithCol['col'] = 3
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol3 and cw < thrTableCol4) :
+                        textWithCol['col'] = 4
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol4 and cw < thrTableCol5) :
+                        textWithCol['col'] = 5
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol5 and cw < thrTableCol6) :
+                        textWithCol['col'] = 6
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol6) :
+                        textWithCol['col'] = 7
+                        textWithCol['row'] = currentRow
+                        
+                    textData.append(textWithCol.copy())
                     
-                if (cw > thrTableCol4 and cw < thrTableCol5) :
-                    textWithCol['col'] = 5
-                    textWithCol['row'] = currentRow
-                    
-                if (cw > thrTableCol5 and cw < thrTableCol6) :
-                    textWithCol['col'] = 6
-                    textWithCol['row'] = currentRow
-                    
-                if (cw > thrTableCol6) :
-                    textWithCol['col'] = 7
-                    textWithCol['row'] = currentRow
-                    
-                textData.append(textWithCol.copy())
+            except TypeError as e:
+                return exceptionHandler(
+                    f'An error occurred with image {filename}. Try rephotographing this image more clearly!',
+                    400,
+                    e
+                )
+            
+            except ValueError as e:
+                return exceptionHandler(
+                    f'An error occurred with image {filename}. Try rephotographing this image more clearly!',
+                    400,
+                    e
+                ) 
         # if not isBankStatementCorrect :
         #     return 400
         

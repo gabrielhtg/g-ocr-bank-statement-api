@@ -278,58 +278,73 @@ def doOcrCimb (imageArray, app, bankStatementType) :
                 ('ma' in text.lower() and 'kas' in text.lower())
                 ) :
                     break
+            
+            try :        
+                if 'rai' in text.lower() and 'tran' in text.lower() and currentRow == 0:
+                    thbHeaderTable = tb + int(0.028 * tinggiGambar)
+                    thbTable = tb + int(0.575 * tinggiGambar)
+                    thrTableCol1 = rb - int(0.16 * tinggiGambar)
+                    thrTableCol2 = thrTableCol1 + int(0.08 * tinggiGambar)
+                    thrTableCol3 = thrTableCol2 + int(0.18 * tinggiGambar)
+                    thrTableCol4 = thrTableCol3 + int(0.07 * tinggiGambar)
+                    thrTableCol5 = thrTableCol4 + int(0.09 * tinggiGambar)
+                    thrTableCol6 = thrTableCol5 + int(0.08 * tinggiGambar)
                     
-            if 'rai' in text.lower() and 'tran' in text.lower() and currentRow == 0:
-                thbHeaderTable = tb + int(0.028 * tinggiGambar)
-                thbTable = tb + int(0.575 * tinggiGambar)
-                thrTableCol1 = rb - int(0.16 * tinggiGambar)
-                thrTableCol2 = thrTableCol1 + int(0.08 * tinggiGambar)
-                thrTableCol3 = thrTableCol2 + int(0.18 * tinggiGambar)
-                thrTableCol4 = thrTableCol3 + int(0.07 * tinggiGambar)
-                thrTableCol5 = thrTableCol4 + int(0.09 * tinggiGambar)
-                thrTableCol6 = thrTableCol5 + int(0.08 * tinggiGambar)
-                
-            if thbHeaderTable != None and tb > thbHeaderTable and bb < thbTable :
-                if currentRow == 0 :
-                    currentRow += 1
-                
-                if (cw < thrTableCol1) :
-                    if 'total' in text.lower() :
-                        thbTable = tb
-                        nextPage = False
-                        continue
+                if thbHeaderTable != None and tb > thbHeaderTable and bb < thbTable :
+                    if currentRow == 0 :
+                        currentRow += 1
                     
-                    currentRow += 1    
-                    textWithCol['col'] = 1
-                    textWithCol['row'] = currentRow
-                
-                if (cw > thrTableCol1 and cw < thrTableCol2) :
-                    textWithCol['col'] = 2
-                    textWithCol['row'] = currentRow
+                    if (cw < thrTableCol1) :
+                        if 'total' in text.lower() :
+                            thbTable = tb
+                            nextPage = False
+                            continue
+                        
+                        currentRow += 1    
+                        textWithCol['col'] = 1
+                        textWithCol['row'] = currentRow
                     
-                if (cw > thrTableCol2 and cw < thrTableCol3) :
-                    textWithCol['col'] = 3
-                    textWithCol['row'] = currentRow
-                    
-                if (cw > thrTableCol3 and cw < thrTableCol4) :
-                    textWithCol['col'] = 4
-                    textWithCol['row'] = currentRow
-                    
-                if (cw > thrTableCol4 and cw < thrTableCol5) :
-                    textWithCol['col'] = 5
-                    textWithCol['row'] = currentRow
-                    
-                if (cw > thrTableCol5 and cw < thrTableCol6) :
-                    textWithCol['col'] = 6
-                    textWithCol['row'] = currentRow
-                    
-                if (cw > thrTableCol6) :
-                    textWithCol['col'] = 7
-                    textWithCol['row'] = currentRow
-                    
-                textWithCol['text'] = text
-                    
-                textData.append(textWithCol.copy())
+                    if (cw > thrTableCol1 and cw < thrTableCol2) :
+                        textWithCol['col'] = 2
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol2 and cw < thrTableCol3) :
+                        textWithCol['col'] = 3
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol3 and cw < thrTableCol4) :
+                        textWithCol['col'] = 4
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol4 and cw < thrTableCol5) :
+                        textWithCol['col'] = 5
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol5 and cw < thrTableCol6) :
+                        textWithCol['col'] = 6
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol6) :
+                        textWithCol['col'] = 7
+                        textWithCol['row'] = currentRow
+                        
+                    textWithCol['text'] = text
+                        
+                    textData.append(textWithCol.copy())
+            
+            except TypeError as e:
+                return exceptionHandler(
+                    f'An error occurred with image {filename}. Try rephotographing this image more clearly!',
+                    400,
+                    e
+                )
+            
+            except ValueError as e:
+                return exceptionHandler(
+                    f'An error occurred with image {filename}. Try rephotographing this image more clearly!',
+                    400,
+                    e
+                ) 
         # if not isBankStatementCorrect :
         #     return 400
         

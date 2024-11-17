@@ -325,124 +325,139 @@ def doOcrBri (imageArray, app, bankStatementType) :
                     ) :
                         if alamatUnitKerja == None :
                             alamatUnitKerja = text.strip()
-                    
-            if 'tanggal' in text.lower() and 'ran' in text.lower() and currentRow == 0 and ch > 0.3 * tinggiGambar:
-                thbHeaderTable = tb + int(0.025 * tinggiGambar)
-                thbTable = tb + int(0.49 * tinggiGambar)
-                thrTableCol1 = rb + int(0.005 * lebarGambar)
-                thrTableCol2 = thrTableCol1 + int(0.263 * lebarGambar)
-                thrTableCol3 = thrTableCol2 + int(0.069 * lebarGambar)
-                thrTableCol4 = thrTableCol3 + int(0.154 * lebarGambar)
-                thrTableCol5 = thrTableCol4 + int(0.152 * lebarGambar)
             
-            if page > 1 :
-                if 'tanggal' in text.lower() and 'ran' in text.lower() :
+            try :       
+                if 'tanggal' in text.lower() and 'ran' in text.lower() and currentRow == 0 and ch > 0.3 * tinggiGambar:
                     thbHeaderTable = tb + int(0.025 * tinggiGambar)
-                    
+                    thbTable = tb + int(0.49 * tinggiGambar)
                     thrTableCol1 = rb + int(0.005 * lebarGambar)
                     thrTableCol2 = thrTableCol1 + int(0.263 * lebarGambar)
                     thrTableCol3 = thrTableCol2 + int(0.069 * lebarGambar)
                     thrTableCol4 = thrTableCol3 + int(0.154 * lebarGambar)
                     thrTableCol5 = thrTableCol4 + int(0.152 * lebarGambar)
-                    
-                if 'saldo awal' in text.lower() :
-                    thbTable = tb + int(0.005 * tinggiGambar)
-                    thtTotalTransaksiDebit = thtSaldoAwal
-                    thtTotalTransaksiKredit = thtSaldoAwal
-                    thtSaldoAkhir = thtSaldoAwal
-                    
-                    thtSaldoAwal = bb + int(0.013 * tinggiGambar)
-                    thlSaldoAwal = lb - int(0.073 * lebarGambar)
-                    thrSaldoAwal = rb + int(0.073 * lebarGambar) 
-                    thbSaldoAwal = thtSaldoAwal + int(0.02 * tinggiGambar) 
-                    
-                    thlTotalTransaksiDebit = thrSaldoAwal
-                    thrTotalTransaksiDebit = thrSaldoAwal + int(0.23 * lebarGambar) 
-                    thtTotalTransaksiDebit = bb + int(0.013 * tinggiGambar)
-                    thbTotalTransaksiDebit = thtSaldoAwal + int(0.02 * tinggiGambar)
-                    
-                    thlTotalTransaksiKredit = thrTotalTransaksiDebit
-                    thrTotalTransaksiKredit = thrTotalTransaksiDebit + int(0.21 * lebarGambar) 
-                    thtTotalTransaksiKredit = bb + int(0.013 * tinggiGambar)
-                    thbTotalTransaksiKredit = thtSaldoAwal + int(0.02 * tinggiGambar)
-                    
-                    thlSaldoAkhir = thrTotalTransaksiKredit
-                    thrSaldoAkhir = thrTotalTransaksiKredit + int(0.28 * lebarGambar) 
-                    thtSaldoAkhir = bb + int(0.013 * tinggiGambar)
-                    thbSaldoAkhir = thtSaldoAwal + int(0.02 * tinggiGambar)
-                    
-                if thrSaldoAwal != None:
-                    if (
-                        (cw < thrSaldoAwal) 
-                        and (cw > thlSaldoAwal) 
-                        and (ch > thtSaldoAwal)
-                        and (ch < thbSaldoAwal)
-                    ) :
-                        if saldoAwal == None :
-                            saldoAwal = format_currency(convertToFloat(text))
-                            
-                if thrTotalTransaksiDebit != None:
-                    if (
-                        (cw < thrTotalTransaksiDebit) 
-                        and (cw > thlTotalTransaksiDebit) 
-                        and (ch > thtTotalTransaksiDebit)
-                        and (ch < thbTotalTransaksiDebit)
-                    ) :
-                        if totalTransaksiDebit == None :
-                            totalTransaksiDebit = format_currency(convertToFloat(text))
-                            
-                if thrTotalTransaksiKredit != None:
-                    if (
-                        (cw < thrTotalTransaksiKredit) 
-                        and (cw > thlTotalTransaksiKredit) 
-                        and (ch > thtTotalTransaksiKredit)
-                        and (ch < thbTotalTransaksiKredit)
-                    ) :
-                        if totalTransaksiKredit == None :
-                            totalTransaksiKredit = format_currency(convertToFloat(text))
-                            
-                if thrSaldoAkhir != None:
-                    if (
-                        (cw < thrSaldoAkhir) 
-                        and (cw > thlSaldoAkhir) 
-                        and (ch > thtSaldoAkhir)
-                        and (ch < thbSaldoAkhir)
-                    ) :
-                        if saldoAkhir == None :
-                            saldoAkhir = format_currency(convertToFloat(text))
-                    
-            if thbHeaderTable != None and tb > thbHeaderTable and ch < thbTable :
-                # if currentRow == 0 :
-                #     currentRow += 1
+                
+                if page > 1 :
+                    if 'tanggal' in text.lower() and 'ran' in text.lower() :
+                        thbHeaderTable = tb + int(0.025 * tinggiGambar)
+                        
+                        thrTableCol1 = rb + int(0.005 * lebarGambar)
+                        thrTableCol2 = thrTableCol1 + int(0.263 * lebarGambar)
+                        thrTableCol3 = thrTableCol2 + int(0.069 * lebarGambar)
+                        thrTableCol4 = thrTableCol3 + int(0.154 * lebarGambar)
+                        thrTableCol5 = thrTableCol4 + int(0.152 * lebarGambar)
+                        
+                    if 'saldo awal' in text.lower() :
+                        thbTable = tb + int(0.005 * tinggiGambar)
+                        thtTotalTransaksiDebit = thtSaldoAwal
+                        thtTotalTransaksiKredit = thtSaldoAwal
+                        thtSaldoAkhir = thtSaldoAwal
+                        
+                        thtSaldoAwal = bb + int(0.013 * tinggiGambar)
+                        thlSaldoAwal = lb - int(0.073 * lebarGambar)
+                        thrSaldoAwal = rb + int(0.073 * lebarGambar) 
+                        thbSaldoAwal = thtSaldoAwal + int(0.02 * tinggiGambar) 
+                        
+                        thlTotalTransaksiDebit = thrSaldoAwal
+                        thrTotalTransaksiDebit = thrSaldoAwal + int(0.23 * lebarGambar) 
+                        thtTotalTransaksiDebit = bb + int(0.013 * tinggiGambar)
+                        thbTotalTransaksiDebit = thtSaldoAwal + int(0.02 * tinggiGambar)
+                        
+                        thlTotalTransaksiKredit = thrTotalTransaksiDebit
+                        thrTotalTransaksiKredit = thrTotalTransaksiDebit + int(0.21 * lebarGambar) 
+                        thtTotalTransaksiKredit = bb + int(0.013 * tinggiGambar)
+                        thbTotalTransaksiKredit = thtSaldoAwal + int(0.02 * tinggiGambar)
+                        
+                        thlSaldoAkhir = thrTotalTransaksiKredit
+                        thrSaldoAkhir = thrTotalTransaksiKredit + int(0.28 * lebarGambar) 
+                        thtSaldoAkhir = bb + int(0.013 * tinggiGambar)
+                        thbSaldoAkhir = thtSaldoAwal + int(0.02 * tinggiGambar)
+                        
+                    if thrSaldoAwal != None:
+                        if (
+                            (cw < thrSaldoAwal) 
+                            and (cw > thlSaldoAwal) 
+                            and (ch > thtSaldoAwal)
+                            and (ch < thbSaldoAwal)
+                        ) :
+                            if saldoAwal == None :
+                                saldoAwal = format_currency(convertToFloat(text))
+                                
+                    if thrTotalTransaksiDebit != None:
+                        if (
+                            (cw < thrTotalTransaksiDebit) 
+                            and (cw > thlTotalTransaksiDebit) 
+                            and (ch > thtTotalTransaksiDebit)
+                            and (ch < thbTotalTransaksiDebit)
+                        ) :
+                            if totalTransaksiDebit == None :
+                                totalTransaksiDebit = format_currency(convertToFloat(text))
+                                
+                    if thrTotalTransaksiKredit != None:
+                        if (
+                            (cw < thrTotalTransaksiKredit) 
+                            and (cw > thlTotalTransaksiKredit) 
+                            and (ch > thtTotalTransaksiKredit)
+                            and (ch < thbTotalTransaksiKredit)
+                        ) :
+                            if totalTransaksiKredit == None :
+                                totalTransaksiKredit = format_currency(convertToFloat(text))
+                                
+                    if thrSaldoAkhir != None:
+                        if (
+                            (cw < thrSaldoAkhir) 
+                            and (cw > thlSaldoAkhir) 
+                            and (ch > thtSaldoAkhir)
+                            and (ch < thbSaldoAkhir)
+                        ) :
+                            if saldoAkhir == None :
+                                saldoAkhir = format_currency(convertToFloat(text))
+                        
+                if thbHeaderTable != None and tb > thbHeaderTable and ch < thbTable :
+                    # if currentRow == 0 :
+                    #     currentRow += 1
 
-                textWithCol['text'] = text
-                
-                if (cw < thrTableCol1) :
-                    currentRow += 1    
-                    textWithCol['col'] = 1
-                    textWithCol['row'] = currentRow
-                
-                if (cw > thrTableCol1 and cw < thrTableCol2) :
-                    textWithCol['col'] = 2
-                    textWithCol['row'] = currentRow
+                    textWithCol['text'] = text
                     
-                if (cw > thrTableCol2 and cw < thrTableCol3) :
-                    textWithCol['col'] = 3
-                    textWithCol['row'] = currentRow
+                    if (cw < thrTableCol1) :
+                        currentRow += 1    
+                        textWithCol['col'] = 1
+                        textWithCol['row'] = currentRow
                     
-                if (cw > thrTableCol3 and cw < thrTableCol4) :
-                    textWithCol['col'] = 4
-                    textWithCol['row'] = currentRow
+                    if (cw > thrTableCol1 and cw < thrTableCol2) :
+                        textWithCol['col'] = 2
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol2 and cw < thrTableCol3) :
+                        textWithCol['col'] = 3
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol3 and cw < thrTableCol4) :
+                        textWithCol['col'] = 4
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol4 and cw < thrTableCol5) :
+                        textWithCol['col'] = 5
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol5) :
+                        textWithCol['col'] = 6
+                        textWithCol['row'] = currentRow
+                        
+                    textData.append(textWithCol.copy())
                     
-                if (cw > thrTableCol4 and cw < thrTableCol5) :
-                    textWithCol['col'] = 5
-                    textWithCol['row'] = currentRow
-                    
-                if (cw > thrTableCol5) :
-                    textWithCol['col'] = 6
-                    textWithCol['row'] = currentRow
-                    
-                textData.append(textWithCol.copy())
+            except TypeError as e:
+                return exceptionHandler(
+                    f'An error occurred with image {filename}. Try rephotographing this image more clearly!',
+                    400,
+                    e
+                )
+            
+            except ValueError as e:
+                return exceptionHandler(
+                    f'An error occurred with image {filename}. Try rephotographing this image more clearly!',
+                    400,
+                    e
+                ) 
         # if not isBankStatementCorrect :
         #     return 400
         

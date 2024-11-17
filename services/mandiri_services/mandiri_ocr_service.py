@@ -244,6 +244,13 @@ def doOcrMandiri (imageArray, app, bankStatementType) :
                     400,
                     e
                 ) 
+                
+            except TypeError as e:
+                return exceptionHandler(
+                    f'An error occurred with image {filename}. Try rephotographing this image more clearly!',
+                    400,
+                    e
+                )
         # if not isBankStatementCorrect :
         #     return 400
         

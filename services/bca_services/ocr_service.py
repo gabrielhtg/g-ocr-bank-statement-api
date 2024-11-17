@@ -369,9 +369,6 @@ def doOcrBca (imageArray, app, bankStatementType) :
                         
             before = text
                 
-        # if not isBankStatementCorrect :
-        #     return 400
-        
         try :
             for t in text_ :
                 bbox, text, score = t

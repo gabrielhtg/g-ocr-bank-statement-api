@@ -305,13 +305,19 @@ def doOcrPermata (imageArray, app, bankStatementType) :
                         
                     textData.append(textWithCol.copy())
                     
-            except TypeError as e :
-                print('-' * 150)
-                print(f'Terjadi kesalahan pada gambar {filename}. Coba foto ulang gambar ini dengan lebih jelas!')
-                print(e)
-                print('-' * 150)
-                print()
-                return 400, f'Terjadi kesalahan pada gambar {filename}. Coba foto ulang gambar ini dengan lebih jelas!'
+            except TypeError as e:
+                return exceptionHandler(
+                    f'An error occurred with image {filename}. Try rephotographing this image more clearly!',
+                    400,
+                    e
+                )
+            
+            except ValueError as e:
+                return exceptionHandler(
+                    f'An error occurred with image {filename}. Try rephotographing this image more clearly!',
+                    400,
+                    e
+                )  
             
         # if not isBankStatementCorrect :
         #     return 400

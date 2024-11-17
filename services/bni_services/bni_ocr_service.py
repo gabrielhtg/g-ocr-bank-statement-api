@@ -231,146 +231,162 @@ def doOcrBni (imageArray, app, bankStatementType) :
                         else :
                             periodeRekening = periodeRekening + ' ' + text
             
-            if 'ting' in text.lower() and 'te' in text.lower() and currentRow == 0:
-                thbHeaderTable = tb + int(0.015 * tinggiGambar)
-                thbTable = tb + int(0.575 * tinggiGambar)
-                thrTableCol1 = rb + int(0.03 * lebarGambar)
-                thrTableCol2 = thrTableCol1 + int(0.148 * lebarGambar)
-                thrTableCol3 = thrTableCol2 + int(0.079 * lebarGambar)
-                thrTableCol4 = thrTableCol3 + int(0.058 * lebarGambar)
-                thrTableCol5 = thrTableCol4 + int(0.219 * lebarGambar)
-                thrTableCol6 = thrTableCol5 + int(0.11 * lebarGambar)
-                thrTableCol7 = thrTableCol6 + int(0.045 * lebarGambar)
-                
-            if (page == len(imageArray)) :        
-                if 'ending' in text.lower() :
-                    thbTable = tb - int(0.005 * tinggiGambar)
-                    thtEndingBalance = thbTable
-                    thrEndingBalance = lebarGambar - int(0.005 * lebarGambar)
-                    thlEndingBalance = lb
-                    thbEndingBalance = thtEndingBalance + int(0.02 * tinggiGambar)
+            
+            try :
+                if 'ting' in text.lower() and 'te' in text.lower() and currentRow == 0:
+                    thbHeaderTable = tb + int(0.015 * tinggiGambar)
+                    thbTable = tb + int(0.575 * tinggiGambar)
+                    thrTableCol1 = rb + int(0.03 * lebarGambar)
+                    thrTableCol2 = thrTableCol1 + int(0.148 * lebarGambar)
+                    thrTableCol3 = thrTableCol2 + int(0.079 * lebarGambar)
+                    thrTableCol4 = thrTableCol3 + int(0.058 * lebarGambar)
+                    thrTableCol5 = thrTableCol4 + int(0.219 * lebarGambar)
+                    thrTableCol6 = thrTableCol5 + int(0.11 * lebarGambar)
+                    thrTableCol7 = thrTableCol6 + int(0.045 * lebarGambar)
                     
-                if 'total' in text.lower() and 'debet' in text.lower():
-                    thtTotalDebet = thbTable + int(0.022 * tinggiGambar)
-                    thrTotalDebet = rb + int(0.1 * lebarGambar)
-                    thlTotalDebet = rb + int(0.01 * lebarGambar)
-                    thbTotalDebet = thtTotalDebet + int(0.02 * tinggiGambar)
-                    
-                    thtTotalDebetAmount = thbTable + int(0.022 * tinggiGambar)
-                    thlTotalDebetAmount = thrTotalDebet
-                    thrTotalDebetAmount = rb + int(0.3 * lebarGambar)
-                    thbTotalDebetAmount = thtTotalDebetAmount + int(0.02 * tinggiGambar)
-                    
-                if 'total' in text.lower() and 'credit' in text.lower():
-                    thtTotalCredit = thbTable + int(0.042 * tinggiGambar)
-                    thrTotalCredit = rb + int(0.1 * lebarGambar)
-                    thlTotalCredit = rb + int(0.01 * lebarGambar)
-                    thbTotalCredit = thtTotalCredit + int(0.02 * tinggiGambar)
-                    
-                    thtTotalCreditAmount = thtTotalCredit
-                    thlTotalCreditAmount = thrTotalCredit
-                    thrTotalCreditAmount = rb + int(0.3 * lebarGambar)
-                    thbTotalCreditAmount = thbTotalCredit
-                    
-                if thrEndingBalance != None:
-                    if (
-                        (cw < thrEndingBalance) 
-                        and (ch <= thbEndingBalance) 
-                        and (ch >= thtEndingBalance)
-                        and (cw > thlEndingBalance)
-                    ) :
-                        if endingBalance == None :
-                            endingBalance = text
-                            
-                if thrTotalDebet != None:
-                    if (
-                        (cw < thrTotalDebet) 
-                        and (ch <= thbTotalDebet) 
-                        and (ch >= thtTotalDebet)
-                        and (cw > thlTotalDebet)
-                    ) :
-                        if totalDebet == None :
-                            totalDebet = text
-                            
-                if thrTotalCredit != None:
-                    if (
-                        (cw < thrTotalCredit) 
-                        and (ch <= thbTotalCredit) 
-                        and (ch >= thtTotalCredit)
-                        and (cw > thlTotalCredit)
-                    ) :
-                        if totalCredit == None :
-                            totalCredit = text
-                            
-                if thrTotalCreditAmount != None:
-                    if (
-                        (cw < thrTotalCreditAmount) 
-                        and (ch <= thbTotalCreditAmount) 
-                        and (ch >= thtTotalCreditAmount)
-                        and (cw > thlTotalCreditAmount)
-                    ) :
-                        if totalCreditAmount == None :
-                            totalCreditAmount = text
-                
-                if thrTotalDebetAmount != None:
-                    if (
-                        (cw < thrTotalDebetAmount) 
-                        and (ch <= thbTotalDebetAmount) 
-                        and (ch >= thtTotalDebetAmount)
-                        and (cw > thlTotalDebetAmount)
-                    ) :
-                        if totalDebetAmount == None :
-                            totalDebetAmount = text
-                
-            if thbHeaderTable != None and ch > thbHeaderTable :
-                textWithCol['text'] = text
-                
-                if (cw > thrTableCol1 and 
-                    cw < thrTableCol6 and 
-                    'edge' in text.lower() and 
-                    'alan' in text.lower()):
-                    currentRow += 1
-                    textWithCol['col'] = 5
-                    textWithCol['row'] = currentRow
-                    
-                if cw > thrTableCol7 :
-                    textWithCol['col'] = 8
-                    textWithCol['row'] = currentRow
+                if (page == len(imageArray)) :        
+                    if 'ending' in text.lower() :
+                        thbTable = tb - int(0.005 * tinggiGambar)
+                        thtEndingBalance = thbTable
+                        thrEndingBalance = lebarGambar - int(0.005 * lebarGambar)
+                        thlEndingBalance = lb
+                        thbEndingBalance = thtEndingBalance + int(0.02 * tinggiGambar)
                         
-                if (cw < thrTableCol1) :
-                    currentRow += 1    
-                    textWithCol['col'] = 1
-                    textWithCol['row'] = currentRow
-                
-                if (cw > thrTableCol1 and cw < thrTableCol2) :
-                    textWithCol['col'] = 2
-                    textWithCol['row'] = currentRow
+                    if 'total' in text.lower() and 'debet' in text.lower():
+                        thtTotalDebet = thbTable + int(0.022 * tinggiGambar)
+                        thrTotalDebet = rb + int(0.1 * lebarGambar)
+                        thlTotalDebet = rb + int(0.01 * lebarGambar)
+                        thbTotalDebet = thtTotalDebet + int(0.02 * tinggiGambar)
+                        
+                        thtTotalDebetAmount = thbTable + int(0.022 * tinggiGambar)
+                        thlTotalDebetAmount = thrTotalDebet
+                        thrTotalDebetAmount = rb + int(0.3 * lebarGambar)
+                        thbTotalDebetAmount = thtTotalDebetAmount + int(0.02 * tinggiGambar)
+                        
+                    if 'total' in text.lower() and 'credit' in text.lower():
+                        thtTotalCredit = thbTable + int(0.042 * tinggiGambar)
+                        thrTotalCredit = rb + int(0.1 * lebarGambar)
+                        thlTotalCredit = rb + int(0.01 * lebarGambar)
+                        thbTotalCredit = thtTotalCredit + int(0.02 * tinggiGambar)
+                        
+                        thtTotalCreditAmount = thtTotalCredit
+                        thlTotalCreditAmount = thrTotalCredit
+                        thrTotalCreditAmount = rb + int(0.3 * lebarGambar)
+                        thbTotalCreditAmount = thbTotalCredit
+                        
+                    if thrEndingBalance != None:
+                        if (
+                            (cw < thrEndingBalance) 
+                            and (ch <= thbEndingBalance) 
+                            and (ch >= thtEndingBalance)
+                            and (cw > thlEndingBalance)
+                        ) :
+                            if endingBalance == None :
+                                endingBalance = text
+                                
+                    if thrTotalDebet != None:
+                        if (
+                            (cw < thrTotalDebet) 
+                            and (ch <= thbTotalDebet) 
+                            and (ch >= thtTotalDebet)
+                            and (cw > thlTotalDebet)
+                        ) :
+                            if totalDebet == None :
+                                totalDebet = text
+                                
+                    if thrTotalCredit != None:
+                        if (
+                            (cw < thrTotalCredit) 
+                            and (ch <= thbTotalCredit) 
+                            and (ch >= thtTotalCredit)
+                            and (cw > thlTotalCredit)
+                        ) :
+                            if totalCredit == None :
+                                totalCredit = text
+                                
+                    if thrTotalCreditAmount != None:
+                        if (
+                            (cw < thrTotalCreditAmount) 
+                            and (ch <= thbTotalCreditAmount) 
+                            and (ch >= thtTotalCreditAmount)
+                            and (cw > thlTotalCreditAmount)
+                        ) :
+                            if totalCreditAmount == None :
+                                totalCreditAmount = text
                     
-                if (cw > thrTableCol2 and cw < thrTableCol3) :
-                    textWithCol['col'] = 3
-                    textWithCol['row'] = currentRow
+                    if thrTotalDebetAmount != None:
+                        if (
+                            (cw < thrTotalDebetAmount) 
+                            and (ch <= thbTotalDebetAmount) 
+                            and (ch >= thtTotalDebetAmount)
+                            and (cw > thlTotalDebetAmount)
+                        ) :
+                            if totalDebetAmount == None :
+                                totalDebetAmount = text
                     
-                if (cw > thrTableCol3 and cw < thrTableCol4) :
-                    textWithCol['col'] = 4
-                    textWithCol['row'] = currentRow
+                if thbHeaderTable != None and ch > thbHeaderTable :
+                    textWithCol['text'] = text
                     
-                if (cw > thrTableCol4 and cw < thrTableCol5) :
-                    textWithCol['col'] = 5
-                    textWithCol['row'] = currentRow
+                    if (cw > thrTableCol1 and 
+                        cw < thrTableCol6 and 
+                        'edge' in text.lower() and 
+                        'alan' in text.lower()):
+                        currentRow += 1
+                        textWithCol['col'] = 5
+                        textWithCol['row'] = currentRow
+                        
+                    if cw > thrTableCol7 :
+                        textWithCol['col'] = 8
+                        textWithCol['row'] = currentRow
+                            
+                    if (cw < thrTableCol1) :
+                        currentRow += 1    
+                        textWithCol['col'] = 1
+                        textWithCol['row'] = currentRow
                     
-                if (cw > thrTableCol5 and cw < thrTableCol6) :
-                    textWithCol['col'] = 6
-                    textWithCol['row'] = currentRow
+                    if (cw > thrTableCol1 and cw < thrTableCol2) :
+                        textWithCol['col'] = 2
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol2 and cw < thrTableCol3) :
+                        textWithCol['col'] = 3
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol3 and cw < thrTableCol4) :
+                        textWithCol['col'] = 4
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol4 and cw < thrTableCol5) :
+                        textWithCol['col'] = 5
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol5 and cw < thrTableCol6) :
+                        textWithCol['col'] = 6
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol6 and cw < thrTableCol7) :
+                        textWithCol['col'] = 7
+                        textWithCol['row'] = currentRow
+                        
+                    if (cw > thrTableCol7) :
+                        textWithCol['col'] = 8
+                        textWithCol['row'] = currentRow
                     
-                if (cw > thrTableCol6 and cw < thrTableCol7) :
-                    textWithCol['col'] = 7
-                    textWithCol['row'] = currentRow
+                    textData.append(textWithCol.copy())
                     
-                if (cw > thrTableCol7) :
-                    textWithCol['col'] = 8
-                    textWithCol['row'] = currentRow
-                
-                textData.append(textWithCol.copy())
+            except TypeError as e:
+                return exceptionHandler(
+                    f'An error occurred with image {filename}. Try rephotographing this image more clearly!',
+                    400,
+                    e
+                )
+            
+            except ValueError as e:
+                return exceptionHandler(
+                    f'An error occurred with image {filename}. Try rephotographing this image more clearly!',
+                    400,
+                    e
+                ) 
         
         # if not isBankStatementCorrect :
         #     return 400
