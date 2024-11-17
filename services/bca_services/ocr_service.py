@@ -99,6 +99,8 @@ def doOcrBca (imageArray, app, bankStatementType) :
     currentRow = 0
     textData = []
     textWithCol = {}
+    
+    countText = 0
 
     for e in imageArray:
         thbTable = None
@@ -127,6 +129,7 @@ def doOcrBca (imageArray, app, bankStatementType) :
         text_ = doEasyOcr(perspectiveCorrectedImage)
 
         for e in text_ :
+            countText += 1
             bbox, text, score = e
     
             bbox = [[int(coord[0]), int(coord[1])] for coord in bbox]
@@ -137,6 +140,22 @@ def doOcrBca (imageArray, app, bankStatementType) :
             bb = bbox[2][1]
             cw = lb + int(abs(rb - lb) / 2)
             ch = tb + int(abs(bb - tb) / 2)
+            
+            if (
+                ('bni' in text.lower() or
+                'ocbc' in text.lower() or
+                ('permata' in text.lower() and 'bank' in text.lower()) or
+                'bri' in text.lower() or
+                'cimb' in text.lower() or
+                'mandiri' in text.lower() or
+                'danamon' in text.lower())
+                and countText < 15
+            ) :
+                return exceptionHandler(
+                    f'The type of bank statement detected is not the same as in the {filename} image! Please re-upload with the same type of bank statement or a clearer image.',
+                    400,
+                    None
+                )
             
             if page == 1 :
                 if ch < 0.1 * tinggiGambar and 'bca' in text.lower() :

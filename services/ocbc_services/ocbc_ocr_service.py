@@ -117,6 +117,7 @@ def doOcrOcbc (imageArray, app, bankStatementType) :
     thbTotalSaldoDalamIDR = None
     
     currentRow = 0
+    countText = 0
     
     for e in imageArray:
         page += 1
@@ -144,6 +145,7 @@ def doOcrOcbc (imageArray, app, bankStatementType) :
         text_ = doEasyOcr(perspectiveCorrectedImage)
 
         for e in text_ :
+            countText += 1
             bbox, text, score = e
     
             bbox = [[int(coord[0]), int(coord[1])] for coord in bbox]
@@ -154,6 +156,22 @@ def doOcrOcbc (imageArray, app, bankStatementType) :
             bb = bbox[2][1]
             cw = lb + int(abs(rb - lb) / 2)
             ch = tb + int(abs(bb - tb) / 2)
+            
+            if (
+                ('bca' in text.lower() or
+                'mandiri' in text.lower() or
+                ('permata' in text.lower() and 'bank' in text.lower()) or
+                'bni' in text.lower() or
+                'bri' in text.lower() or
+                'danamon' in text.lower() or
+                'cimb' in text.lower())
+                and countText < 15
+            ) :
+                return exceptionHandler(
+                    f'The type of bank statement detected is not the same as in the {filename} image! Please re-upload with the same type of bank statement or a clearer image.',
+                    400,
+                    None
+                )
             
             if page == 1 :
                 if 'mor' in text.lower() and 'ning' in text.lower() and ch < (0.5 * tinggiGambar) :
