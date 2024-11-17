@@ -56,6 +56,13 @@ def ocbcController(app) :
             'transaction_data' : data['transaction_data'],
             'total_debet' : data['total_debet'],
             'total_kredit' : data['total_kredit'],
-            'analytics_data': data['analytics_data']    
+            'analytics_data': data['analytics_data'],
+            'tunggakan_bunga': data['tunggakan_bunga'],
+            'tunggakan_denda': data['tunggakan_denda'],
+            'tunggakan_biaya_lain': data['tunggakan_biaya_lain'],
+            'total_tunggakan': data['total_tunggakan'],
+            'kurs_valas_idr': data['kurs_valas_idr'],
+            'saldo_dalam_mata_uang_idr': data['saldo_dalam_mata_uang_idr'],
+            'total_saldo_dalam_idr': data['total_saldo_dalam_idr']
         }
     })

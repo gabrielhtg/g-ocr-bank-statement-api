@@ -1,11 +1,10 @@
 from format_currency import format_currency
-from numpy import number
 
 from services.utils.convert_to_float import convertToFloat
 
 def mandiriGetTransactionData (textData, filename:str) :
     rowDataArr = []
-    currentRow = 1
+    currentRow = textData[0]['row']
     beforeRow = textData[0]['row']
     currentData = {
         'date_and_time' : None,
@@ -16,10 +15,10 @@ def mandiriGetTransactionData (textData, filename:str) :
         'kredit' : None,
         'saldo' : None
     }
-
+    
     for e in textData :
         currentRow = e['row']
-    
+        
         if (beforeRow == currentRow) :
             if e['col'] == 1 :
                 currentData['date_and_time'] = e['text']
@@ -38,18 +37,17 @@ def mandiriGetTransactionData (textData, filename:str) :
                 currentData['refference_no'] = e['text']
                 
             if e['col'] == 5 :
-                print(e['text'])
-                currentData['debit'] = format_currency(convertToFloat(e['text']), currency_code='IDR')
+                currentData['debit'] = e['text']
                 
             if e['col'] == 6 :
-                currentData['kredit'] = format_currency(convertToFloat(e['text']), currency_code='IDR')
+                currentData['kredit'] = e['text']
                 
             if e['col'] == 7 :
-                currentData['saldo'] = format_currency(convertToFloat(e['text']), currency_code='IDR')
+                currentData['saldo'] = e['text']
             
         else :
             beforeRow = currentRow
-            currentData['filename'] = filename     
+            currentData['filename'] = filename 
             rowDataArr.append(currentData.copy())
             currentData = {
                 'date_and_time' : None,
@@ -78,16 +76,18 @@ def mandiriGetTransactionData (textData, filename:str) :
                 currentData['refference_no'] = e['text']
                 
             if e['col'] == 5 :
-                currentData['debit'] = format_currency(convertToFloat(e['text']), currency_code='IDR')
+                # print(e['text'])
+                currentData['debit'] = e['text']
                 
             if e['col'] == 6 :
-                currentData['kredit'] = format_currency(convertToFloat(e['text']), currency_code='IDR')
+                currentData['kredit'] = e['text']
                 
             if e['col'] == 7 :
-                currentData['saldo'] = format_currency(convertToFloat(e['text']), currency_code='IDR')
+                currentData['saldo'] = e['text']
                 
-        
-    currentData['filename'] = filename            
+    currentData['filename'] = filename 
     rowDataArr.append(currentData.copy())
+    # print(rowDataArr)
+    # print()
     return rowDataArr
             

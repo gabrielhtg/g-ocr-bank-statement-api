@@ -1,6 +1,8 @@
 import statistics
 from format_currency import format_currency
 
+from services.utils.convert_to_float import convertToFloat
+
 def mandiriAnalysisData (transactionData) :
     freqDebit = 0
     arrDebit = []
@@ -11,13 +13,13 @@ def mandiriAnalysisData (transactionData) :
     for e in transactionData :
         if e['debit'] != None :
             freqDebit += 1
-            convertedDebet = float(e['debit'].replace(',', '').replace('.', '').replace('Rp ', '')) / 100
+            convertedDebet = convertToFloat(e['debit'])
             arrDebit.append(convertedDebet)
             
         
         if e['kredit'] != None :
             freqKredit += 1
-            convertedKredit = float(e['kredit'].replace(',', '').replace('.', '').replace('Rp ', '')) / 100
+            convertedKredit = convertToFloat(e['kredit'])
             arrKredit.append(convertedKredit)
     
     return {

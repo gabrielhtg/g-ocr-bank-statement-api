@@ -1,7 +1,6 @@
 from flask import jsonify, request
 
 from services.bca_services.ocr_service import doOcrBca
-from services.bri_services.bri_ocr_service import doOcrBri
 from services.utils.check_is_zip import checkIsZip
 from services.utils.get_file_list_from_zip import getFileListFromZip
 from services.utils.return_fail_message import returnFailMessage

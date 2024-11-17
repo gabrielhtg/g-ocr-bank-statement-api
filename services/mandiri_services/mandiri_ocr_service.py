@@ -83,6 +83,9 @@ def doOcrMandiri (imageArray, app, bankStatementType) :
         
         lebarGambar = getImageWidth(perspectiveCorrectedImage)
         tinggiGambar = getImageHeight(perspectiveCorrectedImage)
+        
+        print(lebarGambar)
+        print(tinggiGambar)
 
         # text_ merupakan semua teks hasil ocr dari gambar
         # tapi masih bukan hasil akhir
@@ -183,15 +186,7 @@ def doOcrMandiri (imageArray, app, bankStatementType) :
                     thrTableCol5 = thrTableCol4 + int(0.078 * tinggiGambar)
                     thrTableCol6 = thrTableCol5 + int(0.065 * tinggiGambar)
                     
-                if 'total' in text.lower() and 'trans' in text.lower() and ch > 0.4 * tinggiGambar:
-                    thbTable = tb - 0.005 * tinggiGambar
-                    thbHeaderTable = None
-                    continue
-                    
-                if thbHeaderTable != None and tb > thbHeaderTable and ch < thbTable :
-                    if currentRow == 0 :
-                        currentRow += 1
-
+                if thbHeaderTable != None and ch > thbHeaderTable and ch < thbTable :
                     textWithCol['text'] = text
                     
                     if (cw < thrTableCol1) :
@@ -224,6 +219,7 @@ def doOcrMandiri (imageArray, app, bankStatementType) :
                         textWithCol['row'] = currentRow
                         
                     textData.append(textWithCol.copy())
+                    
             except ValueError as e:
                 return exceptionHandler(
                     f'An error occurred with image {filename}. Try rephotographing this image more clearly!',
