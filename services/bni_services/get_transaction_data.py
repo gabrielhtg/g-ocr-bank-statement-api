@@ -1,6 +1,7 @@
 from format_currency import format_currency
 from numpy import number
 
+from services.utils.convert_to_float import convertToFloat
 from services.utils.format_string_money_amount import convertToIDR
 
 def bniGetTransactionData (textData, filename:str) :
@@ -46,13 +47,13 @@ def bniGetTransactionData (textData, filename:str) :
                     currentData['transaction_description'] = currentData['transaction_description'] + ' ' + e['text']
                 
             if e['col'] == 6 :
-                currentData['amount'] = convertToIDR(e['text'])
+                currentData['amount'] = format_currency(convertToFloat(e['text']))
                 
             if e['col'] == 7 :
                 currentData['debit_credit'] = e['text']
                 
             if e['col'] == 8 :
-                currentData['balance'] = convertToIDR(e['text'])
+                currentData['balance'] = format_currency(convertToFloat(e['text']))
             
         else :
             beforeRow = currentRow
@@ -80,13 +81,13 @@ def bniGetTransactionData (textData, filename:str) :
                     currentData['transaction_description'] = currentData['transaction_description'] + ' ' + e['text']
                 
             if e['col'] == 6 :
-                currentData['amount'] = convertToIDR(e['text'])
+                currentData['amount'] = format_currency(convertToFloat(e['text']))
                 
             if e['col'] == 7 :
                 currentData['debit_credit'] = e['text']
                 
             if e['col'] == 8 :
-                currentData['balance'] = convertToIDR(e['text'])
+                currentData['balance'] = format_currency(convertToFloat(e['text']))
     
     # print(rowDataArr)
     # print('----------------------------------------------------------')

@@ -14,8 +14,8 @@ def getFileListFromZip (dataFile, app, zipPassword):
             zip_ref.pwd = zipPassword.encode('utf-8')
             
             file_list = zip_ref.namelist()
-            file_list.sort()
-            # fileList.sort(key=lambda x: int(x.split("_")[-1].split(".")[0]))
+            # file_list.sort()
+            file_list.sort(key=lambda x: int(x.split("_")[-1].split(".")[0]))
             
             for file_name in file_list:
                 unique_filename = f"{uuid.uuid4().hex}_{os.path.basename(file_name)}"

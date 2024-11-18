@@ -19,8 +19,10 @@ app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # Batas ukuran file hingga
 
 UPLOAD_FOLDER = 'uploads/'
 EXTRACT_FOLDER = 'extracted_data/'
+PDF_EXTRACT_FOLDER = 'extracted_pdf/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['EXTRACT_FOLDER'] = EXTRACT_FOLDER
+app.config['PDF_EXTRACT_FOLDER'] = PDF_EXTRACT_FOLDER
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)

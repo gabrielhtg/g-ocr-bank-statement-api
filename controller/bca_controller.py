@@ -4,12 +4,12 @@ from services.bca_services.ocr_service import doOcrBca
 from services.utils.check_is_pdf import checkIsPdf
 from services.utils.check_is_zip import checkIsZip
 from services.utils.get_file_list_from_zip import getFileListFromZip
+from services.utils.get_images_from_pdf import getImagesFromPdf
 from services.utils.return_fail_message import returnFailMessage
 
 def bcaController(app) :
     uploadedFiles = request.files.getlist('files')
     zipPassword = ''
-    bankStatementType = request.form.get('bank-statement-type')
     
     if request.form.get('zip-password') :
         zipPassword = request.form.get('zip-password')
@@ -31,18 +31,23 @@ def bcaController(app) :
             return returnFailMessage('Gagal mengekstrak zip! Password salah!', 400)
 
         else :
-            statusCode, data = doOcrBca(fileList, app, bankStatementType)
+            statusCode, data = doOcrBca(fileList, app, isZip, isPdf)
 
             if statusCode != 200 :
                 return returnFailMessage(data, statusCode)
             
-    # elif isPdf :
+    elif isPdf :
+        fileList = getImagesFromPdf(uploadedFiles[0], app)
         
-            
+        statusCode, data = doOcrBca(fileList, app, isZip, isPdf)
+
+        if statusCode != 200 :
+            return returnFailMessage(data, statusCode)
+        
     else :
         sortedData = sorted(uploadedFiles, key=lambda x: x.filename)
         
-        statusCode, data = doOcrBca(sortedData, app, bankStatementType)
+        statusCode, data = doOcrBca(sortedData, app, isZip, isPdf)
         
         if statusCode != 200 :
             return returnFailMessage(data, statusCode)

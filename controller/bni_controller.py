@@ -1,14 +1,15 @@
 from flask import jsonify, request
 
 from services.bni_services.bni_ocr_service import doOcrBni
+from services.utils.check_is_pdf import checkIsPdf
 from services.utils.check_is_zip import checkIsZip
 from services.utils.get_file_list_from_zip import getFileListFromZip
+from services.utils.get_images_from_pdf import getImagesFromPdf
 from services.utils.return_fail_message import returnFailMessage
 
 def bniController(app) :
     uploadedFiles = request.files.getlist('files')
     zipPassword = ''
-    bankStatementType = request.form.get('bank-statement-type')
     
     if request.form.get('zip-password') :
         zipPassword = request.form.get('zip-password')
@@ -16,10 +17,12 @@ def bniController(app) :
     # variable ini menyimpan apakah file yang diupload adalah 
     # file zip atau bukan. 
     isZip = False
+    isPdf = False
     
     # cek apakah file yang diupload adalah zip
     if len(uploadedFiles) == 1 :
         isZip = checkIsZip(uploadedFiles)
+        isPdf = checkIsPdf(uploadedFiles)
         
     if isZip:
         fileList = getFileListFromZip(uploadedFiles[0], app, zipPassword)
@@ -28,15 +31,23 @@ def bniController(app) :
             return returnFailMessage(False, 'Gagal mengekstrak zip! Password salah!')
 
         else :
-            statusCode, data = doOcrBni(fileList, app, bankStatementType)
+            statusCode, data = doOcrBni(fileList, app, isZip, isPdf)
 
             if statusCode != 200 :
                 return returnFailMessage(data, statusCode)
             
+    elif isPdf:
+        fileList = getImagesFromPdf(uploadedFiles[0], app)
+        
+        statusCode, data = doOcrBni(fileList, app, isZip, isPdf)
+
+        if statusCode != 200 :
+            return returnFailMessage(data, statusCode)
+            
     else :
         sortedData = sorted(uploadedFiles, key=lambda x: x.filename)
         
-        statusCode, data = doOcrBni(sortedData, app, bankStatementType)
+        statusCode, data = doOcrBni(sortedData, app, isZip, isPdf)
         
         if statusCode != 200 :
             return returnFailMessage(data, statusCode)
