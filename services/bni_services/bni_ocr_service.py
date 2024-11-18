@@ -1,4 +1,5 @@
 import os
+import uuid
 from matplotlib.dviread import Page
 from werkzeug.utils import secure_filename
 
@@ -7,6 +8,7 @@ from services.bni_services.get_total_debit import getTotalDebit
 from services.bni_services.get_total_kredit import getTotalKredit
 from services.bni_services.get_transaction_data import bniGetTransactionData
 from services.utils.correct_perspective import correctPerspective
+from services.utils.delete_image import deleteImage
 from services.utils.do_orc_easyocr import doEasyOcr
 from services.utils.exception_handler import exceptionHandler
 from services.utils.get_image_height import getImageHeight
@@ -108,7 +110,8 @@ def doOcrBni (imageArray, app, bankStatementType) :
         else :
             file = e
             filename = secure_filename(file.filename)
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            unique_filename = f"{uuid.uuid4().hex}_{filename}"
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
             file.save(file_path)
             perspectiveCorrectedImage = correctPerspective(file_path)
         
@@ -134,6 +137,7 @@ def doOcrBni (imageArray, app, bankStatementType) :
             cw = lb + int(abs(rb - lb) / 2)
             ch = tb + int(abs(bb - tb) / 2)
             
+            print(text)
             if (
                 ('bca' in text.lower() or
                 'ocbc' in text.lower() or
@@ -392,6 +396,7 @@ def doOcrBni (imageArray, app, bankStatementType) :
         #     return 400
         
         transactionData.extend(bniGetTransactionData(textData, filename))
+        deleteImage(file_path)
     
     data['akun_rekening'] = akunRekening
     data['nomor_rekening'] = nomorRekening

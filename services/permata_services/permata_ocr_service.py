@@ -1,4 +1,5 @@
 import os
+import uuid
 from matplotlib.dviread import Page
 from werkzeug.utils import secure_filename
 
@@ -7,6 +8,7 @@ from services.permata_services.get_total_debet import getTotalDebet
 from services.permata_services.get_total_kredit import getTotalKredit
 from services.permata_services.get_transaction_data import getTransactionData
 from services.utils.correct_perspective import correctPerspective
+from services.utils.delete_image import deleteImage
 from services.utils.do_orc_easyocr import doEasyOcr
 from services.utils.exception_handler import exceptionHandler
 from services.utils.get_image_height import getImageHeight
@@ -90,7 +92,8 @@ def doOcrPermata (imageArray, app, bankStatementType) :
         else :
             file = e
             filename = secure_filename(file.filename)
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            unique_filename = f"{uuid.uuid4().hex}_{filename}"
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
             file.save(file_path)
             perspectiveCorrectedImage = correctPerspective(file_path)
         
@@ -323,6 +326,7 @@ def doOcrPermata (imageArray, app, bankStatementType) :
         #     return 400
         
         transactionData.extend(getTransactionData(textData, filename))
+        deleteImage(file_path)
 
     data['pemilik_rekening'] = pemilikRekening
     data['alamat'] = alamat

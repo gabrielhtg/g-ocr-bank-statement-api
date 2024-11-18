@@ -28,20 +28,18 @@ def mandiriController(app) :
             return returnFailMessage(False, 'Gagal mengekstrak zip! Password salah!')
 
         else :
-            fileList.sort()
-            
-            data = doOcrMandiri(fileList, app, bankStatementType)
+            statusCode, data = doOcrMandiri(fileList, app, bankStatementType)
 
-            if data == 400 :
-                return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
+            if statusCode != 200 :
+                return returnFailMessage(data, statusCode)
             
     else :
         sortedData = sorted(uploadedFiles, key=lambda x: x.filename)
         
-        data = doOcrMandiri(sortedData, app, bankStatementType)
+        statusCode, data = doOcrMandiri(sortedData, app, bankStatementType)
         
-        if data == 400 :
-            return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
+        if statusCode != 200 :
+            return returnFailMessage(data, statusCode)
 
     return jsonify({
         'message' : 'ok',

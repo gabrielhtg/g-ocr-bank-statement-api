@@ -1,4 +1,5 @@
 import os
+import uuid
 from matplotlib.dviread import Page
 from werkzeug.utils import secure_filename
 
@@ -7,6 +8,7 @@ from services.ocbc_services.get_total_debit import getTotalDebit
 from services.ocbc_services.get_total_kredit import getTotalKredit
 from services.ocbc_services.get_transaction_data import ocbcGetTransactionData
 from services.utils.correct_perspective import correctPerspective
+from services.utils.delete_image import deleteImage
 from services.utils.do_orc_easyocr import doEasyOcr
 from services.utils.exception_handler import exceptionHandler
 from services.utils.get_image_height import getImageHeight
@@ -131,7 +133,8 @@ def doOcrOcbc (imageArray, app, bankStatementType) :
         else :
             file = e
             filename = secure_filename(file.filename)
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            unique_filename = f"{uuid.uuid4().hex}_{filename}"
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
             file.save(file_path)
             perspectiveCorrectedImage = correctPerspective(file_path)
         
@@ -492,6 +495,7 @@ def doOcrOcbc (imageArray, app, bankStatementType) :
         #     return 400
         
         transactionData.extend(ocbcGetTransactionData(textData, filename))
+        deleteImage(file_path)
     
     data['pemilik_rekening'] = pemilikRekening
     data['alamat'] = alamat
@@ -511,4 +515,4 @@ def doOcrOcbc (imageArray, app, bankStatementType) :
     data['total_debet'] = getTotalDebit(transactionData)
     data['total_kredit'] = getTotalKredit(transactionData)
     data['analytics_data'] = ocbcAnalysisData(data['transaction_data'])
-    return data
+    return 200, data

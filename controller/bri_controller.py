@@ -28,8 +28,6 @@ def briController(app) :
             return returnFailMessage(False, 'Gagal mengekstrak zip! Password salah!')
 
         else :
-            fileList.sort()
-            
             statusCode, data = doOcrBri(fileList, app, bankStatementType)
 
             if statusCode != 200 :

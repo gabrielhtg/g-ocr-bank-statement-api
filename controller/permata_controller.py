@@ -28,8 +28,6 @@ def permataController(app) :
             return returnFailMessage('Gagal mengekstrak zip! Password salah!', 400)
 
         else :
-            fileList.sort()
-            
             statusCode, data = doOcrPermata(fileList, app, bankStatementType)
 
             if statusCode != 200 :

@@ -1,6 +1,7 @@
 from flask import jsonify, request
 
 from services.bca_services.ocr_service import doOcrBca
+from services.utils.check_is_pdf import checkIsPdf
 from services.utils.check_is_zip import checkIsZip
 from services.utils.get_file_list_from_zip import getFileListFromZip
 from services.utils.return_fail_message import returnFailMessage
@@ -16,10 +17,12 @@ def bcaController(app) :
     # variable ini menyimpan apakah file yang diupload adalah 
     # file zip atau bukan. 
     isZip = False
+    isPdf = False
     
     # cek apakah file yang diupload adalah zip
     if len(uploadedFiles) == 1 :
         isZip = checkIsZip(uploadedFiles)
+        isPdf = checkIsPdf(uploadedFiles)
         
     if isZip:
         fileList = getFileListFromZip(uploadedFiles[0], app, zipPassword)
@@ -28,12 +31,13 @@ def bcaController(app) :
             return returnFailMessage('Gagal mengekstrak zip! Password salah!', 400)
 
         else :
-            fileList.sort()
-            
             statusCode, data = doOcrBca(fileList, app, bankStatementType)
 
             if statusCode != 200 :
                 return returnFailMessage(data, statusCode)
+            
+    # elif isPdf :
+        
             
     else :
         sortedData = sorted(uploadedFiles, key=lambda x: x.filename)

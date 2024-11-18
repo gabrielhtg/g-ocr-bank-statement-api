@@ -28,20 +28,18 @@ def ocbcController(app) :
             return returnFailMessage(False, 'Gagal mengekstrak zip! Password salah!')
 
         else :
-            fileList.sort(key=lambda x: int(x.split("_")[-1].split(".")[0]))
-            
-            data = doOcrOcbc(fileList, app, bankStatementType)
+            statusCode, data = doOcrOcbc(fileList, app, bankStatementType)
 
-            if data == 400 :
-                return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
+            if statusCode != 200 :
+                return returnFailMessage(data, statusCode)
             
     else :
         sortedData = sorted(uploadedFiles, key=lambda x: int(x.filename.split("_")[-1].split(".")[0]))
         
-        data = doOcrOcbc(sortedData, app, bankStatementType)
+        statusCode, data = doOcrOcbc(sortedData, app, bankStatementType)
         
-        if data == 400 :
-            return returnFailMessage(False, 'Tipe dari bank statement tidak sama!')
+        if statusCode != 200 :
+            return returnFailMessage(data, statusCode)
 
     return jsonify({
         'message' : 'ok',
