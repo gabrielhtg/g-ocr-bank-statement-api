@@ -14,7 +14,7 @@ from services.utils.exception_handler import exceptionHandler
 from services.utils.get_image_height import getImageHeight
 from services.utils.get_image_width import getImageWidth
 
-def doOcrCimb (imageArray, app, bankStatementType) :
+def doOcrCimb (imageArray, app, isZip, isPdf) :
     page = 0
     data = {}
     currentRow = 0
@@ -95,9 +95,14 @@ def doOcrCimb (imageArray, app, bankStatementType) :
         page += 1
         textData.clear()
         
-        if isinstance(e, str) :
+        if isZip :
             filename = secure_filename(e)
             file_path = os.path.join(app.config['EXTRACT_FOLDER'], filename)
+            perspectiveCorrectedImage = correctPerspective(file_path)
+            
+        elif isPdf :
+            filename = secure_filename(e)
+            file_path = os.path.join(app.config['PDF_EXTRACT_FOLDER'], filename)
             perspectiveCorrectedImage = correctPerspective(file_path)
             
         else :

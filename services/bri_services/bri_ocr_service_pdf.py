@@ -16,7 +16,7 @@ from services.utils.exception_handler import exceptionHandler
 from services.utils.get_image_height import getImageHeight
 from services.utils.get_image_width import getImageWidth
 
-def doOcrBri (imageArray, app, isZip, isPdf) :
+def doOcrBriPdf(imageArray, app, isZip, isPdf) :
     pemilikRekening = None
     alamat = None
     nomorRekening = None
@@ -182,24 +182,24 @@ def doOcrBri (imageArray, app, isZip, isPdf) :
             
             if page == 1 :
                 if 'bri' in text.lower() and ch < 0.3 * tinggiGambar:
-                    thlPemilikRekening = lb + int(0.005 * lebarGambar)
+                    thlPemilikRekening = lb - int(0.06 * lebarGambar)
                     thrPemilikRekening = thlPemilikRekening + int(0.34 * lebarGambar)
-                    thtPemilikRekening = tb + int(0.11 * tinggiGambar)
+                    thtPemilikRekening = tb + int(0.125 * tinggiGambar)
                     thbPemilikRekening = thtPemilikRekening + int(0.026 * tinggiGambar)
                     
-                    thlAlamat = lb + int(0.005 * lebarGambar)
-                    thrAlamat = thlPemilikRekening + int(0.34 * lebarGambar)
+                    thlAlamat = thlPemilikRekening
+                    thrAlamat = thrPemilikRekening
                     thtAlamat = thbPemilikRekening
-                    thbAlamat = thtAlamat + int(0.045 * tinggiGambar)
+                    thbAlamat = thtAlamat + int(0.055 * tinggiGambar)
                     
                 if 'kening' in text.lower() and ch < 0.3 * tinggiGambar :
-                    thlNomorRekening = rb + int(0.08 * lebarGambar)
+                    thlNomorRekening = rb + int(0.05 * lebarGambar)
                     thrNomorRekening = rb + int(0.3 * lebarGambar)
                     thtNomorRekening = tb - int(0.005 * tinggiGambar)
                     thbNomorRekening = bb + int(0.005 * tinggiGambar)
                     
                 if 'oduk' in text.lower() and ch < 0.4 * tinggiGambar :
-                    thlNamaProduk = rb + int(0.08 * lebarGambar)
+                    thlNamaProduk = rb + int(0.05 * lebarGambar)
                     thrNamaProduk = rb + int(0.3 * lebarGambar)
                     thtNamaProduk = tb - int(0.005 * tinggiGambar)
                     thbNamaProduk = bb + int(0.005 * tinggiGambar)
@@ -339,10 +339,10 @@ def doOcrBri (imageArray, app, isZip, isPdf) :
                     thbHeaderTable = tb + int(0.025 * tinggiGambar)
                     thbTable = tb + int(0.49 * tinggiGambar)
                     thrTableCol1 = rb + int(0.005 * lebarGambar)
-                    thrTableCol2 = thrTableCol1 + int(0.263 * lebarGambar)
-                    thrTableCol3 = thrTableCol2 + int(0.069 * lebarGambar)
+                    thrTableCol2 = thrTableCol1 + int(0.272 * lebarGambar)
+                    thrTableCol3 = thrTableCol2 + int(0.073 * lebarGambar)
                     thrTableCol4 = thrTableCol3 + int(0.154 * lebarGambar)
-                    thrTableCol5 = thrTableCol4 + int(0.152 * lebarGambar)
+                    thrTableCol5 = thrTableCol4 + int(0.146 * lebarGambar)
                 
                 if page > 1 :
                     if 'tanggal' in text.lower() and 'ran' in text.lower() :

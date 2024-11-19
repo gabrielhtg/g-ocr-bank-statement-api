@@ -1,8 +1,10 @@
 from flask import jsonify, request
 
 from services.ocbc_services.ocbc_ocr_service import doOcrOcbc
+from services.utils.check_is_pdf import checkIsPdf
 from services.utils.check_is_zip import checkIsZip
 from services.utils.get_file_list_from_zip import getFileListFromZip
+from services.utils.get_images_from_pdf import getImagesFromPdf
 from services.utils.return_fail_message import returnFailMessage
 
 def ocbcController(app) :
@@ -16,13 +18,15 @@ def ocbcController(app) :
     # variable ini menyimpan apakah file yang diupload adalah 
     # file zip atau bukan. 
     isZip = False
+    isPdf = False
     
     # cek apakah file yang diupload adalah zip
     if len(uploadedFiles) == 1 :
         isZip = checkIsZip(uploadedFiles)
+        isPdf = checkIsPdf(uploadedFiles)
         
     if isZip:
-        fileList = getFileListFromZip(uploadedFiles[0], app, zipPassword)
+        fileList = getFileListFromZip(uploadedFiles[0], app, isZip, isPdf)
             
         if fileList == 400 :
             return returnFailMessage(False, 'Gagal mengekstrak zip! Password salah!')
@@ -33,10 +37,18 @@ def ocbcController(app) :
             if statusCode != 200 :
                 return returnFailMessage(data, statusCode)
             
+    elif isPdf:
+        fileList = getImagesFromPdf(uploadedFiles[0], app)
+            
+        statusCode, data = doOcrOcbc(fileList, app, isZip, isPdf)
+
+        if statusCode != 200 :
+            return returnFailMessage(data, statusCode)
+            
     else :
         sortedData = sorted(uploadedFiles, key=lambda x: int(x.filename.split("_")[-1].split(".")[0]))
         
-        statusCode, data = doOcrOcbc(sortedData, app, bankStatementType)
+        statusCode, data = doOcrOcbc(sortedData, app, isZip, isPdf)
         
         if statusCode != 200 :
             return returnFailMessage(data, statusCode)

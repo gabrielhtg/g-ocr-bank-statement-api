@@ -14,7 +14,7 @@ from services.utils.exception_handler import exceptionHandler
 from services.utils.get_image_height import getImageHeight
 from services.utils.get_image_width import getImageWidth
 
-def doOcrMandiri (imageArray, app, bankStatementType) :
+def doOcrMandiri (imageArray, app, isZip, isPdf) :
     periodeLaporan = None
     nomorRekening = None
     pemilikRekening = None
@@ -70,9 +70,14 @@ def doOcrMandiri (imageArray, app, bankStatementType) :
         page += 1
         textData.clear()
         
-        if isinstance(e, str) :
+        if isZip :
             filename = secure_filename(e)
             file_path = os.path.join(app.config['EXTRACT_FOLDER'], filename)
+            perspectiveCorrectedImage = correctPerspective(file_path)
+            
+        if isPdf :
+            filename = secure_filename(e)
+            file_path = os.path.join(app.config['PDF_EXTRACT_FOLDER'], filename)
             perspectiveCorrectedImage = correctPerspective(file_path)
             
         else :
@@ -88,9 +93,6 @@ def doOcrMandiri (imageArray, app, bankStatementType) :
         lebarGambar = getImageWidth(perspectiveCorrectedImage)
         tinggiGambar = getImageHeight(perspectiveCorrectedImage)
         
-        print(lebarGambar)
-        print(tinggiGambar)
-
         # text_ merupakan semua teks hasil ocr dari gambar
         # tapi masih bukan hasil akhir
         text_ = doEasyOcr(perspectiveCorrectedImage)

@@ -2,5 +2,6 @@
 **/__pycache__/
 /uploads
 /extracted_data
+/extracted_pdf
 /.idea
 /.vscode

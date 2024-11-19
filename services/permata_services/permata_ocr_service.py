@@ -2,6 +2,7 @@ import os
 import uuid
 from matplotlib.dviread import Page
 from werkzeug.utils import secure_filename
+import cv2 as cv
 
 from services.permata_services.analysis_data import permataAnalysisData
 from services.permata_services.get_total_debet import getTotalDebet
@@ -14,7 +15,7 @@ from services.utils.exception_handler import exceptionHandler
 from services.utils.get_image_height import getImageHeight
 from services.utils.get_image_width import getImageWidth
 
-def doOcrPermata (imageArray, app, bankStatementType) :
+def doOcrPermata (imageArray, app, isZip, isPdf) :
     pemilikRekening = None
     alamat = None
     periodeLaporan = None
@@ -84,10 +85,15 @@ def doOcrPermata (imageArray, app, bankStatementType) :
         page += 1
         textData.clear()
         
-        if isinstance(e, str) :
+        if isZip :
             filename = secure_filename(e)
             file_path = os.path.join(app.config['EXTRACT_FOLDER'], filename)
             perspectiveCorrectedImage = correctPerspective(file_path)
+            
+        elif isPdf :
+            filename = secure_filename(e)
+            file_path = os.path.join(app.config['PDF_EXTRACT_FOLDER'], filename)
+            perspectiveCorrectedImage = cv.imread(file_path)
             
         else :
             file = e

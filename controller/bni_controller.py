@@ -1,6 +1,7 @@
 from flask import jsonify, request
 
 from services.bni_services.bni_ocr_service import doOcrBni
+from services.bni_services.bni_ocr_service_pdf import doOcrBniPdf
 from services.utils.check_is_pdf import checkIsPdf
 from services.utils.check_is_zip import checkIsZip
 from services.utils.get_file_list_from_zip import getFileListFromZip
@@ -14,8 +15,6 @@ def bniController(app) :
     if request.form.get('zip-password') :
         zipPassword = request.form.get('zip-password')
     
-    # variable ini menyimpan apakah file yang diupload adalah 
-    # file zip atau bukan. 
     isZip = False
     isPdf = False
     
@@ -39,7 +38,7 @@ def bniController(app) :
     elif isPdf:
         fileList = getImagesFromPdf(uploadedFiles[0], app)
         
-        statusCode, data = doOcrBni(fileList, app, isZip, isPdf)
+        statusCode, data = doOcrBniPdf(fileList, app, isZip, isPdf)
 
         if statusCode != 200 :
             return returnFailMessage(data, statusCode)

@@ -14,7 +14,7 @@ from services.utils.exception_handler import exceptionHandler
 from services.utils.get_image_height import getImageHeight
 from services.utils.get_image_width import getImageWidth
 
-def doOcrOcbc (imageArray, app, bankStatementType) :
+def doOcrOcbc (imageArray, app, isZip, isPdf) :
     pemilikRekening = None
     alamat = None
     nomorRekening = None
@@ -125,9 +125,14 @@ def doOcrOcbc (imageArray, app, bankStatementType) :
         page += 1
         textData.clear()
         
-        if isinstance(e, str) :
+        if isZip :
             filename = secure_filename(e)
             file_path = os.path.join(app.config['EXTRACT_FOLDER'], filename)
+            perspectiveCorrectedImage = correctPerspective(file_path)
+            
+        if isPdf :
+            filename = secure_filename(e)
+            file_path = os.path.join(app.config['PDF_EXTRACT_FOLDER'], filename)
             perspectiveCorrectedImage = correctPerspective(file_path)
             
         else :
@@ -313,7 +318,7 @@ def doOcrOcbc (imageArray, app, bankStatementType) :
                     thrTableCol4 = thrTableCol3 + int(0.11 * lebarGambar)
                     thrTableCol5 = thrTableCol4 + int(0.12 * lebarGambar)
                     
-                if 'tunggak' in text.lower() and 'bunga' in text.lower() :
+                if 'tunggak' in text.lower() and ch > (0.4 * tinggiGambar):
                     thlTunggakanBunga = lb - int(0.05 * lebarGambar)
                     thrTunggakanBunga = rb + int(0.005 * lebarGambar)
                     thtTunggakanBunga = bb + int(0.0005 * tinggiGambar)
@@ -434,8 +439,8 @@ def doOcrOcbc (imageArray, app, bankStatementType) :
                         if totalSaldoDalamIDR == None :
                             totalSaldoDalamIDR = text.strip()  
                     
-                if ch > 0.5 * tinggiGambar and 'mata' in text.lower() and 'uang' in text.lower() :
-                    thbTable = tb
+                if ch > 0.5 * tinggiGambar and 'mata' in text.lower():
+                    thbTable = tb + (0.001 * tinggiGambar)
                     continue
                     
                 try :

@@ -7,7 +7,7 @@ def getImagesFromPdf(pdf_file, app):
 
     try:
         # Konversi PDF ke daftar objek gambar menggunakan pdf2image
-        images = convert_from_bytes(pdf_file.read(), dpi=200)
+        images = convert_from_bytes(pdf_file.read(), dpi=500)
 
         for index, image in enumerate(images):
             # Membuat nama file unik menggunakan UUID
