@@ -69,7 +69,6 @@ def doOcrMandiri (imageArray, app, isZip, isPdf) :
     for e in imageArray:
         page += 1
         textData.clear()
-        print(isZip)
         
         if isZip == True :
             filename = secure_filename(e)

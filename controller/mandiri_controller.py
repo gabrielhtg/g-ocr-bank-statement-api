@@ -38,7 +38,7 @@ def mandiriController(app) :
             if statusCode != 200 :
                 return returnFailMessage(data, statusCode)
             
-    if isPdf:
+    elif isPdf:
         fileList = getImagesFromPdf(uploadedFiles[0], app)
             
         statusCode, data = doOcrMandiriPdf(fileList, app, isZip, isPdf)

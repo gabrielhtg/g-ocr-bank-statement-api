@@ -1,5 +1,6 @@
 from io import BytesIO
 import os
+import uuid
 from flask import jsonify, request
 from pypdf import PdfReader
 
@@ -41,9 +42,10 @@ def bniController(app) :
                 return returnFailMessage(data, statusCode)
             
     elif isPdf:
-        temp_path = f"/tmp/{uploadedFiles[0].filename}"
-        uploadedFiles[0].save(temp_path)
-        stat = os.stat(temp_path)
+        unique_filename = f"{uuid.uuid4().hex}_{uploadedFiles[0].filename}"
+        destination_path = os.path.join(app.config['PDF_EXTRACT_FOLDER'], unique_filename)
+        uploadedFiles[0].save(destination_path)
+        stat = os.stat(destination_path)
         print(stat)
         
         # creation_date = metadata.get('/CreationDate', None)
