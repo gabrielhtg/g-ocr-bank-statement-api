@@ -1,4 +1,7 @@
+from io import BytesIO
+import os
 from flask import jsonify, request
+from pypdf import PdfReader
 
 from services.bni_services.bni_ocr_service import doOcrBni
 from services.bni_services.bni_ocr_service_pdf import doOcrBniPdf
@@ -6,6 +9,7 @@ from services.utils.check_is_pdf import checkIsPdf
 from services.utils.check_is_zip import checkIsZip
 from services.utils.get_file_list_from_zip import getFileListFromZip
 from services.utils.get_images_from_pdf import getImagesFromPdf
+from services.utils.is_pdf_changed import isPdfChanged
 from services.utils.return_fail_message import returnFailMessage
 
 def bniController(app) :
@@ -17,6 +21,7 @@ def bniController(app) :
     
     isZip = False
     isPdf = False
+    isPdfModified = None
     
     # cek apakah file yang diupload adalah zip
     if len(uploadedFiles) == 1 :
@@ -36,6 +41,18 @@ def bniController(app) :
                 return returnFailMessage(data, statusCode)
             
     elif isPdf:
+        temp_path = f"/tmp/{uploadedFiles[0].filename}"
+        uploadedFiles[0].save(temp_path)
+        stat = os.stat(temp_path)
+        print(stat)
+        
+        # creation_date = metadata.get('/CreationDate', None)
+        # modification_date = metadata.get('/ModDate', None)
+        
+        # if creation_date == modification_date:
+        #     isPdfModified = False
+        # else:
+        #     isPdfModified = True
         fileList = getImagesFromPdf(uploadedFiles[0], app)
         
         statusCode, data = doOcrBniPdf(fileList, app, isZip, isPdf)
@@ -68,6 +85,7 @@ def bniController(app) :
             'total_credit' : data['total_credit'],
             'total_debet_amount' : data['total_debet_amount'],
             'total_credit_amount' : data['total_credit_amount'],
-            'analytics_data': data['analytics_data']    
+            'analytics_data': data['analytics_data'],
+            'is_pdf_modified' : isPdfModified   
         }
     })

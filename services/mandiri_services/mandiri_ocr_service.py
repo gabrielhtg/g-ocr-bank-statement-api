@@ -69,13 +69,14 @@ def doOcrMandiri (imageArray, app, isZip, isPdf) :
     for e in imageArray:
         page += 1
         textData.clear()
+        print(isZip)
         
-        if isZip :
+        if isZip == True :
             filename = secure_filename(e)
             file_path = os.path.join(app.config['EXTRACT_FOLDER'], filename)
             perspectiveCorrectedImage = correctPerspective(file_path)
             
-        if isPdf :
+        elif isPdf == True :
             filename = secure_filename(e)
             file_path = os.path.join(app.config['PDF_EXTRACT_FOLDER'], filename)
             perspectiveCorrectedImage = correctPerspective(file_path)

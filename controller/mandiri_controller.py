@@ -27,7 +27,7 @@ def mandiriController(app) :
         isPdf = checkIsPdf(uploadedFiles)
         
     if isZip:
-        fileList = getFileListFromZip(uploadedFiles[0], app, isZip, isPdf)
+        fileList = getFileListFromZip(uploadedFiles[0], app, zipPassword)
             
         if fileList == 400 :
             return returnFailMessage(False, 'Gagal mengekstrak zip! Password salah!')

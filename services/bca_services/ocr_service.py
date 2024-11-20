@@ -3,6 +3,7 @@ import uuid
 from matplotlib.dviread import Page
 from format_currency import format_currency
 from werkzeug.utils import secure_filename
+import cv2 as cv
 
 from services.bca_services.get_analysis_data import getAnalysisData
 from services.bca_services.get_total_debit import getTotalDebit
@@ -117,7 +118,7 @@ def doOcrBca (imageArray, app, isZip, isPdf) :
         elif isPdf:
             filename = secure_filename(e)
             file_path = os.path.join(app.config['PDF_EXTRACT_FOLDER'], filename)
-            perspectiveCorrectedImage = correctPerspective(file_path)
+            perspectiveCorrectedImage = cv.imread(file_path)
             
         else :
             file = e

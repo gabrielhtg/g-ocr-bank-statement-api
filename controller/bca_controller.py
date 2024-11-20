@@ -1,10 +1,12 @@
 from flask import jsonify, request
+from pypdf import PdfReader
 
 from services.bca_services.ocr_service import doOcrBca
 from services.utils.check_is_pdf import checkIsPdf
 from services.utils.check_is_zip import checkIsZip
 from services.utils.get_file_list_from_zip import getFileListFromZip
 from services.utils.get_images_from_pdf import getImagesFromPdf
+from services.utils.is_pdf_changed import isPdfChanged
 from services.utils.return_fail_message import returnFailMessage
 
 def bcaController(app) :
@@ -18,6 +20,7 @@ def bcaController(app) :
     # file zip atau bukan. 
     isZip = False
     isPdf = False
+    isPdfModified = False
     
     # cek apakah file yang diupload adalah zip
     if len(uploadedFiles) == 1 :
@@ -37,6 +40,8 @@ def bcaController(app) :
                 return returnFailMessage(data, statusCode)
             
     elif isPdf :
+        # isPdfModified = isPdfChanged(uploadedFiles[0])
+        
         fileList = getImagesFromPdf(uploadedFiles[0], app)
         
         statusCode, data = doOcrBca(fileList, app, isZip, isPdf)
@@ -70,6 +75,7 @@ def bcaController(app) :
             'transaction_data' : data['transaction_data'],
             'total_debet' : data['total_debit'],
             'total_kredit' : data['total_kredit'],
-            'analytics_data': data['analytics_data']    
+            'analytics_data': data['analytics_data'],
+            # 'is_pdf_modified' : isPdfModified  
         }
     }), statusCode
