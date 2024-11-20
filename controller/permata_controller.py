@@ -20,6 +20,7 @@ def permataController(app) :
     # file zip atau bukan. 
     isZip = False
     isPdf = False
+    isPdfModified = None
     
     # cek apakah file yang diupload adalah zip
     if len(uploadedFiles) == 1 :
