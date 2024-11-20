@@ -147,6 +147,13 @@ def doOcrOcbc (imageArray, app, isZip, isPdf) :
         
         lebarGambar = getImageWidth(perspectiveCorrectedImage)
         tinggiGambar = getImageHeight(perspectiveCorrectedImage)
+        
+        if int(lebarGambar) > int(tinggiGambar) :
+            return exceptionHandler(
+                'Image detected landscape. Photo images in Portrait form',
+                400,
+                e
+            )
 
         # text_ merupakan semua teks hasil ocr dari gambar
         # tapi masih bukan hasil akhir

@@ -16,6 +16,7 @@ from services.utils.do_orc_easyocr import doEasyOcr
 from services.utils.exception_handler import exceptionHandler
 from services.utils.get_image_height import getImageHeight
 from services.utils.get_image_width import getImageWidth
+from services.utils.return_fail_message import returnFailMessage
 
 def doOcrBca (imageArray, app, isZip, isPdf) :
     page = 0
@@ -132,6 +133,13 @@ def doOcrBca (imageArray, app, isZip, isPdf) :
         
         lebarGambar = getImageWidth(perspectiveCorrectedImage)
         tinggiGambar = getImageHeight(perspectiveCorrectedImage)
+        
+        if int(lebarGambar) > int(tinggiGambar) :
+            return exceptionHandler(
+                'Image detected landscape. Photo images in Portrait form',
+                400,
+                e
+            )
 
         # text_ merupakan semua teks hasil ocr dari gambar
         # tapi masih bukan hasil akhir
