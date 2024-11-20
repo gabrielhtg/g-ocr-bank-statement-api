@@ -1,4 +1,6 @@
+import os
 from pydoc import ispackage
+import uuid
 from flask import jsonify, request
 
 from services.danamon_services.danamon_ocr_service import doOcrDanamon
@@ -39,6 +41,19 @@ def danamonController(app) :
             
     elif isPdf:
         fileList = getImagesFromPdf(uploadedFiles[0], app)
+        
+        unique_filename = f"{uuid.uuid4().hex}_{uploadedFiles[0].filename}"
+        destination_path = os.path.join(app.config['PDF_EXTRACT_FOLDER'], unique_filename)
+        uploadedFiles[0].save(destination_path)
+        stat = os.stat(destination_path)
+        
+        if stat.st_mtime == stat.st_ctime :
+            isPdfModified = False
+            
+        else :
+            isPdfModified = True
+            
+        os.remove(destination_path)
             
         statusCode, data = doOcrDanamon(fileList, app, isZip, isPdf)
 
@@ -65,6 +80,7 @@ def danamonController(app) :
             'periode_laporan' : data['periode_laporan'],
             'total_debet' : data['total_debet'],
             'total_kredit' : data['total_kredit'],
-            'analytics_data': data['analytics_data']    
+            'analytics_data': data['analytics_data'],
+            'is_pdf_modified': isPdfModified 
         }
     })

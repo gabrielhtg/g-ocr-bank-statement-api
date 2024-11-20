@@ -1,3 +1,5 @@
+import os
+import uuid
 from flask import jsonify, request
 
 from services.ocbc_services.ocbc_ocr_service import doOcrOcbc
@@ -39,6 +41,19 @@ def ocbcController(app) :
             
     elif isPdf:
         fileList = getImagesFromPdf(uploadedFiles[0], app)
+        
+        unique_filename = f"{uuid.uuid4().hex}_{uploadedFiles[0].filename}"
+        destination_path = os.path.join(app.config['PDF_EXTRACT_FOLDER'], unique_filename)
+        uploadedFiles[0].save(destination_path)
+        stat = os.stat(destination_path)
+        
+        if stat.st_mtime == stat.st_ctime :
+            isPdfModified = False
+            
+        else :
+            isPdfModified = True
+            
+        os.remove(destination_path)
             
         statusCode, data = doOcrOcbc(fileList, app, isZip, isPdf)
 
@@ -73,6 +88,7 @@ def ocbcController(app) :
             'total_tunggakan': data['total_tunggakan'],
             'kurs_valas_idr': data['kurs_valas_idr'],
             'saldo_dalam_mata_uang_idr': data['saldo_dalam_mata_uang_idr'],
-            'total_saldo_dalam_idr': data['total_saldo_dalam_idr']
+            'total_saldo_dalam_idr': data['total_saldo_dalam_idr'],
+            'is_pdf_modified' : isPdfModified
         }
     })

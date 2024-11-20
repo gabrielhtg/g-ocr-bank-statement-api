@@ -1,3 +1,5 @@
+import os
+import uuid
 from flask import jsonify, request
 
 from services.bri_services.bri_ocr_service import doOcrBri
@@ -27,6 +29,19 @@ def briController(app) :
         
     if isZip:
         fileList = getFileListFromZip(uploadedFiles[0], app, zipPassword)
+        
+        unique_filename = f"{uuid.uuid4().hex}_{uploadedFiles[0].filename}"
+        destination_path = os.path.join(app.config['PDF_EXTRACT_FOLDER'], unique_filename)
+        uploadedFiles[0].save(destination_path)
+        stat = os.stat(destination_path)
+        
+        if stat.st_mtime == stat.st_ctime :
+            isPdfModified = False
+            
+        else :
+            isPdfModified = True
+            
+        os.remove(destination_path)
             
         if fileList == 400 :
             return returnFailMessage(False, 'Gagal mengekstrak zip! Password salah!')
@@ -73,5 +88,6 @@ def briController(app) :
             'saldo_akhir' : data['saldo_akhir'],
             'total_transaksi_debit' : data['total_transaksi_debit'],
             'total_transaksi_kredit' : data['total_transaksi_kredit'],
+            'is_pdf_modified' : isPdfModified
         }
     })

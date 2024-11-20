@@ -42,20 +42,20 @@ def bniController(app) :
                 return returnFailMessage(data, statusCode)
             
     elif isPdf:
+        fileList = getImagesFromPdf(uploadedFiles[0], app)
+        
         unique_filename = f"{uuid.uuid4().hex}_{uploadedFiles[0].filename}"
         destination_path = os.path.join(app.config['PDF_EXTRACT_FOLDER'], unique_filename)
         uploadedFiles[0].save(destination_path)
         stat = os.stat(destination_path)
-        print(stat)
         
-        # creation_date = metadata.get('/CreationDate', None)
-        # modification_date = metadata.get('/ModDate', None)
-        
-        # if creation_date == modification_date:
-        #     isPdfModified = False
-        # else:
-        #     isPdfModified = True
-        fileList = getImagesFromPdf(uploadedFiles[0], app)
+        if stat.st_mtime == stat.st_ctime :
+            isPdfModified = False
+            
+        else :
+            isPdfModified = True
+            
+        os.remove(destination_path)
         
         statusCode, data = doOcrBniPdf(fileList, app, isZip, isPdf)
 
