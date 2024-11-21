@@ -2,7 +2,6 @@ import os
 import uuid
 from flask import jsonify, request
 from pypdf import PdfReader
-import requests
 
 from services.bca_services.ocr_service import doOcrBca
 from services.utils.check_is_pdf import checkIsPdf
@@ -70,25 +69,6 @@ def bcaController(app) :
         if statusCode != 200 :
             return returnFailMessage(data, statusCode)
         
-    # url = "http://147.139.136.231/api/v5_ifinrmd_api/api/BankValidator/CheckBankAccountNo"
-
-    # headers = {
-    #     "Content-Type": "application/json",
-    #     "UserId": "bmltZEE%3D"
-    # }
-
-    # validationData = [
-    #     {
-    #         "p_bank_code": "014",
-    #         "p_bank_account_no": data['nomor_rekening'],
-    #         "p_bank_account_name": data['pemilik_rekening']
-    #     }
-    # ]
-
-    # validationResponse = requests.post(url, json=validationData, headers=headers)
-    
-    # playsound(app.config['BELL'])
-    
     return jsonify({
         'message' : 'ok',
         'data' : {
