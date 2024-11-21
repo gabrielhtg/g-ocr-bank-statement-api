@@ -89,9 +89,6 @@ def bniGetTransactionData (textData, filename:str) :
             if e['col'] == 8 :
                 currentData['balance'] = format_currency(convertToFloat(e['text']))
     
-    # print(rowDataArr)
-    # print('----------------------------------------------------------')
-    # print()
     currentData['filename'] = filename
     rowDataArr.append(currentData.copy())
     return rowDataArr

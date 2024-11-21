@@ -270,13 +270,17 @@ def doOcrBca (imageArray, app, isZip, isPdf) :
                         if mataUang == None :
                             mataUang = text
                             
-            if 'saldo awal' in text.lower() or ('saldo' in before.lower() and 'awal' in text.lower()) :
+            # print(before)
+            # print(text)
+            # print()
+            if ('saldo' in text.lower() and 'awal' in text.lower()) or ('saldo' in before.lower() and 'awal' in text.lower()) :
                 countSaldoAwal += 1
             
             if 'tanggal' in text.lower() and thbHeaderTable == None:
                 thbHeaderTable = tb + int(0.013 * tinggiGambar)
                 
-            if countSaldoAwal >= 2 and thbTable == None and page == len(imageArray):
+            if countSaldoAwal >= 2 and thbTable == None  and page == len(imageArray):
+                print('mama')
                 thbTable = tb - int(0.001 * tinggiGambar)
                 
                 thbSaldoAwal = thbTable + int(0.014 * tinggiGambar)
@@ -386,64 +390,64 @@ def doOcrBca (imageArray, app, isZip, isPdf) :
                         
             before = text
                 
-        try :
-            for t in text_ :
-                bbox, text, score = t
+        # try :
+        for t in text_ :
+            bbox, text, score = t
+            
+            bbox = [[int(coord[0]), int(coord[1])] for coord in bbox]
+                    
+            rb = bbox[1][0]
+            lb = bbox[0][0]
+            tb = bbox[1][1]
+            bb = bbox[2][1]
+            cw = lb + int(abs(rb - lb) / 2)
+            ch = tb + int(abs(bb - tb) / 2)
+            
+            if 'tanggal' in text.lower() and cw < (thlAlamat + int(0.073 * tinggiGambar)) and currentRow == 0:
+                thrTableCol1 = lb + int(0.063 * tinggiGambar)
+                thrTableCol2 = thrTableCol1 + int(0.253 * tinggiGambar)
+                thrTableCol3 = thrTableCol2 + int(0.0473 * tinggiGambar)
+                thrTableCol4 = thrTableCol3 + int(0.149 * tinggiGambar)
                 
-                bbox = [[int(coord[0]), int(coord[1])] for coord in bbox]
-                        
-                rb = bbox[1][0]
-                lb = bbox[0][0]
-                tb = bbox[1][1]
-                bb = bbox[2][1]
-                cw = lb + int(abs(rb - lb) / 2)
-                ch = tb + int(abs(bb - tb) / 2)
+            if thrTableCol1 != None and tb > thbHeaderTable and ch < thbTable :
+                textWithCol['text'] = text
                 
-                if 'tanggal' in text.lower() and cw < (thlAlamat + int(0.073 * tinggiGambar)) and currentRow == 0:
-                    thrTableCol1 = lb + int(0.063 * tinggiGambar)
-                    thrTableCol2 = thrTableCol1 + int(0.253 * tinggiGambar)
-                    thrTableCol3 = thrTableCol2 + int(0.0473 * tinggiGambar)
-                    thrTableCol4 = thrTableCol3 + int(0.149 * tinggiGambar)
+                if (cw < thrTableCol1) :
+                    currentRow += 1    
+                    textWithCol['col'] = 1
+                    textWithCol['row'] = currentRow
+                
+                if (cw > thrTableCol1 and cw < thrTableCol2) :
+                    textWithCol['col'] = 2
+                    textWithCol['row'] = currentRow
                     
-                if thrTableCol1 != None and tb > thbHeaderTable and ch < thbTable :
-                    textWithCol['text'] = text
+                if (cw > thrTableCol2 and cw < thrTableCol3) :
+                    textWithCol['col'] = 3
+                    textWithCol['row'] = currentRow
                     
-                    if (cw < thrTableCol1) :
-                        currentRow += 1    
-                        textWithCol['col'] = 1
-                        textWithCol['row'] = currentRow
+                if (cw > thrTableCol3 and cw < thrTableCol4) :
+                    textWithCol['col'] = 4
+                    textWithCol['row'] = currentRow
                     
-                    if (cw > thrTableCol1 and cw < thrTableCol2) :
-                        textWithCol['col'] = 2
-                        textWithCol['row'] = currentRow
-                        
-                    if (cw > thrTableCol2 and cw < thrTableCol3) :
-                        textWithCol['col'] = 3
-                        textWithCol['row'] = currentRow
-                        
-                    if (cw > thrTableCol3 and cw < thrTableCol4) :
-                        textWithCol['col'] = 4
-                        textWithCol['row'] = currentRow
-                        
-                    if (cw > thrTableCol4) :
-                        textWithCol['col'] = 5
-                        textWithCol['row'] = currentRow
-                        
-                    textData.append(textWithCol.copy())
+                if (cw > thrTableCol4) :
+                    textWithCol['col'] = 5
+                    textWithCol['row'] = currentRow
                     
-        except TypeError as e:
-            return exceptionHandler(
-                f'An error occurred with image {filename}. Try rephotographing this image more clearly!',
-                400,
-                e
-            )
+                textData.append(textWithCol.copy())
+                    
+        # except TypeError as e:
+        #     return exceptionHandler(
+        #         f'An error occurred with image {filename}. Try rephotographing this image more clearly!',
+        #         400,
+        #         e
+        #     )
         
-        except ValueError as e:
-            return exceptionHandler(
-                f'An error occurred with image {filename}. Try rephotographing this image more clearly!',
-                400,
-                e
-            )   
+        # except ValueError as e:
+        #     return exceptionHandler(
+        #         f'An error occurred with image {filename}. Try rephotographing this image more clearly!',
+        #         400,
+        #         e
+        #     )   
     
         transactionData.extend(bcaGetTransactionData(textData, filename))
         

@@ -39,7 +39,7 @@ def cimbController(app) :
             if statusCode != 200 :
                 return returnFailMessage(data, statusCode)
             
-    if isPdf:
+    elif isPdf:
         fileList = getImagesFromPdf(uploadedFiles[0], app)
         
         unique_filename = f"{uuid.uuid4().hex}_{uploadedFiles[0].filename}"

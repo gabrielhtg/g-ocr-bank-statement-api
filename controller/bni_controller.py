@@ -10,7 +10,6 @@ from services.utils.check_is_pdf import checkIsPdf
 from services.utils.check_is_zip import checkIsZip
 from services.utils.get_file_list_from_zip import getFileListFromZip
 from services.utils.get_images_from_pdf import getImagesFromPdf
-from services.utils.is_pdf_changed import isPdfChanged
 from services.utils.return_fail_message import returnFailMessage
 
 def bniController(app) :
@@ -69,7 +68,9 @@ def bniController(app) :
         
         if statusCode != 200 :
             return returnFailMessage(data, statusCode)
-
+        
+    # playsound(app.config['BELL'])
+    
     return jsonify({
         'message' : 'ok',
         'data' : {

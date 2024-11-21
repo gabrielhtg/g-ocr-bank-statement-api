@@ -2,13 +2,13 @@ import os
 import uuid
 from flask import jsonify, request
 from pypdf import PdfReader
+import requests
 
 from services.bca_services.ocr_service import doOcrBca
 from services.utils.check_is_pdf import checkIsPdf
 from services.utils.check_is_zip import checkIsZip
 from services.utils.get_file_list_from_zip import getFileListFromZip
 from services.utils.get_images_from_pdf import getImagesFromPdf
-from services.utils.is_pdf_changed import isPdfChanged
 from services.utils.return_fail_message import returnFailMessage
 
 def bcaController(app) :
@@ -69,7 +69,26 @@ def bcaController(app) :
         
         if statusCode != 200 :
             return returnFailMessage(data, statusCode)
+        
+    # url = "http://147.139.136.231/api/v5_ifinrmd_api/api/BankValidator/CheckBankAccountNo"
 
+    # headers = {
+    #     "Content-Type": "application/json",
+    #     "UserId": "bmltZEE%3D"
+    # }
+
+    # validationData = [
+    #     {
+    #         "p_bank_code": "014",
+    #         "p_bank_account_no": data['nomor_rekening'],
+    #         "p_bank_account_name": data['pemilik_rekening']
+    #     }
+    # ]
+
+    # validationResponse = requests.post(url, json=validationData, headers=headers)
+    
+    # playsound(app.config['BELL'])
+    
     return jsonify({
         'message' : 'ok',
         'data' : {
@@ -89,6 +108,7 @@ def bcaController(app) :
             'total_debet' : data['total_debit'],
             'total_kredit' : data['total_kredit'],
             'analytics_data': data['analytics_data'],
-            'is_pdf_modified' : isPdfModified  
+            'is_pdf_modified' : isPdfModified,
+            # 'account_validation': validationResponse
         }
     }), statusCode

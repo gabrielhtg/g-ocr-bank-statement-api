@@ -166,13 +166,14 @@ def doOcrBniPdf (imageArray, app, isZip, isPdf) :
                 )
             
             if page == 1 :
-                if 'account' in text.lower() and 'statement' in text.lower() :
+                if 'count' in text.lower() and 'eme' in text.lower() :
                     thrPemilikRekening = lb - int(0.2 * lebarGambar)
                     thtPemilikRekening = bb
                     thbPemilikRekening = bb + int(0.02 * tinggiGambar)
                     thrAlamat = lb - int(0.07 * lebarGambar)
-                    thlAlamat = 0
+                    thlAlamat = lb - int(0.2 * lebarGambar)
                     thbAlamat = bb + int (0.1 * tinggiGambar)
+                    thtAlamat = thbPemilikRekening
                     
                 if 'no' in text.lower() and 'cou' in text.lower() :
                     thrAccountNo = rb + int(0.25 * lebarGambar)
@@ -180,7 +181,8 @@ def doOcrBniPdf (imageArray, app, isZip, isPdf) :
                     thtAccountNo = tb - int(0.004 * tinggiGambar)
                     thlAccountNo = rb + int(0.008 * tinggiGambar)
                     
-                if 'cou' in text.lower() and 'pe' in text.lower() :
+                if ('type' in text.lower() and
+                    ch < 0.3 * tinggiGambar):
                     thrAccountType = rb + int(0.25 * lebarGambar)
                     thbAccountType = bb + int(0.0005 * tinggiGambar)
                     thtAccountType = tb - int(0.001 * tinggiGambar)
@@ -191,27 +193,30 @@ def doOcrBniPdf (imageArray, app, isZip, isPdf) :
                     thbPeriod = bb + int(0.0005 * tinggiGambar)
                     thtPeriod = tb - int(0.004 * tinggiGambar)
                     thlPeriod = rb + int(0.008 * tinggiGambar)
-                    
-                if thrAlamat != None:
+                
+                if thrPemilikRekening != None:
                     if (
                         ch < thbPemilikRekening and 
                         ch > thtPemilikRekening and 
-                        cw < thrAlamat
+                        cw < thrPemilikRekening
                         ) :
                         if pemilikRekening == None:
                             pemilikRekening = text
                             
-                    if pemilikRekening != None :
-                        if (
-                            ch > thbPemilikRekening and 
-                            ch < thbAlamat and 
-                            cw < thrAlamat
-                            ) :
-                            if alamat == None:
-                                alamat = text
-                                
-                            else :
-                                alamat = alamat + ' ' + text
+                        else :
+                            pemilikRekening = pemilikRekening + ' ' + text
+                    
+                if thrAlamat != None:
+                    if (
+                        ch < thbAlamat and 
+                        ch > thtAlamat and 
+                        cw < thrAlamat
+                        ) :
+                        if alamat == None:
+                            alamat = text
+                            
+                        else :
+                            alamat = alamat + ' ' + text
                     
                 if thbAccountNo != None:
                     if (
@@ -261,38 +266,38 @@ def doOcrBniPdf (imageArray, app, isZip, isPdf) :
             if (page == len(imageArray)) :        
                 if 'ending' in text.lower() :
                     thbTable = tb - int(0.005 * tinggiGambar)
-                    thtEndingBalance = thbTable
+                    thtEndingBalance = tb
                     thrEndingBalance = lebarGambar - int(0.005 * lebarGambar)
-                    thlEndingBalance = lb
+                    thlEndingBalance = rb + int(0.003 * lebarGambar)
                     thbEndingBalance = thtEndingBalance + int(0.02 * tinggiGambar)
                     
                 if 'total' in text.lower() and 'debet' in text.lower():
-                    thtTotalDebet = thbTable + int(0.022 * tinggiGambar)
+                    thtTotalDebet = tb
                     thrTotalDebet = rb + int(0.1 * lebarGambar)
                     thlTotalDebet = rb + int(0.01 * lebarGambar)
-                    thbTotalDebet = thtTotalDebet + int(0.02 * tinggiGambar)
+                    thbTotalDebet = bb
                     
-                    thtTotalDebetAmount = thbTable + int(0.022 * tinggiGambar)
+                    thtTotalDebetAmount = tb
                     thlTotalDebetAmount = thrTotalDebet
                     thrTotalDebetAmount = rb + int(0.3 * lebarGambar)
-                    thbTotalDebetAmount = thtTotalDebetAmount + int(0.02 * tinggiGambar)
+                    thbTotalDebetAmount = bb
                     
                 if 'total' in text.lower() and 'credit' in text.lower():
-                    thtTotalCredit = thbTable + int(0.042 * tinggiGambar)
+                    thtTotalCredit = tb
                     thrTotalCredit = rb + int(0.1 * lebarGambar)
                     thlTotalCredit = rb + int(0.01 * lebarGambar)
-                    thbTotalCredit = thtTotalCredit + int(0.02 * tinggiGambar)
+                    thbTotalCredit = bb
                     
-                    thtTotalCreditAmount = thtTotalCredit
+                    thtTotalCreditAmount = tb
                     thlTotalCreditAmount = thrTotalCredit
                     thrTotalCreditAmount = rb + int(0.3 * lebarGambar)
-                    thbTotalCreditAmount = thbTotalCredit
+                    thbTotalCreditAmount = bb
                     
                 if thrEndingBalance != None:
                     if (
                         (cw < thrEndingBalance) 
-                        and (ch <= thbEndingBalance) 
-                        and (ch >= thtEndingBalance)
+                        and (ch < thbEndingBalance) 
+                        and (ch > thtEndingBalance)
                         and (cw > thlEndingBalance)
                     ) :
                         if endingBalance == None :
