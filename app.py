@@ -30,6 +30,8 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 if not os.path.exists(EXTRACT_FOLDER):
     os.makedirs(EXTRACT_FOLDER, exist_ok=True)
+if not os.path.exists(PDF_EXTRACT_FOLDER):
+    os.makedirs(PDF_EXTRACT_FOLDER, exist_ok=True)
     
 if __name__ == "__main__":
     #app.run(host='0.0.0.0')
