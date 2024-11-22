@@ -1,7 +1,6 @@
 import os
 import uuid
 from flask import jsonify, request
-from pypdf import PdfReader
 
 from services.bca_services.ocr_service import doOcrBca
 from services.utils.check_is_pdf import checkIsPdf
