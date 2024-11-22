@@ -2,7 +2,6 @@ from io import BytesIO
 import os
 import uuid
 from flask import jsonify, request
-from pypdf import PdfReader
 
 from services.bni_services.bni_ocr_service import doOcrBni
 from services.bni_services.bni_ocr_service_pdf import doOcrBniPdf

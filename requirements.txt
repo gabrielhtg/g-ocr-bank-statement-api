@@ -4,6 +4,6 @@ flask-cors
 format-currency
 waitress
 opencv-python
-waitress
 pyzipper
 matplotlib
+pdf2image
