@@ -1,3 +1,4 @@
+from asyncio import threads
 import os
 from flask import Flask
 from flask_cors import CORS
@@ -33,11 +34,6 @@ if not os.path.exists(EXTRACT_FOLDER):
 if not os.path.exists(PDF_EXTRACT_FOLDER):
     os.makedirs(PDF_EXTRACT_FOLDER, exist_ok=True)
     
-if __name__ == "__main__":
-    #app.run(host='0.0.0.0')
-    #We now use this syntax to server our app. 
-    serve(app, host='0.0.0.0', port=5000)
-
 @app.route('/', methods=['GET'])
 def hello():
     return 'Python OCR API Menyala!!!'
@@ -73,3 +69,6 @@ def proceedOcbc () :
 @app.route('/proceed-mandiri', methods=['POST'])
 def proceedMandiri () : 
     return mandiriController(app)
+
+if __name__ == "__main__":
+    serve(app, host='0.0.0.0', port=5000, threads=8)
