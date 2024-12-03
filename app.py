@@ -73,6 +73,7 @@ def proceedMandiri () :
 
 if __name__ == "__main__":
     num_threads = multiprocessing.cpu_count()
+    print('-' * 100)
     print(f'Banyak threads : {num_threads}')
     print('Api Flask Is Running!!!')
     print('-' * 100)
