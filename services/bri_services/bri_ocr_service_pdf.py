@@ -344,7 +344,7 @@ def doOcrBriPdf(imageArray, app, isZip, isPdf) :
             try :       
                 if 'tanggal' in text.lower() and 'ran' in text.lower() and currentRow == 0 and ch > 0.3 * tinggiGambar:
                     thbHeaderTable = tb + int(0.025 * tinggiGambar)
-                    thbTable = tb + int(0.49 * tinggiGambar)
+                    thbTable = tb + int(0.51 * tinggiGambar)
                     thrTableCol1 = rb + int(0.005 * lebarGambar)
                     thrTableCol2 = thrTableCol1 + int(0.272 * lebarGambar)
                     thrTableCol3 = thrTableCol2 + int(0.073 * lebarGambar)
