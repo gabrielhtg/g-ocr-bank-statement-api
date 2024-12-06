@@ -280,7 +280,6 @@ def doOcrBca (imageArray, app, isZip, isPdf) :
                 thbHeaderTable = tb + int(0.013 * tinggiGambar)
                 
             if countSaldoAwal >= 2 and thbTable == None  and page == len(imageArray):
-                print('mama')
                 thbTable = tb - int(0.001 * tinggiGambar)
                 
                 thbSaldoAwal = thbTable + int(0.014 * tinggiGambar)
