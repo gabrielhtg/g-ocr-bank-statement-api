@@ -9,10 +9,13 @@ from services.utils.get_file_list_from_zip import getFileListFromZip
 from services.utils.get_images_from_pdf import getImagesFromPdf
 from services.utils.return_fail_message import returnFailMessage
 
-def ocbcController(app) :
+def ocbcController(app, logger) :
+    username = request.headers.get('X-Username')
+    
+    logger.info(f"{username} : '/proceed-ocbc', methods=['POST']")
+    
     uploadedFiles = request.files.getlist('files')
     zipPassword = ''
-    bankStatementType = request.form.get('bank-statement-type')
     
     if request.form.get('zip-password') :
         zipPassword = request.form.get('zip-password')
@@ -35,7 +38,7 @@ def ocbcController(app) :
             return returnFailMessage(False, 'Gagal mengekstrak zip! Password salah!')
 
         else :
-            statusCode, data = doOcrOcbc(fileList, app, isZip, isPdf)
+            statusCode, data = doOcrOcbc(fileList, app, isZip, isPdf, logger, username)
 
             if statusCode != 200 :
                 return returnFailMessage(data, statusCode)
@@ -56,7 +59,7 @@ def ocbcController(app) :
             
         os.remove(destination_path)
             
-        statusCode, data = doOcrOcbc(fileList, app, isZip, isPdf)
+        statusCode, data = doOcrOcbc(fileList, app, isZip, isPdf, logger, username)
 
         if statusCode != 200 :
             return returnFailMessage(data, statusCode)
@@ -64,7 +67,7 @@ def ocbcController(app) :
     else :
         sortedData = sorted(uploadedFiles, key=lambda x: int(x.filename.split("_")[-1].split(".")[0]))
         
-        statusCode, data = doOcrOcbc(sortedData, app, isZip, isPdf)
+        statusCode, data = doOcrOcbc(sortedData, app, isZip, isPdf, logger, username)
         
         if statusCode != 200 :
             return returnFailMessage(data, statusCode)

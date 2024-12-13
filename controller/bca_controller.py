@@ -9,7 +9,11 @@ from services.utils.get_file_list_from_zip import getFileListFromZip
 from services.utils.get_images_from_pdf import getImagesFromPdf
 from services.utils.return_fail_message import returnFailMessage
 
-def bcaController(app) :
+def bcaController(app, logger) :
+    username = request.headers.get('X-Username')
+    
+    logger.info(f"{username} : '/proceed-bca', methods=['POST']")
+    
     uploadedFiles = request.files.getlist('files')
     zipPassword = ''
     
@@ -31,12 +35,14 @@ def bcaController(app) :
         fileList = getFileListFromZip(uploadedFiles[0], app, zipPassword)
             
         if fileList == 400 :
+            logger.error(f"{username} : 'Gagal mengekstrak zip! Password salah!. Return 400")
             return returnFailMessage('Gagal mengekstrak zip! Password salah!', 400)
 
         else :
-            statusCode, data = doOcrBca(fileList, app, isZip, isPdf)
+            statusCode, data = doOcrBca(fileList, app, isZip, isPdf, username, logger)
 
             if statusCode != 200 :
+                logger.error(f"{username} : {data}, {statusCode}")
                 return returnFailMessage(data, statusCode)
             
     elif isPdf :
@@ -55,19 +61,22 @@ def bcaController(app) :
             
         os.remove(destination_path)
         
-        statusCode, data = doOcrBca(fileList, app, isZip, isPdf)
+        statusCode, data = doOcrBca(fileList, app, isZip, isPdf, username, logger)
 
         if statusCode != 200 :
+            logger.error(f"{username} : {data}, {statusCode}")
             return returnFailMessage(data, statusCode)
         
     else :
         sortedData = sorted(uploadedFiles, key=lambda x: x.filename)
         
-        statusCode, data = doOcrBca(sortedData, app, isZip, isPdf)
+        statusCode, data = doOcrBca(sortedData, app, isZip, isPdf, username, logger)
         
         if statusCode != 200 :
+            logger.error(f"{username} : {data}, {statusCode}")
             return returnFailMessage(data, statusCode)
-        
+    
+    logger.info(f"{username} : Proceed BCA Success, {statusCode}")
     return jsonify({
         'message' : 'ok',
         'data' : {

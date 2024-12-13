@@ -10,7 +10,11 @@ from services.utils.get_file_list_from_zip import getFileListFromZip
 from services.utils.get_images_from_pdf import getImagesFromPdf
 from services.utils.return_fail_message import returnFailMessage
 
-def danamonController(app) :
+def danamonController(app, logger) :
+    username = request.headers.get('X-Username')
+    
+    logger.info(f"{username} : '/proceed-danamon', methods=['POST']")
+    
     uploadedFiles = request.files.getlist('files')
     zipPassword = ''
     
@@ -35,7 +39,7 @@ def danamonController(app) :
             return returnFailMessage(False, 'Gagal mengekstrak zip! Password salah!')
 
         else :
-            statusCode, data = doOcrDanamon(fileList, app, isZip, isPdf)
+            statusCode, data = doOcrDanamon(fileList, app, isZip, isPdf, logger, username)
 
             if statusCode != 200 :
                 return returnFailMessage(data, statusCode)
@@ -56,7 +60,7 @@ def danamonController(app) :
             
         os.remove(destination_path)
             
-        statusCode, data = doOcrDanamon(fileList, app, isZip, isPdf)
+        statusCode, data = doOcrDanamon(fileList, app, isZip, isPdf, logger, username)
 
         if statusCode != 200 :
             return returnFailMessage(data, statusCode)
@@ -64,7 +68,7 @@ def danamonController(app) :
     else :
         sortedData = sorted(uploadedFiles, key=lambda x: x.filename)
         
-        statusCode, data = doOcrDanamon(sortedData, app, isZip, isPdf)
+        statusCode, data = doOcrDanamon(sortedData, app, isZip, isPdf, logger, username)
         
         if statusCode != 200 :
             return returnFailMessage(data, statusCode)

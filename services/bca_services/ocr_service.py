@@ -18,7 +18,7 @@ from services.utils.get_image_height import getImageHeight
 from services.utils.get_image_width import getImageWidth
 from services.utils.return_fail_message import returnFailMessage
 
-def doOcrBca (imageArray, app, isZip, isPdf) :
+def doOcrBca (imageArray, app, isZip, isPdf, username, logger) :
     page = 0
     data = {}
     
@@ -128,7 +128,8 @@ def doOcrBca (imageArray, app, isZip, isPdf) :
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
             file.save(file_path)
             perspectiveCorrectedImage = correctPerspective(file_path)
-            
+        
+        logger.info(f"{username} : Processing {filename}")
         print('Processing', filename)
         
         lebarGambar = getImageWidth(perspectiveCorrectedImage)
@@ -270,9 +271,6 @@ def doOcrBca (imageArray, app, isZip, isPdf) :
                         if mataUang == None :
                             mataUang = text
                             
-            # print(before)
-            # print(text)
-            # print()
             if ('saldo' in text.lower() and 'awal' in text.lower()) or ('saldo' in before.lower() and 'awal' in text.lower()) :
                 countSaldoAwal += 1
             

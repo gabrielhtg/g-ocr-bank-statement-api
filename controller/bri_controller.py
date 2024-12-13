@@ -10,7 +10,11 @@ from services.utils.get_file_list_from_zip import getFileListFromZip
 from services.utils.get_images_from_pdf import getImagesFromPdf
 from services.utils.return_fail_message import returnFailMessage
 
-def briController(app) :
+def briController(app, logger) :
+    username = request.headers.get('X-Username')
+    
+    logger.info(f"{username} : '/proceed-bri', methods=['POST']")
+    
     uploadedFiles = request.files.getlist('files')
     zipPassword = ''
     
@@ -48,7 +52,7 @@ def briController(app) :
             return returnFailMessage(False, 'Gagal mengekstrak zip! Password salah!')
 
         else :
-            statusCode, data = doOcrBri(fileList, app, isZip, isPdf)
+            statusCode, data = doOcrBri(fileList, app, isZip, isPdf, logger, username)
 
             if statusCode != 200 :
                 return returnFailMessage(data, statusCode)
@@ -56,7 +60,7 @@ def briController(app) :
     elif isPdf:
         fileList = getImagesFromPdf(uploadedFiles[0], app)
             
-        statusCode, data = doOcrBriPdf(fileList, app, isZip, isPdf)
+        statusCode, data = doOcrBriPdf(fileList, app, isZip, isPdf, logger, username)
 
         if statusCode != 200 :
             return returnFailMessage(data, statusCode)
@@ -64,7 +68,7 @@ def briController(app) :
     else :
         sortedData = sorted(uploadedFiles, key=lambda x: x.filename)
         
-        statusCode, data = doOcrBri(sortedData, app, isZip, isPdf)
+        statusCode, data = doOcrBri(sortedData, app, isZip, isPdf, logger, username)
         
         if statusCode != 200 :
             return returnFailMessage(data, statusCode)

@@ -3,5 +3,6 @@
 /uploads
 /extracted_data
 /extracted_pdf
+/logs
 /.idea
 /.vscode

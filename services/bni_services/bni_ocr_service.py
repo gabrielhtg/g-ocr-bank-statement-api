@@ -14,7 +14,7 @@ from services.utils.exception_handler import exceptionHandler
 from services.utils.get_image_height import getImageHeight
 from services.utils.get_image_width import getImageWidth
 
-def doOcrBni (imageArray, app, isZip, isPdf) :
+def doOcrBni (imageArray, app, isZip, isPdf, logger, username) :
     page = 0
     
     pemilikRekening = None
@@ -120,6 +120,7 @@ def doOcrBni (imageArray, app, isZip, isPdf) :
             file.save(file_path)
             perspectiveCorrectedImage = correctPerspective(file_path)
         
+        logger.info(f"{username} : Processing {filename}")
         print('Processing', filename)
         
         lebarGambar = getImageWidth(perspectiveCorrectedImage)
