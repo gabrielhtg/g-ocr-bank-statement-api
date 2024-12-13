@@ -35,7 +35,7 @@ def ocbcController(app) :
             return returnFailMessage(False, 'Gagal mengekstrak zip! Password salah!')
 
         else :
-            statusCode, data = doOcrOcbc(fileList, app, bankStatementType)
+            statusCode, data = doOcrOcbc(fileList, app, isZip, isPdf)
 
             if statusCode != 200 :
                 return returnFailMessage(data, statusCode)
