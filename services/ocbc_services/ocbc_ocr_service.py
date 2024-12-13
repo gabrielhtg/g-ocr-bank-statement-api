@@ -130,7 +130,7 @@ def doOcrOcbc (imageArray, app, isZip, isPdf) :
             file_path = os.path.join(app.config['EXTRACT_FOLDER'], filename)
             perspectiveCorrectedImage = correctPerspective(file_path)
             
-        if isPdf :
+        elif isPdf :
             filename = secure_filename(e)
             file_path = os.path.join(app.config['PDF_EXTRACT_FOLDER'], filename)
             perspectiveCorrectedImage = correctPerspective(file_path)
