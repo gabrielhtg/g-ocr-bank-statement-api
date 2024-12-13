@@ -3,7 +3,8 @@ import logging
 from logging.handlers import TimedRotatingFileHandler
 import multiprocessing
 import os
-from flask import Flask
+import zipfile
+from flask import Flask, send_file
 from flask_cors import CORS
 
 from waitress import serve
@@ -54,6 +55,22 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 logger.addHandler(log_handler)
 logger.addHandler(logging.StreamHandler())
+
+def zip_logs():
+    log_folder = 'logs'
+    zip_filename = 'logs.zip'
+    zip_path = os.path.join(log_folder, zip_filename)
+
+    # Membuat file zip
+    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        # Looping untuk menambahkan semua file log ke dalam zip
+        for root, dirs, files in os.walk(log_folder):
+            for file in files:
+                if file.endswith('.log'):
+                    file_path = os.path.join(root, file)
+                    zipf.write(file_path, os.path.relpath(file_path, log_folder))
+
+    return zip_path
     
 @app.route('/', methods=['GET'])
 def hello():
@@ -90,6 +107,19 @@ def proceedOcbc () :
 @app.route('/proceed-mandiri', methods=['POST'])
 def proceedMandiri () : 
     return mandiriController(app, logger)
+
+@app.route('/logs', methods=['GET'])
+def download_logs():
+    try:
+        # Memanggil fungsi untuk membuat file zip
+        zip_path = zip_logs()
+        
+        # Mengirim file zip ke client
+        return send_file(zip_path, as_attachment=True, download_name='logs.zip')
+    except Exception as e:
+        # Menangani jika ada kesalahan
+        logger.error(f"Error while creating zip file: {str(e)}")
+        return {'message': 'Failed to create zip file'}, 500
 
 if __name__ == "__main__":
     num_threads = multiprocessing.cpu_count()
