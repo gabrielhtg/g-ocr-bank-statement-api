@@ -73,6 +73,7 @@ def danamonController(app, logger) :
         if statusCode != 200 :
             return returnFailMessage(data, statusCode)
 
+    logger.info(f"{username} : Proceed Danamon Success, {statusCode}")
     return jsonify({
         'message' : 'ok',
         'data' : {

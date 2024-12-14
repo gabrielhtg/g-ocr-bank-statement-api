@@ -72,6 +72,7 @@ def cimbController(app, logger) :
         if statusCode != 200 :
             return returnFailMessage(data, statusCode)
 
+    logger.info(f"{username} : Proceed CIMB Success, {statusCode}")
     return jsonify({
         'message' : 'ok',
         'data' : {

@@ -73,6 +73,7 @@ def briController(app, logger) :
         if statusCode != 200 :
             return returnFailMessage(data, statusCode)
 
+    logger.info(f"{username} : Proceed BRI Success, {statusCode}")
     return jsonify({
         'message' : 'ok',
         'data' : {

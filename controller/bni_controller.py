@@ -74,6 +74,7 @@ def bniController(app, logger) :
         
     # playsound(app.config['BELL'])
     
+    logger.info(f"{username} : Proceed BNI Success, {statusCode}")
     return jsonify({
         'message' : 'ok',
         'data' : {
