@@ -66,7 +66,7 @@ def zip_logs():
         # Looping untuk menambahkan semua file log ke dalam zip
         for root, dirs, files in os.walk(log_folder):
             for file in files:
-                if file.endswith('.log'):
+                if not file.endswith('.zip'):
                     file_path = os.path.join(root, file)
                     zipf.write(file_path, os.path.relpath(file_path, log_folder))
 

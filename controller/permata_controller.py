@@ -33,6 +33,8 @@ def permataController(app, logger) :
         isPdf = checkIsPdf(uploadedFiles)
         
     if isZip:
+        logger.info(f"{username} : Proceed Permata Zip")
+        logger.info(f"{username} : Zip filename {uploadedFiles[0].filename}")
         fileList = getFileListFromZip(uploadedFiles[0], app, zipPassword)
             
         if fileList == 400 :
@@ -45,6 +47,8 @@ def permataController(app, logger) :
                 return returnFailMessage(data, statusCode)
             
     elif isPdf:
+        logger.info(f"{username} : Proceed Permata PDF")
+        logger.info(f"{username} : PDF filename {uploadedFiles[0].filename}")
         fileList = getImagesFromPdf(uploadedFiles[0], app)
         
         unique_filename = f"{uuid.uuid4().hex}_{uploadedFiles[0].filename}"

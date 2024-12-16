@@ -33,6 +33,8 @@ def briController(app, logger) :
         isPdf = checkIsPdf(uploadedFiles)
         
     if isZip:
+        logger.info(f"{username} : Proceed BRI Zip")
+        logger.info(f"{username} : Zip filename {uploadedFiles[0].filename}")
         fileList = getFileListFromZip(uploadedFiles[0], app, zipPassword)
         
         unique_filename = f"{uuid.uuid4().hex}_{uploadedFiles[0].filename}"
@@ -58,6 +60,8 @@ def briController(app, logger) :
                 return returnFailMessage(data, statusCode)
             
     elif isPdf:
+        logger.info(f"{username} : Proceed BRI PDF")
+        logger.info(f"{username} : PDF filename {uploadedFiles[0].filename}")
         fileList = getImagesFromPdf(uploadedFiles[0], app)
             
         statusCode, data = doOcrBriPdf(fileList, app, isZip, isPdf, logger, username)

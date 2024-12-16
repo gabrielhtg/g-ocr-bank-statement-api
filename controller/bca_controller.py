@@ -32,6 +32,8 @@ def bcaController(app, logger) :
         isPdf = checkIsPdf(uploadedFiles)
         
     if isZip:
+        logger.info(f"{username} : Proceed BCA Zip")
+        logger.info(f"{username} : Zip filename {uploadedFiles[0].filename}")
         fileList = getFileListFromZip(uploadedFiles[0], app, zipPassword)
             
         if fileList == 400 :
@@ -46,6 +48,8 @@ def bcaController(app, logger) :
                 return returnFailMessage(data, statusCode)
             
     elif isPdf :
+        logger.info(f"{username} : Proceed BCA PDF")
+        logger.info(f"{username} : PDF filename {uploadedFiles[0].filename}")
         fileList = getImagesFromPdf(uploadedFiles[0], app)
         
         unique_filename = f"{uuid.uuid4().hex}_{uploadedFiles[0].filename}"
@@ -68,6 +72,7 @@ def bcaController(app, logger) :
             return returnFailMessage(data, statusCode)
         
     else :
+        logger.info(f"{username} : Proceed BCA Images")
         sortedData = sorted(uploadedFiles, key=lambda x: x.filename)
         
         statusCode, data = doOcrBca(sortedData, app, isZip, isPdf, username, logger)
