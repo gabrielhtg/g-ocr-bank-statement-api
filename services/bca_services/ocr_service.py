@@ -477,5 +477,6 @@ def doOcrBca (imageArray, app, isZip, isPdf, username, logger) :
     data['total_debit'] = getTotalDebit(transactionData)
     data['total_kredit'] = getTotalKredit(transactionData)
     data['analytics_data'] = getAnalysisData(data['transaction_data'])
+    data['banyak_halaman'] = len(imageArray)
     
     return 200, data

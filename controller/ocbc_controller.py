@@ -98,6 +98,7 @@ def ocbcController(app, logger) :
             'kurs_valas_idr': data['kurs_valas_idr'],
             'saldo_dalam_mata_uang_idr': data['saldo_dalam_mata_uang_idr'],
             'total_saldo_dalam_idr': data['total_saldo_dalam_idr'],
-            'is_pdf_modified' : isPdfModified
+            'is_pdf_modified' : isPdfModified,
+            'banyak_halaman': data['banyak_halaman'],
         }
     })

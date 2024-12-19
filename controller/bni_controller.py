@@ -14,7 +14,7 @@ from services.utils.return_fail_message import returnFailMessage
 def bniController(app, logger) :
     username = request.headers.get('X-Username')
     
-    logger.info(f"{username} : '/proceed-bri', methods=['POST']")
+    logger.info(f"{username} : '/proceed-bni', methods=['POST']")
     
     uploadedFiles = request.files.getlist('files')
     zipPassword = ''
@@ -97,6 +97,7 @@ def bniController(app, logger) :
             'total_debet_amount' : data['total_debet_amount'],
             'total_credit_amount' : data['total_credit_amount'],
             'analytics_data': data['analytics_data'],
-            'is_pdf_modified' : isPdfModified   
+            'is_pdf_modified' : isPdfModified,
+            'banyak_halaman': data['banyak_halaman'],
         }
     })

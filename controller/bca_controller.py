@@ -101,7 +101,8 @@ def bcaController(app, logger) :
             'total_debet' : data['total_debit'],
             'total_kredit' : data['total_kredit'],
             'analytics_data': data['analytics_data'],
+            'banyak_halaman': data['banyak_halaman'],
             'is_pdf_modified' : isPdfModified,
-            # 'account_validation': validationResponse
+            # 'account_validation': validationResponse 
         }
     }), statusCode

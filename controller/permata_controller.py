@@ -95,6 +95,7 @@ def permataController(app, logger) :
             'total_debet' : data['total_debet'],
             'total_kredit' : data['total_kredit'],
             'analytics_data': data['analytics_data'],
-            'is_pdf_modified':  isPdfModified
+            'is_pdf_modified':  isPdfModified,
+            'banyak_halaman': data['banyak_halaman'],
         }
     })

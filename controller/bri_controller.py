@@ -98,6 +98,7 @@ def briController(app, logger) :
             'saldo_akhir' : data['saldo_akhir'],
             'total_transaksi_debit' : data['total_transaksi_debit'],
             'total_transaksi_kredit' : data['total_transaksi_kredit'],
-            'is_pdf_modified' : isPdfModified
+            'is_pdf_modified' : isPdfModified,
+            'banyak_halaman': data['banyak_halaman'],
         }
     })

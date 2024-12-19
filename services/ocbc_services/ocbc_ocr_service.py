@@ -528,4 +528,5 @@ def doOcrOcbc (imageArray, app, isZip, isPdf, logger, username) :
     data['total_debet'] = getTotalDebit(transactionData)
     data['total_kredit'] = getTotalKredit(transactionData)
     data['analytics_data'] = ocbcAnalysisData(data['transaction_data'])
+    data['banyak_halaman'] = len(imageArray)
     return 200, data

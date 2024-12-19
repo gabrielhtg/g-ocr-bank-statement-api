@@ -355,4 +355,5 @@ def doOcrPermata (imageArray, app, isZip, isPdf, logger, username) :
     data['total_debet'] = getTotalDebet(data['transaction_data'])
     data['total_kredit'] = getTotalKredit(data['transaction_data'])
     data['analytics_data'] = permataAnalysisData(data['transaction_data'])
+    data['banyak_halaman'] = len(imageArray)
     return 200, data

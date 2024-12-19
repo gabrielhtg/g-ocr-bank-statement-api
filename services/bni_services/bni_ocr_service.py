@@ -426,4 +426,5 @@ def doOcrBni (imageArray, app, isZip, isPdf, logger, username) :
     data['total_debet_by_ocr'] = getTotalDebit(transactionData)
     data['total_kredit_by_ocr'] = getTotalKredit(transactionData)
     data['analytics_data'] = bniAnalysisData(data['transaction_data'])
+    data['banyak_halaman'] = len(imageArray)
     return 200, data

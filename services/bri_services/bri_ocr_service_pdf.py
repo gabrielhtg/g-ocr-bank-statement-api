@@ -497,4 +497,5 @@ def doOcrBriPdf(imageArray, app, isZip, isPdf, logger, username) :
     data['total_debit'] = getTotalDebit(transactionData)
     data['total_kredit'] = getTotalKredit(transactionData)
     data['analytics_data'] = briAnalysisData(data['transaction_data'])
+    data['banyak_halaman'] = len(imageArray)
     return 200, data
