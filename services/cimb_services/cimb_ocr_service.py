@@ -96,13 +96,15 @@ def doOcrCimb (imageArray, app, isZip, isPdf, logger, username) :
         textData.clear()
         
         if isZip :
-            filename = secure_filename(e)
-            file_path = os.path.join(app.config['EXTRACT_FOLDER'], filename)
+            filename = secure_filename(e['filename'])
+            unique_filename = secure_filename(e['unique_filename'])
+            file_path = os.path.join(app.config['EXTRACT_FOLDER'], unique_filename)
             perspectiveCorrectedImage = correctPerspective(file_path)
             
         elif isPdf :
-            filename = secure_filename(e)
-            file_path = os.path.join(app.config['PDF_EXTRACT_FOLDER'], filename)
+            filename = secure_filename(e['filename'])
+            unique_filename = secure_filename(e['unique_filename'])
+            file_path = os.path.join(app.config['PDF_EXTRACT_FOLDER'], unique_filename)
             perspectiveCorrectedImage = correctPerspective(file_path)
             
         else :

@@ -1,3 +1,4 @@
+from fileinput import filename
 from io import BytesIO
 import os
 import uuid
@@ -26,7 +27,12 @@ def getFileListFromZip (dataFile, app, zipPassword):
                     extracted_file.write(zip_ref.read(file_name))
                 
                 # Tambahkan nama file baru ke daftar
-                extracted_files.append(unique_filename)
+                extracted_files.append(
+                    {
+                        'unique_filename' : unique_filename,
+                        'filename': file_name
+                    }
+                )
             # zip_ref.extractall(app.config['EXTRACT_FOLDER'])
         except (RuntimeError, pyzipper.BadZipFile, pyzipper.LargeZipFile) as e:
             return 400

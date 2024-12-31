@@ -14,7 +14,12 @@ def getImagesFromPdf(pdf_file, app):
 
             image.save(destination_path, "PNG")
 
-            extracted_images.append(unique_filename)
+            extracted_images.append(
+                {
+                    'unique_filename' : unique_filename,
+                    'filename' : f'{pdf_file.filename.split('.')[0]}_page_{index + 1}.png'
+                }
+            )
 
     except Exception as e:
         print(f"Error processing PDF: {e}")
