@@ -1,9 +1,9 @@
-easyocr
+easyocr==1.7.2
 flask
 flask-cors
 format-currency
 waitress
-opencv-python
+opencv-python==4.10.0.84
 pyzipper
 matplotlib
 pdf2image
