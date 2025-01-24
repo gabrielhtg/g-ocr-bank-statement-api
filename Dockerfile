@@ -7,7 +7,7 @@ COPY . /app/
 
 RUN pip install -r requirements.txt
 RUN apt update -y
-RUN apt install -y libgl1-mesa-dev libglib2.0-0
+RUN apt install -y libgl1-mesa-dev libglib2.0-0 poppler-utils
 
 EXPOSE 5000
 
